@@ -1,0 +1,11 @@
+# Generierter API-Client (entsteht aus openapi/openapi.yaml)
+packages/order_api/
+
+.dart_tool/
+.packages
+build/
+pubspec.lock
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+.idea/

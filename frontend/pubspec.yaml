@@ -1,0 +1,22 @@
+name: order_app
+description: Flutter-Frontend des Order Service (Beispiel der Software Factory).
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # Wird mit `./gradlew :frontend:openApiGenerate` aus openapi/openapi.yaml erzeugt (nicht eingecheckt).
+  order_api:
+    path: packages/order_api
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

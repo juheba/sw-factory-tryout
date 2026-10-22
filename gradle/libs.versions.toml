@@ -1,0 +1,7 @@
+[versions]
+spring-boot = "4.1.1"
+openapi-generator = "7.24.0"
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+openapi-generator = { id = "org.openapi.generator", version.ref = "openapi-generator" }

@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  service:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - uses: gradle/actions/setup-gradle@v5
+
+      - name: Service prüfen (Generieren, Kompilieren, Tests, Checkstyle)
+        run: ./gradlew :service:build
+
+      - name: Berichte hochladen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: service-reports
+          path: |
+            service/build/reports/tests/
+            service/build/reports/jacoco/
+            service/build/reports/checkstyle/
+          if-no-files-found: ignore
+
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      # JDK und Gradle werden nur benötigt, um den Dart-Client aus der Spec zu erzeugen.
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - uses: gradle/actions/setup-gradle@v5
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Frontend prüfen (Client generieren, Format, Analyse, Tests)
+        run: frontend/tool/verify.sh

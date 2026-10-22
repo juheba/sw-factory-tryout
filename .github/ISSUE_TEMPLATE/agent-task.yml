@@ -1,0 +1,41 @@
+name: Agent-Auftrag
+description: Strukturierter Auftrag für einen Coding-Agent
+labels: ["agent"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Ziel
+      description: Was soll am Ende möglich sein? Ein bis drei Sätze.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Kontext
+      description: Relevante Hintergründe, betroffene Teile des Codes oder der Spec.
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Akzeptanzkriterien
+      description: Prüfbare Kriterien, am besten als Checkliste.
+      placeholder: |
+        - [ ] openapi.yaml enthält ...
+        - [ ] Endpunkt ... liefert 200 mit ...
+        - [ ] Fehlerfall ... liefert 400
+        - [ ] ./verify.sh ist grün
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Nicht Teil des Auftrags
+      description: Was soll ausdrücklich nicht angefasst werden?
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Rahmenbedingungen
+      options:
+        - label: Spec zuerst ändern (openapi/openapi.yaml), dann implementieren
+        - label: Keine neuen Abhängigkeiten
+        - label: Doku (docs/) bei Architekturänderung aktualisieren

@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./verify.sh)",
+      "Bash(./gradlew:*)",
+      "Bash(frontend/tool/verify.sh)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter test:*)",
+      "Bash(flutter pub get:*)",
+      "Bash(dart format:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git switch:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push origin agent/*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh pr create:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Bash(git push --force:*)",
+      "Bash(git push origin main:*)"
+    ]
+  }
+}
