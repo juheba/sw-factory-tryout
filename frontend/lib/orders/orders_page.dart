@@ -76,9 +76,7 @@ class _OrdersPageState extends State<OrdersPage> {
                       ? const TextStyle(decoration: TextDecoration.lineThrough)
                       : null,
                 ),
-                subtitle: Text(
-                  '${order.itemCount} Position(en) · ${order.id}',
-                ),
+                subtitle: Text('${order.itemCount} Position(en) · ${order.id}'),
                 trailing: cancelled
                     ? const Chip(label: Text('Storniert'))
                     : IconButton(
