@@ -27,7 +27,7 @@ abstract class OrdersRepository {
 /// Implementierung auf Basis des aus openapi.yaml generierten Clients.
 class ApiOrdersRepository implements OrdersRepository {
   ApiOrdersRepository({required String baseUrl})
-      : _api = api.OrdersApi(api.ApiClient(basePath: baseUrl));
+    : _api = api.OrdersApi(api.ApiClient(basePath: baseUrl));
 
   final api.OrdersApi _api;
 
@@ -55,8 +55,8 @@ class ApiOrdersRepository implements OrdersRepository {
   }
 
   OrderSummary _toSummary(api.Order order) => OrderSummary(
-        id: order.id,
-        customerId: order.customerId,
-        itemCount: order.items.length,
-      );
+    id: order.id,
+    customerId: order.customerId,
+    itemCount: order.items.length,
+  );
 }
