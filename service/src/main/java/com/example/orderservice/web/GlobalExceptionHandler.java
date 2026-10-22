@@ -1,5 +1,7 @@
 package com.example.orderservice.web;
 
+import com.example.orderservice.service.OrderAlreadyCancelledException;
+import com.example.orderservice.service.OrderNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -10,6 +12,16 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 /** Einheitliche Fehlerantworten als RFC-9457-Problem-Details (application/problem+json). */
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ProblemDetail handleOrderNotFound(OrderNotFoundException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(OrderAlreadyCancelledException.class)
+    public ProblemDetail handleOrderAlreadyCancelled(OrderAlreadyCancelledException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+    }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ProblemDetail handleConstraintViolation(ConstraintViolationException ex) {

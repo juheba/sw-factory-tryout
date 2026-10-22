@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -92,5 +93,51 @@ class OrdersApiTest {
     void returnsBadRequestForMalformedId() throws Exception {
         mvc.perform(get("/orders/{id}", "not-a-uuid"))
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void cancelsOrder() throws Exception {
+        String id = createOrderAndReturnId();
+
+        mvc.perform(post("/orders/{id}/cancel", id))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(id))
+            .andExpect(jsonPath("$.status").value("CANCELLED"));
+
+        mvc.perform(get("/orders/{id}", id))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("CANCELLED"));
+    }
+
+    @Test
+    void cancelReturnsNotFoundForUnknownOrder() throws Exception {
+        mvc.perform(post("/orders/{id}/cancel", UUID.randomUUID()))
+            .andExpect(status().isNotFound())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+            .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    void cancelReturnsConflictForAlreadyCancelledOrder() throws Exception {
+        String id = createOrderAndReturnId();
+        mvc.perform(post("/orders/{id}/cancel", id)).andExpect(status().isOk());
+
+        mvc.perform(post("/orders/{id}/cancel", id))
+            .andExpect(status().isConflict())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+            .andExpect(jsonPath("$.status").value(409));
+    }
+
+    @Test
+    void cancelReturnsBadRequestForMalformedId() throws Exception {
+        mvc.perform(post("/orders/{id}/cancel", "not-a-uuid"))
+            .andExpect(status().isBadRequest());
+    }
+
+    private String createOrderAndReturnId() throws Exception {
+        String body = mvc.perform(post("/orders").contentType(MediaType.APPLICATION_JSON).content(VALID_ORDER))
+            .andExpect(status().isCreated())
+            .andReturn().getResponse().getContentAsString();
+        return JsonPath.read(body, "$.id");
     }
 }
