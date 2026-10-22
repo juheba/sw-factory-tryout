@@ -1,5 +1,7 @@
 import 'package:order_api/api.dart' as api;
 
+enum OrderStatus { created, cancelled }
+
 /// Frontend-eigenes Modell. Entkoppelt die UI vom generierten Client:
 /// Ändert sich die Spec, muss nur diese Datei angepasst werden.
 class OrderSummary {
@@ -7,11 +9,13 @@ class OrderSummary {
     required this.id,
     required this.customerId,
     required this.itemCount,
+    required this.status,
   });
 
   final String id;
   final String customerId;
   final int itemCount;
+  final OrderStatus status;
 }
 
 abstract class OrdersRepository {
@@ -22,6 +26,8 @@ abstract class OrdersRepository {
     required String sku,
     required int quantity,
   });
+
+  Future<OrderSummary> cancel(String id);
 }
 
 /// Implementierung auf Basis des aus openapi.yaml generierten Clients.
@@ -54,9 +60,21 @@ class ApiOrdersRepository implements OrdersRepository {
     return _toSummary(created);
   }
 
+  @override
+  Future<OrderSummary> cancel(String id) async {
+    final cancelled = await _api.cancelOrder(id);
+    if (cancelled == null) {
+      throw StateError('Der Service hat keine Bestellung zurückgegeben.');
+    }
+    return _toSummary(cancelled);
+  }
+
   OrderSummary _toSummary(api.Order order) => OrderSummary(
     id: order.id,
     customerId: order.customerId,
     itemCount: order.items.length,
+    status: order.status.value == 'CANCELLED'
+        ? OrderStatus.cancelled
+        : OrderStatus.created,
   );
 }
