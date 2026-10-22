@@ -1,6 +1,6 @@
 [versions]
 spring-boot = "4.1.1"
-openapi-generator = "7.24.0"
+openapi-generator = "7.26.0"
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
