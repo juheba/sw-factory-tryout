@@ -27,7 +27,15 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
 
       - name: Service prüfen (Generieren, Kompilieren, Tests, Checkstyle)
-        run: ./gradlew :service:build
+        run: |
+          set +e
+          ./gradlew :service:build 2>&1 | tee service.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            msg=$(tail -n 80 service.log | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\r/%0D/g;s/\n/%0A/g')
+            echo "::error title=Service-Gate fehlgeschlagen::${msg}"
+          fi
+          exit "$status"
 
       - name: Berichte hochladen
         if: always()
@@ -60,4 +68,12 @@ jobs:
           cache: true
 
       - name: Frontend prüfen (Client generieren, Format, Analyse, Tests)
-        run: frontend/tool/verify.sh
+        run: |
+          set +e
+          frontend/tool/verify.sh 2>&1 | tee verify.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            msg=$(tail -n 80 verify.log | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\r/%0D/g;s/\n/%0A/g')
+            echo "::error title=Frontend-Gate fehlgeschlagen::${msg}"
+          fi
+          exit "$status"
