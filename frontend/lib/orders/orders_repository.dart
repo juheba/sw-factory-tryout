@@ -73,7 +73,7 @@ class ApiOrdersRepository implements OrdersRepository {
     id: order.id,
     customerId: order.customerId,
     itemCount: order.items.length,
-    status: order.status.value == 'CANCELLED'
+    status: order.status == api.OrderStatus.CANCELLED
         ? OrderStatus.cancelled
         : OrderStatus.created,
   );
