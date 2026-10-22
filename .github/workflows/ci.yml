@@ -24,7 +24,7 @@ jobs:
           distribution: temurin
           java-version: "25"
 
-      - uses: gradle/actions/setup-gradle@v5
+      - uses: gradle/actions/setup-gradle@v6
 
       - name: Service prüfen (Generieren, Kompilieren, Tests, Checkstyle)
         run: |
@@ -60,7 +60,7 @@ jobs:
           distribution: temurin
           java-version: "25"
 
-      - uses: gradle/actions/setup-gradle@v5
+      - uses: gradle/actions/setup-gradle@v6
 
       - uses: subosito/flutter-action@v2
         with:
