@@ -81,6 +81,38 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
+  /orders/{id}/cancel:
+    post:
+      tags: [orders]
+      operationId: cancelOrder
+      summary: Eine Bestellung stornieren
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Die stornierte Bestellung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: Bestellung nicht gefunden
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          description: Bestellung ist bereits storniert
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
 components:
   schemas:
     OrderItem:
@@ -113,7 +145,7 @@ components:
 
     OrderStatus:
       type: string
-      enum: [CREATED]
+      enum: [CREATED, CANCELLED]
 
     Order:
       type: object

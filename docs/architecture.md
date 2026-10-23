@@ -45,6 +45,18 @@ sequenceDiagram
     R-->>U: OrderSummary
 ```
 
+## Lebenszyklus einer Bestellung
+
+```mermaid
+stateDiagram-v2
+    [*] --> CREATED: POST /orders
+    CREATED --> CANCELLED: POST /orders/{id}/cancel
+    CANCELLED --> CANCELLED: 409 Conflict
+```
+
+Das Stornieren ist atomar (`ConcurrentHashMap.computeIfPresent`). Unbekannte IDs liefern 404,
+eine bereits stornierte Bestellung liefert 409; beide Fehler als RFC-9457-Problem-Details.
+
 ## Entscheidungen
 
 - [ADR 0001: Spec-first mit OpenAPI](adr/0001-spec-first-openapi.md)

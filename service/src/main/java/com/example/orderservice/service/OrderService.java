@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.springframework.stereotype.Service;
 
 /** Einfache In-Memory-Verwaltung der Bestellungen. Ersetzt später eine Persistenzschicht. */
@@ -28,6 +29,31 @@ public class OrderService {
         order.setCreatedAt(OffsetDateTime.now());
         orders.put(order.getId(), order);
         return order;
+    }
+
+    /**
+     * Storniert eine Bestellung atomar.
+     *
+     * @throws OrderNotFoundException wenn es die Bestellung nicht gibt
+     * @throws OrderAlreadyCancelledException wenn sie bereits storniert ist
+     */
+    public Order cancel(UUID id) {
+        AtomicBoolean alreadyCancelled = new AtomicBoolean(false);
+        Order result = orders.computeIfPresent(id, (key, order) -> {
+            if (order.getStatus() == OrderStatus.CANCELLED) {
+                alreadyCancelled.set(true);
+            } else {
+                order.setStatus(OrderStatus.CANCELLED);
+            }
+            return order;
+        });
+        if (result == null) {
+            throw new OrderNotFoundException(id);
+        }
+        if (alreadyCancelled.get()) {
+            throw new OrderAlreadyCancelledException(id);
+        }
+        return result;
     }
 
     public Optional<Order> find(UUID id) {

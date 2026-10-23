@@ -34,6 +34,11 @@ public class OrdersController implements OrdersApi {
     }
 
     @Override
+    public ResponseEntity<Order> cancelOrder(UUID id) {
+        return ResponseEntity.ok(orderService.cancel(id));
+    }
+
+    @Override
     public ResponseEntity<Order> getOrder(UUID id) {
         return orderService.find(id)
             .map(ResponseEntity::ok)

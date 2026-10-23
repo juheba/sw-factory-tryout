@@ -35,6 +35,18 @@ class _OrdersPageState extends State<OrdersPage> {
     _reload();
   }
 
+  Future<void> _cancel(OrderSummary order) async {
+    try {
+      await widget.repository.cancel(order.id);
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Stornieren fehlgeschlagen: $error')),
+      );
+    }
+    if (mounted) _reload();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,9 +68,22 @@ class _OrdersPageState extends State<OrdersPage> {
             itemCount: orders.length,
             itemBuilder: (context, index) {
               final order = orders[index];
+              final cancelled = order.status == OrderStatus.cancelled;
               return ListTile(
-                title: Text(order.customerId),
+                title: Text(
+                  order.customerId,
+                  style: cancelled
+                      ? const TextStyle(decoration: TextDecoration.lineThrough)
+                      : null,
+                ),
                 subtitle: Text('${order.itemCount} Position(en) · ${order.id}'),
+                trailing: cancelled
+                    ? const Chip(label: Text('Storniert'))
+                    : IconButton(
+                        icon: const Icon(Icons.cancel_outlined),
+                        tooltip: 'Bestellung stornieren',
+                        onPressed: () => _cancel(order),
+                      ),
               );
             },
           );
