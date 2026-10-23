@@ -60,3 +60,4 @@ eine bereits stornierte Bestellung liefert 409; beide Fehler als RFC-9457-Proble
 ## Entscheidungen
 
 - [ADR 0001: Spec-first mit OpenAPI](adr/0001-spec-first-openapi.md)
+- [ADR 0002: Absicherung automatischer Agent-Läufe](adr/0002-agent-sicherheit.md)

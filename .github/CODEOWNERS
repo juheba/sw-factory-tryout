@@ -1,0 +1,23 @@
+# Schutzbereiche: Hier dürfen Agents nichts ohne Review des Besitzers ändern.
+# Wirksam erst, wenn im Ruleset für main "Require review from Code Owners" aktiv ist.
+# Begründung und Einrichtung: docs/adr/0002-agent-sicherheit.md
+
+# Automatisierung und Agent-Konfiguration
+/.github/                   @juheba
+/.claude/                   @juheba
+/CLAUDE.md                  @juheba
+
+# Das Gate selbst (ein Agent darf die eigene Prüfung nicht abschwächen)
+/verify.sh                  @juheba
+/frontend/tool/             @juheba
+/config/                    @juheba
+
+# Build, Abhängigkeiten und Wrapper (Lieferkette)
+/gradle/                    @juheba
+/gradlew                    @juheba
+/gradlew.bat                @juheba
+/settings.gradle.kts        @juheba
+/build.gradle.kts           @juheba
+/service/build.gradle.kts   @juheba
+/frontend/build.gradle.kts  @juheba
+/frontend/pubspec.yaml      @juheba
