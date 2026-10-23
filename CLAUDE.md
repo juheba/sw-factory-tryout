@@ -63,7 +63,35 @@ statt Erfolg zu behaupten.
 - Nie direkt auf `main` pushen. Branch pro Issue: `agent/<issue-nr>-<kurzer-slug>`.
 - Commits klein und im Stil Conventional Commits (`feat:`, `fix:`, `test:`, `docs:`, `refactor:`, `chore:`).
 - Pull Request mit `Closes #<issue-nr>`, kurzer Zusammenfassung und dem Ergebnis von `./verify.sh`.
-- Kein Force-Push.
+- Kein Force-Push (auch kein `--force-with-lease`) und kein Rebase durch den Agenten. Sind History-Änderungen nötig,
+  bittest du den Besitzer darum.
+
+## Lehren aus den ersten Läufen
+
+Diese Punkte haben im Probelauf (Issue #8, „Bestellung stornieren“) konkret Zeit gekostet.
+
+1. **Generierten Code lesen, nicht raten.** Die Form generierter Typen hängt von Generator und Version ab.
+   Beispiel: Der Dart-Client erzeugt einen echten `enum OrderStatus` mit den Konstanten `CREATED` und `CANCELLED`
+   und privatem Wert, es gibt kein `.value`. Eine falsche Annahme kostete eine komplette CI-Runde.
+   Vor dem ersten Zugriff den Client erzeugen (`./gradlew :frontend:openApiGenerate` bzw.
+   `./gradlew :service:openApiGenerate`) und die Datei ansehen: `frontend/packages/order_api/lib/model/`
+   und `service/build/generated/openapi/`.
+2. **Fehler aus dem Gate lesen.** Schlägt die CI fehl, steht die Ursache in den Annotationen des fehlgeschlagenen
+   Jobs (die letzten 80 Zeilen des Gate-Logs): `gh api repos/<owner>/<repo>/check-runs/<id>/annotations`.
+   Die Roh-Logs sind in manchen Umgebungen nicht abrufbar. Nicht raten und nicht blind erneut pushen.
+3. **Dart-Formatierung nicht erfinden.** `dart format` ist streng und ändert den Stil zwischen Dart-Versionen.
+   Ist Flutter lokal nicht verfügbar, übernimmst du den Diff aus der CI-Annotation 1:1.
+4. **Reihenfolge einhalten:** Spec, dann Service, dann Tests, dann Frontend. Nach jeder Spec-Änderung den Client neu
+   erzeugen. So zeigen sich Folgefehler dort, wo sie entstehen.
+5. **Gezielt stagen.** Vor jedem Commit `git status` lesen und nur die Dateien des Auftrags mit `git add <Pfade>`
+   aufnehmen, kein `git add -A`. Vor dem PR `git diff main --stat` prüfen: keine Debug-Dateien, keine
+   unbeteiligten Änderungen.
+6. **Ehrlich berichten, was geprüft wurde.** Der PR-Text trennt „lokal ausgeführt“ von „nur in der CI geprüft“
+   und nennt Annahmen, die erst die CI bestätigt oder widerlegt hat.
+7. **PR per REST-API, wenn `gh pr create` scheitert.** In manchen Umgebungen ist GraphQL gesperrt (Fehler „GitHub
+   GraphQL is not available“). Dann: `gh api repos/<owner>/<repo>/pulls -f title=... -f head=... -f base=main -F body=@datei`.
+8. **Kleine, getrennte PRs.** Fällt etwas Unzusammenhängendes auf (z. B. Zeilenenden einer Datei), kommt es in einen
+   eigenen PR und nicht in den Feature-PR.
 
 ## Dokumentation
 
