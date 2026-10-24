@@ -49,7 +49,7 @@ flowchart LR
 | ID | Punkt | Status | Nächster Schritt / Verweis |
 |---|---|---|---|
 | P1 | Rückmeldekanal bei verbotenem Auftrag | ✅ erledigt | Kommentar im Issue (Issue #33, PR #32). |
-| P2 | Review-Schleife per Kommentar `/agent …` | ⬜ offen | Spike im Interaktiv-Modus der Action (`trigger_phrase`, `include_comments_by_actor`), danach ggf. Eigenbau. Schutzbereichs-Prüfung im Diff bleibt nötig. |
+| P2 | Review-Schleife per Kommentar `/agent …` | ⚠️ in Arbeit | Spike gebaut (`agent-review.yml`, Interaktiv-Modus, Prüfjob mit Schutzbereichs-Check, ADR 0002 „Kommentar-Trigger“). Läuft erst nach dem Merge (`issue_comment` nutzt `main`). Danach mit echtem `agent/*`-PR testen, dann ggf. Eigenbau. |
 | P3 | Selbstheilung bei roter CI | ⬜ offen | Abwandlung von `examples/ci-failure-auto-fix.yml` der Action: nur `agent/*`-PRs, Run-ID statt Logs im Prompt, Obergrenze, Freigabe. |
 | P4 | Vorab-Review durch einen zweiten, schreibgeschützten Lauf | ❓ zu bewerten | Zuerst manuell `/code-review` lokal ausprobieren. Plugin-Variante: Pin- und Environment-Frage klären. |
 | P5 | Rückfrage statt Raten bei mehrdeutigen Kriterien | ⬜ offen | Prompt-Ergänzung: Frage ins Issue, Lauf endet. |

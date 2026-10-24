@@ -31,15 +31,22 @@ flowchart LR
     L -->|grün| PR[Pull Request mit Closes nr]
     PR --> CI[CI: Jobs service und frontend]
     CI --> R[Review durch Mensch]
-    R -->|Änderungen: Issue anpassen, Label neu setzen| O
+    R -->|Änderungswunsch: Kommentar /agent ...| RK[Überarbeitung auf dem PR-Branch]
+    RK --> CI
     R -->|ok| M[Merge in main]
 ```
 
 Gegenüber Stufe 1 startet der Lauf automatisch, sobald der Besitzer das Label `agent` setzt, und nur dann, wenn
 Absender und Issue-Autor der Besitzer sind. Jeder Lauf wartet auf eine Freigabe im GitHub-Environment `agent`.
 Schutzbereiche (Workflows, Gate, Build-Skripte) darf der Agent nicht ändern, dafür sorgen Code-Owner-Review und
-Ruleset. Die Begründungen stehen in [ADR 0002](adr/0002-agent-sicherheit.md). Eine automatische Rückkopplung aus dem
-Review gibt es noch nicht: Bei Änderungswünschen wird das Issue angepasst und das Label neu gesetzt.
+Ruleset. Die Begründungen stehen in [ADR 0002](adr/0002-agent-sicherheit.md).
+
+**Review-Schleife (Spike, Roadmap P2):** Bei Änderungswünschen schreibt der Besitzer auf dem `agent/*`-PR einen
+Kommentar, der mit `/agent` beginnt. Der Workflow `agent-review.yml` prüft zuerst ohne Secrets (offener PR, Branch
+`agent/*`, keine Schutzbereiche im Diff, höchstens 5 Runden) und fragt dann die Freigabe im Environment an. Der Agent
+arbeitet auf demselben Branch, führt `./verify.sh` aus und antwortet mit einem Kommentar. Ändert der PR Schutzbereiche,
+lehnt die Prüfung ab und nennt den Grund; dann arbeitet der Besitzer selbst weiter. Geht der Wunsch über den PR hinaus,
+wird das Issue angepasst und das Label neu gesetzt.
 
 ## Wenn der Agent nicht liefern kann
 

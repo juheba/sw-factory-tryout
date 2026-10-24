@@ -83,6 +83,32 @@ Pro Issue läuft höchstens ein Lauf (`concurrency`), verschiedene Issues dürfe
 Der Agent liest den Issue-Text selbst und behandelt ihn als Daten. Schutzbereiche (Workflows, Gate, Build-Skripte)
 darf er nicht ändern; die Grenze setzen `CODEOWNERS` und das Ruleset. Details: ADR 0002.
 
+## Ablauf: Review-Schleife per Kommentar
+
+```mermaid
+sequenceDiagram
+    actor O as Besitzer
+    participant GH as GitHub
+    participant P as Job pruefung (ohne Secrets)
+    participant Env as Environment agent
+    participant A as Agent (claude-code-action, Interaktiv-Modus)
+    participant CI as CI (ci.yml)
+    O->>GH: Kommentar "/agent Wunsch" auf einem agent/*-PR
+    GH->>P: Ereignis issue_comment (Workflow-Stand von main)
+    P->>P: PR offen, Branch agent/*, gleiches Repo, Autor Besitzer, keine Schutzbereiche im Diff, höchstens 5 Runden
+    P-->>GH: bei Ablehnung: Kommentar mit Grund, kein Agent-Lauf
+    P->>Env: Freigabe anfordern (Branch main)
+    O-->>Env: Lauf freigeben
+    Env-->>A: Secrets (OAuth-Token, PAT)
+    A->>GH: liest Kommentare des Besitzers, ändert Code, ./verify.sh, Push auf den PR-Branch, Antwortkommentar
+    GH->>CI: Gate service und frontend
+    O->>GH: erneut prüfen, weiteren Kommentar schreiben oder mergen
+```
+
+`issue_comment` läuft immer mit der Workflow-Datei von `main`; ein PR kann den Workflow also nicht verändern. Der Job
+`pruefung` entscheidet vor der Freigabe, ob der Befehl zulässig ist. Pro PR läuft höchstens ein Lauf. Die Schleife ist
+ein Spike und noch nicht im Echtbetrieb bewertet (Roadmap P2).
+
 ## Entscheidungen
 
 - [ADR 0001: Spec-first mit OpenAPI](adr/0001-spec-first-openapi.md)
