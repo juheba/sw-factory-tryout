@@ -25,7 +25,7 @@ jobs:
       github.event.label.name == 'agent' &&
       github.event.sender.login == 'juheba' &&
       github.event.issue.user.login == 'juheba'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     # Die Secrets liegen im Environment "agent" (nur Branch main, Freigabe durch den Besitzer).
     environment: agent
@@ -36,20 +36,20 @@ jobs:
       # Bewusst kein id-token, kein actions, kein workflows.
     steps:
       # Läuft auf dem Stand von main. Der PAT (nicht GITHUB_TOKEN) sorgt dafür, dass Pushes des Agents die CI auslösen.
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ github.event.repository.default_branch }}
           token: ${{ secrets.AGENT_GITHUB_TOKEN }}
 
       # Werkzeuge für das Gate (./verify.sh). Sie laufen vor dem Agent und hängen nicht von seinem Ergebnis ab.
-      - uses: actions/setup-java@v6
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6
         with:
           distribution: temurin
           java-version: "25"
 
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           channel: stable
           cache: true
@@ -78,6 +78,8 @@ jobs:
             5. Führe `./verify.sh` aus, ohne die Ausgabe abzuschneiden (kein `| tail`, kein `| head`), und notiere den
                Exit-Code. Fehlt ein Werkzeug oder scheitert das Gate, sag das im PR-Text.
             6. Eröffne den PR mit `Closes #${{ github.event.issue.number }}` und dem tatsächlichen Ergebnis des Gates.
+               Der PR-Text enthält eine eigene Zeile `Exit-Code: <Zahl>` für `./verify.sh` (oder `Exit-Code: nicht
+               ausgeführt` mit Grund).
                Schreibe den PR-Text mit dem Write-Werkzeug nach `.agent-tmp/pr-body.md` (nicht nach `/tmp`) und übergib ihn
                mit `gh pr create --title "<Titel>" --body-file .agent-tmp/pr-body.md`. Committe `.agent-tmp/` nicht.
             7. Lässt sich der Auftrag nach diesen Regeln gar nicht umsetzen (zum Beispiel, weil er nur Schutzbereiche

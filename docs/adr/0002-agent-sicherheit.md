@@ -128,6 +128,14 @@ Deshalb darf die CI keine Secrets verwenden (aktuell der Fall), und Änderungen 
   Dependabot hält die SHAs aktuell.
 - Erlaubte Aktionen in den Repo-Einstellungen einschränken.
 
+Umgesetzt am 24.10.2026: Alle Aktionen in `ci.yml` und `agent.yml` stehen auf Commit-SHAs, mit dem Tag als Kommentar
+(zum Beispiel `# v7`), damit Dependabot sie weiter pflegt. Bei annotierten Tags (`gradle/actions`) gilt der Commit
+hinter dem Tag. Die Allowlist (`anthropics/claude-code-action@*`, `gradle/actions/*`, `subosito/flutter-action@*`,
+`oven-sh/setup-bun@<SHA>`, dazu die GitHub-eigenen Aktionen) erlaubt diese Form. Die Option „Require actions to be
+pinned to a full-length commit SHA“ ist noch nicht gesetzt: Verschachtelte Aktionen (zum Beispiel in
+`subosito/flutter-action`) sind womöglich nur per Tag festgelegt und würden damit blockiert. Erst in einem Testlauf
+einschalten.
+
 ## Manuelle Einstellungen (nur du, in der GitHub-Oberfläche)
 
 | | Einstellung | Wert |
