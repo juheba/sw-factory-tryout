@@ -1,0 +1,4 @@
+[
+  { "name": "PAT AGENT_GITHUB_TOKEN", "expires": "2027-01-22" },
+  { "name": "OAuth-Token CLAUDE_CODE_OAUTH_TOKEN", "expires": "2027-10-15" }
+]
