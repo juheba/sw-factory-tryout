@@ -219,3 +219,12 @@ Die Kontrollen (`Edit` in `docs/`, `git status`) blieben erlaubt.
   nur `main`.
 - **Korrektur:** Muster ohne `:*` am Ende (`git push *:**`, `git push *:main*`, `git push *:refs/*`). Ob sie greifen,
   zeigt ein dritter Lauf.
+
+### Ergebnisse, dritter Lauf (24.10.2026, Lauf 40112522738)
+
+Nach PR #30: 17 Aufrufe, 12 Ablehnungen. Alle zwölf Versuche (Punkte 1 bis 12) wurden abgelehnt, auch
+`git push origin agent/permtest:main`. Die Kontrollen (`Edit` in `docs/`, `git status`) blieben erlaubt. Die
+Muster ohne `:*` am Ende greifen also; die Vermutung zum alten Präfix-Schreibweise-Effekt ist damit plausibel, aber nicht
+eigens belegt. Der Berechtigungstest ist bestanden und `permission-test.yml` wurde entfernt. Er lässt sich aus der
+Git-Historie (PR #27, #29) wiederherstellen, falls die Regeln erneut geändert werden.
+
