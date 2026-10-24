@@ -49,3 +49,5 @@ Android-Emulator: `flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8080`
 ## Teststand
 
 Die Stufe 2 wird abgenommen.
+
+Test 3b
