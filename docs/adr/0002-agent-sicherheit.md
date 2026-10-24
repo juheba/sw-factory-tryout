@@ -144,8 +144,9 @@ bist zugleich Autor, brauchst du den Admin-Bypass. Ohne Bypass blockierst du dic
      (lesen/schreiben) und Administration (lesen). Passt schlecht zu „so wenig Rechte wie möglich“.
    - *Eigene minimale GitHub-App* (nur Contents, Issues, Pull requests): eigene Bot-Identität und Pflicht-Reviews
      möglich, aber mehr Einrichtung.
-   Vorschlag: PAT, 90 Tage Laufzeit, im Environment-Secret (vom Besitzer noch zu bestätigen). Der Workflow nutzt ihn
-   als `github_token` der Action. Ob die Action dann ohne installierte App läuft, ist nicht ausdrücklich dokumentiert
+   Entscheidung (24.10.2026, Besitzer): Start mit dem PAT, 90 Tage Laufzeit (läuft am 22.01.2027 ab), im
+   Environment-Secret `AGENT_GITHUB_TOKEN`. Die eigene minimale App wird neu bewertet, sobald das Repo mehr als ein
+   Experiment ist. Der Workflow nutzt den PAT als `github_token` der Action. Ob die Action dann ohne installierte App läuft, ist nicht ausdrücklich dokumentiert
    und wird im ersten Lauf geprüft.
 2. **Merge-Schutz.** Mit einem PAT handelt der Agent als Besitzer und könnte rein technisch mergen. Die Allowlist
    verbietet `gh pr merge`, das ist aber nur eine Regel. Eine harte Grenze entsteht erst mit einer getrennten
