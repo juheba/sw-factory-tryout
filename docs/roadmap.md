@@ -39,7 +39,7 @@ flowchart LR
 | ID | Punkt | Status | Nächster Schritt / Verweis |
 |---|---|---|---|
 | E1 | Stufe 1: manueller Lauf mit CI-Gate | ✅ erledigt | – |
-| E2 | Stufe 2: Label `agent` startet den Lauf | ✅ erledigt | Abnahme bestanden (ADR 0002, „Stand der Abnahme“). ADR-Status noch „vorgeschlagen“, auf „akzeptiert“ setzen. |
+| E2 | Stufe 2: Label `agent` startet den Lauf | ✅ erledigt | Abnahme bestanden (ADR 0002, „Stand der Abnahme“). ADR 0002 ist seit 24.10.2026 „akzeptiert“. |
 | E3 | Stufe 3: Rollen (Planer, Umsetzer, Reviewer) | ❓ zu bewerten | Erst nach der Review-Schleife. Das Vorab-Review (P4) ist ein kleiner Vorgriff. |
 | E4 | Stufe 4: eigener Orchestrator mit Agent SDK | ❓ zu bewerten | Setzt E3 und Messwerte (M1) voraus. |
 | E5 | Stufe 5: eigenes Repo `sw-factory` | ❓ zu bewerten | Vorher klären, was projektspezifisch und was generisch ist (W1). |
@@ -64,12 +64,12 @@ flowchart LR
 | S1 | Technische Sperren des Agenten | ✅ erledigt | Berechtigungstest bestanden (12 von 12). Regeln in `.claude/agent-settings.json`. |
 | S2 | Aktionen auf Commit-SHAs festlegen | ✅ erledigt | PR #40. Option „Require actions to be pinned“ erst nach Test einschalten. |
 | S3 | Widerruf des `setup-token`-Tokens klären | ⬜ offen | Besitzer: in Doku oder Einstellungen nachsehen. Ohne bekannten Widerruf ist der Verlust des Tokens ein Risiko. |
-| S4 | Ablaufdaten: PAT 22.01.2027, OAuth-Token Oktober 2027 | ⚠️ in Arbeit | Meldung per Issue 30 Tage vorher (`housekeeping.yml`, Daten in `.github/ablaufdaten.json`). Auf erledigt setzen, sobald ein manueller Lauf gelungen ist. Das OAuth-Datum (15.10.2027) ist eine vorsichtige Schätzung, bitte prüfen. Beim Erneuern eines Zugangs das Datum anpassen. |
+| S4 | Ablaufdaten: PAT 22.01.2027, OAuth-Token Oktober 2027 | ✅ erledigt | Meldung per Issue 30 Tage vorher (`housekeeping.yml`, Daten in `.github/ablaufdaten.json`). Erster Lauf auf GitHub grün. Das OAuth-Datum (15.10.2027) ist eine vorsichtige Schätzung, bitte prüfen. Beim Erneuern eines Zugangs das Datum anpassen. |
 | S5 | Eigene Bot-Identität mit minimaler GitHub-App | ❓ zu bewerten | Löst: PAT als statisches Token, Agent kann technisch mergen, Approve-Review nicht möglich (Autor = Besitzer). |
 | S6 | Pflicht-Check `agent-approval-check` | ❓ zu bewerten | Braucht S5. |
 | S7 | Secret Scanning und Push Protection | ❓ zu bewerten | Repo-Einstellung prüfen (öffentliches Repo). Sicht darauf hat nur der Besitzer. |
 | S8 | CodeQL und Egress-Filter | ❓ zu bewerten | CodeQL ist günstig, Egress-Filter aufwändiger. |
-| S9 | Notausschalter | ⬜ offen | Dokumentieren, wie ein laufender oder drohender Missbrauch gestoppt wird (Workflow deaktivieren, Environment-Freigabe, Tokens widerrufen, Branch-Schutz). |
+| S9 | Notausschalter | ⚠️ in Arbeit | Beschrieben in [betrieb.md](betrieb.md). Noch nicht geprobt, einmal durchspielen (Lauf abbrechen, Workflow abschalten). Widerruf des OAuth-Tokens ungeklärt (S3). |
 | S10 | Nutzung des Abo-Tokens im Dauerbetrieb | ❓ zu bewerten | Nutzungsbedingungen und Limits für automatisierte Läufe prüfen. Ich habe das nicht geprüft. |
 
 ## Messung und Qualität
@@ -88,9 +88,9 @@ flowchart LR
 | B1 | Updates der Action und von Claude Code | ⬜ offen | Die Action installiert Claude Code zur Laufzeit (zuletzt 2.1.310). Vorgehen für Versionssprünge festlegen: neues Tag lesen, Referenzaufgaben laufen lassen, dann pinnen. |
 | B2 | Kontingent bei parallelen Läufen | ❓ zu bewerten | Concurrency pro Issue erlaubt Parallelität. Beobachten, ob das Abo-Limit greift. |
 | B3 | Aufräumen übrig gebliebener `agent/*`-Branches | ❓ zu bewerten | „Branch nach Merge löschen“ ist aktiv. Branches ohne PR bleiben liegen. |
-| B4 | Betriebshandbuch | ⬜ offen | Kurz: hängender Lauf, abgelaufenes Token, rote CI auf `main`, Verdacht auf Missbrauch (siehe S9). |
+| B4 | Betriebshandbuch | ✅ erledigt | Erste Fassung in [betrieb.md](betrieb.md): Notausschalter, Störungen, Zugänge erneuern. Wird mit den Erfahrungen ergänzt. |
 | B5 | Runner-Image und Abhängigkeiten | ⚠️ in Arbeit | `ubuntu-24.04` festgelegt. Dependabot läuft wöchentlich. |
-| B6 | Pflege der Roadmap | ⚠️ in Arbeit | Regel in `CLAUDE.md`, Checkbox in der PR-Vorlage, Erinnerung per `housekeeping.yml`. Auf erledigt setzen nach dem ersten manuellen Lauf. |
+| B6 | Pflege der Roadmap | ✅ erledigt | Regel in `CLAUDE.md`, Checkbox in der PR-Vorlage, Erinnerung per `housekeeping.yml` (erster Lauf grün). |
 
 ## Produkt (Spielwiese)
 

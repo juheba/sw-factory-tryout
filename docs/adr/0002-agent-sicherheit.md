@@ -1,6 +1,6 @@
 # ADR 0002: Absicherung automatischer Agent-Läufe
 
-- Status: vorgeschlagen (wird mit dem Workflow für Stufe 2 umgesetzt)
+- Status: akzeptiert (24.10.2026, nach bestandener Abnahme, siehe „Stand der Abnahme“)
 - Datum: 2026-10-23
 
 ## Kontext
