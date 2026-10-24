@@ -268,3 +268,48 @@ Git-Historie (PR #27, #29) wiederherstellen, falls die Regeln erneut geändert w
 Zusätzlich bestanden: Rückmeldekanal bei komplett verbotenem Auftrag (Issue #33), PR-Text per `--body-file` (PR #37),
 parallele Läufe zu verschiedenen Issues ohne verdrängten Lauf (#33 bis #35).
 
+
+## Kommentar-Trigger (Review-Schleife, Spike)
+
+Stand: gebaut, noch nicht im Echtbetrieb getestet (Roadmap P2). Ein Kommentar des Besitzers, der mit `/agent` beginnt,
+startet auf einem `agent/*`-PR eine Überarbeitung (`.github/workflows/agent-review.yml`).
+
+**Entscheidungen und Gründe**
+
+- **Ereignis `issue_comment`.** Es läuft immer mit der Workflow-Datei der Standardbranch. Ein PR kann den Workflow
+  deshalb nicht ändern, und das Environment `agent` (nur Branch `main`) bleibt nutzbar. `pull_request_review(_comment)`
+  liefe dagegen vom PR-Stand und würde vom Environment blockiert.
+- **Zwei Jobs.** Der Job `pruefung` hat keine Secrets und keine Freigabe, nur lesende Rechte plus `issues: write` für
+  die Ablehnungsmeldung. Er lässt nur durch: offener PR im selben Repo, Autor Besitzer, Branch `agent/*`, Absender und
+  Kommentarautor Besitzer, höchstens 5 `/agent`-Kommentare, und keine Datei des PR in einem Schutzbereich. Erst danach
+  fragt der Job `agent` die Freigabe im Environment an. So muss der Besitzer keine Läufe freigeben, die ohnehin
+  abgelehnt würden.
+- **Schutzbereichs-Prüfung im Diff.** Die Action stellt beim Lauf auf einem PR nur die Claude-Konfiguration (`.claude/`,
+  `CLAUDE.md`) aus dem Basis-Branch wieder her. Skripte wie `verify.sh` oder Gradle-Dateien stammen aus dem PR-Branch.
+  Berührt der PR sie, würde der Agent beim Gate fremden Code ausführen. Deshalb lehnt `pruefung` solche PRs ab.
+- **Interaktiv-Modus ohne `prompt`.** Die Action liefert Trigger-Erkennung, Fortschrittskommentar und Kontext aus den
+  Kommentaren (`include_comments_by_actor: juheba`). Fremde Kommentare gelangen nicht in den Kontext.
+- **Gleiche Sperren wie Stufe 2.** `--settings .claude/agent-settings.json` (Allow-/Deny-Liste), `--max-turns 40`,
+  Timeout 30 Minuten, kein `id-token`, Concurrency pro PR.
+
+**Neue Deny-Regeln:** `gh api` mit `-f`, `-F`, `--field`, `--raw-field` und `--input` (Schreibzugriff über die
+REST-API, obwohl `-X` schon gesperrt ist), dazu `Edit` auf `.gitignore`, `.gitattributes`, `.editorconfig` und
+`frontend/analysis_options.yaml`. Erlaubt sind das Lesen von Kommentaren (`gh api repos/*/issues/*/comments` usw.)
+und `gh pr comment`.
+
+**Bekannte Restrisiken des Spikes**
+
+- Im Interaktiv-Modus nutzt die Action den Berechtigungsmodus `acceptEdits`: Dateiänderungen im Arbeitsverzeichnis
+  sind erlaubt, soweit kein Deny greift. Die Liste der Schutzbereiche ist deshalb als Deny-Regeln gepflegt, nicht als
+  Allowlist. Ergänzende Dateien (siehe oben) sind nachgezogen, die Liste kann trotzdem Lücken haben.
+- Die Action ist für den Betrieb mit der Claude-GitHub-App ausgelegt. Mit PAT und `issue_comment` ist der Ablauf
+  nicht vorgesehen und ungetestet. Ob der Fortschrittskommentar und das Pushen auf den PR-Branch funktionieren, zeigt
+  erst der erste Lauf nach dem Merge.
+- Der PAT bleibt ein statisches Token (siehe Roadmap S5).
+- Ein Kommentar kann den Agenten nur innerhalb des PR-Branchs ändern lassen. Merge und Push auf `main` bleiben durch
+  Deny-Regeln, Ruleset und Code-Owner-Review gesperrt.
+
+**Abnahme nach dem Merge:** (1) PR ohne Schutzbereiche: `/agent`-Kommentar führt zu Push und Antwort mit
+`Exit-Code`. (2) PR mit Änderung in `.github/`: Ablehnung mit Grund, kein Lauf. (3) Kommentar eines anderen Kontos:
+kein Lauf. (4) Sechster Kommentar: Ablehnung wegen der Obergrenze. (5) Annotationen „Agent-Ablehnungen“ und
+„Arbeitsverzeichnis“ lesen und prüfen, ob `acceptEdits` unerwünschte Änderungen zuließ.
