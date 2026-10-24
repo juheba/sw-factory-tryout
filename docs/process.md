@@ -34,3 +34,5 @@ bis das Gate grün ist. Ohne dieses Feedback gibt es kein belastbares „geprüf
 3. **Rollen:** Planer, Implementierer und Reviewer als Subagents/Skills in `.claude/`.
 4. **Orchestrator:** Eigener Graph mit dem Claude Agent SDK (Knoten = Rollen, Kanten = Übergaben, Schleife = Review → Fix).
 5. **Wiederverwendung:** Skills und Templates in einem eigenen Factory-Repo für weitere Stacks.
+
+Stufe 2 (Automatisierung) ist aktiv.
