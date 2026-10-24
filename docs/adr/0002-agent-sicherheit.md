@@ -86,6 +86,13 @@ normale `.claude/settings.json`, damit die tägliche Arbeit lokal nicht behinder
   Force-Push, Rebase, Push auf `main`, `gh pr merge`, Zugriff auf Secrets und Workflows.
 - **Keine Bearbeitung der Schutzbereiche** (`Edit`-Regeln, siehe nächster Abschnitt).
 - Die Datei wird vom Stand auf `main` geladen. Der Agent kann sie nicht für den laufenden Lauf ändern.
+- Schreibrechte (`Edit`/`Write`) gibt es nur als Allowlist für die Arbeitsbereiche (`service/`, `frontend/lib`,
+  `frontend/test`, `openapi/`, `docs/`, `README.md`). Die Deny-Regeln für Schutzbereiche haben Vorrang.
+- Beobachtung aus dem ersten Lauf: Die Action lädt zusätzlich die Projekt-Einstellungen `.claude/settings.json`. Deren
+  Allow-Regeln gelten im Lauf **mit**; Deny-Regeln beider Dateien gelten immer. Die Basisdatei darf deshalb nichts
+  erlauben, was der Agent nicht dürfen soll.
+- Der Job meldet Erfolg, auch wenn Aktionen abgelehnt wurden. Der Diagnoseschritt „Abgelehnte Aktionen melden“ gibt
+  sie als Annotation aus (vorübergehend, bis die Abnahmeläufe durch sind).
 
 ### 5. Schutzbereiche (Muss)
 
