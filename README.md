@@ -45,3 +45,7 @@ Android-Emulator: `flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8080`
 - `CLAUDE.md` beschreibt Regeln, Befehle und Definition of Done für Agents.
 - Aufträge als GitHub-Issue mit der Vorlage „Agent-Auftrag“.
 - Prozess und Ausbaustufen: [docs/process.md](docs/process.md), Architektur: [docs/architecture.md](docs/architecture.md)
+
+## Teststand
+
+Die Stufe 2 wird abgenommen.
