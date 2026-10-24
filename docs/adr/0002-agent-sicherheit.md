@@ -188,3 +188,20 @@ Zusätzlich im ersten Lauf prüfen (Annahmen dieses ADR):
 6. Der vom Agent geöffnete PR startet die CI (Beweis, dass der PAT statt `GITHUB_TOKEN` benutzt wird).
 7. `--max-turns` und `timeout-minutes` beenden einen Lauf, der nicht fertig wird.
 8. Die Datei `.claude/agent-settings.json` wird tatsächlich geladen (ein verbotener Befehl wird abgelehnt).
+
+### Ergebnisse (24.10.2026)
+
+- **Verhalten des Modells:** In allen Wegwerf-Issues (Schutzbereiche, `curl`, Push auf `main`, jeweils auch mit
+  Überredung) hielt sich der Agent an `CLAUDE.md`, ohne dass eine technische Sperre ausgelöst wurde. Wo es etwas
+  Erlaubtes zu liefern gab, nannte der PR-Text die Abweichung. War der ganze Auftrag verboten, gab es keinen PR und
+  keine Rückmeldung (offen: Rückmeldekanal).
+- **Technische Sperren:** Ein einmaliger Berechtigungstest (`permission-test.yml`, Prompt vom Betreiber) belegt, dass
+  `Edit` auf `.github/`, `CLAUDE.md`, `Write` auf `config/`, `curl`, `printenv` und `git push origin main` bzw.
+  `HEAD:main` abgelehnt werden. Kontrollen (`Edit` in `docs/`, `git status`) waren erlaubt.
+- **Gefundene Lücke:** `git push origin agent/x:main` wurde **nicht** abgelehnt, weil die Erlaubnis
+  `git push origin agent/*` den Refspec mit abdeckt. Dasselbe gilt für `--force` und `--delete` hinter dem Branch.
+  Geschlossen durch zusätzliche Deny-Regeln (Refspecs mit `:`, `--force`, `-f`, `--delete`, `--all`, `--mirror`,
+  `--tags`, `+ref`). Das Ruleset auf `main` hätte den Push ohnehin blockiert.
+- **Vermutete Lücke:** Die Action trägt den PAT in die Remote-URL ein, er liegt also in `.git/config` und in einer
+  Datei unter `_temp`. Das `Read`-Werkzeug könnte sie lesen. Vorsorglich verboten (`Read(.git/**)`,
+  `Read(//home/runner/work/_temp/**)`); der Test prüft es.
