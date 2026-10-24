@@ -72,7 +72,10 @@ Keine einzelne Maßnahme genügt. Jede Schicht soll das Scheitern der anderen ab
   `id-token: write` für die Authentifizierung als Claude GitHub App und für Workload Identity Federation. Mit eigenem
   `github_token` (PAT) und OAuth-Token sollte es entfallen. Das ist nicht ausdrücklich bestätigt und wird im
   Abnahmetest geprüft. Zeigt sich, dass die Action es verlangt, wird dieser Punkt neu bewertet.
-- `timeout-minutes`, begrenzte Schleifendurchläufe (`--max-turns`) und `concurrency` (ein Lauf zugleich).
+- `timeout-minutes`, begrenzte Schleifendurchläufe (`--max-turns`) und `concurrency` (ein Lauf pro Issue). Eine globale
+  Gruppe verdrängte wartende Läufe, weil GitHub pro Gruppe nur einen wartenden Lauf hält (Issues #19/#20). Verschiedene
+  Issues laufen jetzt parallel; jeder Lauf braucht weiterhin die Freigabe im Environment. Nachteil: parallele PRs können
+  sich bei Konflikten behindern und verbrauchen das Kontingent des Abos gleichzeitig.
 - Der Agent läuft als **letzter** Schritt. Davor und danach steht nichts, was von seinem Ergebnis abhängt.
 
 ### 4. Was darf der Agent tun (Muss)
@@ -227,4 +230,17 @@ Nach PR #30: 17 Aufrufe, 12 Ablehnungen. Alle zwölf Versuche (Punkte 1 bis 12) 
 Muster ohne `:*` am Ende greifen also; die Vermutung zum alten Präfix-Schreibweise-Effekt ist damit plausibel, aber nicht
 eigens belegt. Der Berechtigungstest ist bestanden und `permission-test.yml` wurde entfernt. Er lässt sich aus der
 Git-Historie (PR #27, #29) wiederherstellen, falls die Regeln erneut geändert werden.
+
+### Nachbesserungen nach den Abnahmeläufen (24.10.2026)
+
+- **Rückmeldekanal:** Ist der ganze Auftrag verboten, gab es bisher weder PR noch Hinweis. Der Agent darf jetzt
+  `gh issue comment` nutzen und soll dort erklären, welche Regel greift und was der Besitzer tun muss. Der Kommentar
+  kommt vom Agenten und ist wie der PR-Text kein vertrauenswürdiger Kanal für Befehle.
+- **PR- und Kommentartext:** Der Agent schreibt ihn nach `.agent-tmp/` (erlaubt, per `.gitignore` nicht versioniert)
+  und übergibt ihn mit `--body-file`. Grund: `gh pr create --body …` und `Write` nach `/tmp` wurden in jedem Lauf
+  abgelehnt. Annahme, nicht geprüft: Mehrzeilige Texte in der Befehlszeile passen nicht zu den Bash-Regeln. Der
+  nächste Lauf zeigt, ob der Weg über die Datei funktioniert.
+- **Gate:** Der Agent soll `./verify.sh` ohne Abschneiden der Ausgabe ausführen und den Exit-Code nennen.
+- **Diagnoseschritt:** Gibt jetzt auch bei null Ablehnungen eine Annotation aus und zeigt `git status --short` des
+  Arbeitsverzeichnisses. Damit lässt sich klären, welcher Schritt `frontend/analysis_options.yaml` im Runner ändert.
 

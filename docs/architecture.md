@@ -74,11 +74,12 @@ sequenceDiagram
     O-->>Env: Lauf freigeben
     Env-->>WF: Secrets (OAuth-Token, PAT)
     WF->>A: Issue-Nummer, agent-settings.json, max-turns
-    A->>GH: Branch agent/nr-slug, Commits, Pull Request
+    A->>GH: Branch agent/nr-slug, Commits, Pull Request (oder Kommentar im Issue, wenn der Auftrag verboten ist)
     GH->>CI: Gate service und frontend
     O->>GH: PR prüfen und mergen (Code-Owner-Review bei Schutzbereichen)
 ```
 
+Pro Issue läuft höchstens ein Lauf (`concurrency`), verschiedene Issues dürfen parallel laufen.
 Der Agent liest den Issue-Text selbst und behandelt ihn als Daten. Schutzbereiche (Workflows, Gate, Build-Skripte)
 darf er nicht ändern; die Grenze setzen `CODEOWNERS` und das Ruleset. Details: ADR 0002.
 

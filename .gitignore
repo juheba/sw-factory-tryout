@@ -19,5 +19,8 @@ out/
 # Claude Code (lokale Einstellungen)
 .claude/settings.local.json
 
+# Arbeitsdateien des automatischen Agent-Laufs (PR-Text, Kommentar)
+.agent-tmp/
+
 # OS
 .DS_Store
