@@ -1,6 +1,12 @@
 {
   "permissions": {
     "allow": [
+      "Edit(/service/**)",
+      "Edit(/frontend/lib/**)",
+      "Edit(/frontend/test/**)",
+      "Edit(/openapi/**)",
+      "Edit(/docs/**)",
+      "Edit(/README.md)",
       "Bash(./verify.sh)",
       "Bash(./gradlew *)",
       "Bash(frontend/tool/verify.sh)",
@@ -15,6 +21,7 @@
       "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(git push origin agent/*)",
+      "Bash(git push -u origin agent/*)",
       "Bash(gh issue view *)",
       "Bash(gh pr create *)",
       "Bash(gh pr view *)",
