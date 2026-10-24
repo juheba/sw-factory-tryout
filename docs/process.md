@@ -31,14 +31,15 @@ flowchart LR
     L -->|grün| PR[Pull Request mit Closes nr]
     PR --> CI[CI: Jobs service und frontend]
     CI --> R[Review durch Mensch]
-    R -->|Änderungen| A
+    R -->|Änderungen: Issue anpassen, Label neu setzen| O
     R -->|ok| M[Merge in main]
 ```
 
 Gegenüber Stufe 1 startet der Lauf automatisch, sobald der Besitzer das Label `agent` setzt, und nur dann, wenn
 Absender und Issue-Autor der Besitzer sind. Jeder Lauf wartet auf eine Freigabe im GitHub-Environment `agent`.
 Schutzbereiche (Workflows, Gate, Build-Skripte) darf der Agent nicht ändern, dafür sorgen Code-Owner-Review und
-Ruleset. Die Begründungen stehen in [ADR 0002](adr/0002-agent-sicherheit.md).
+Ruleset. Die Begründungen stehen in [ADR 0002](adr/0002-agent-sicherheit.md). Eine automatische Rückkopplung aus dem
+Review gibt es noch nicht: Bei Änderungswünschen wird das Issue angepasst und das Label neu gesetzt.
 
 ## Beobachtbarkeit
 
