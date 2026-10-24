@@ -88,6 +88,11 @@ normale `.claude/settings.json`, damit die tägliche Arbeit lokal nicht behinder
 - Die Datei wird vom Stand auf `main` geladen. Der Agent kann sie nicht für den laufenden Lauf ändern.
 - Schreibrechte (`Edit`/`Write`) gibt es nur als Allowlist für die Arbeitsbereiche (`service/`, `frontend/lib`,
   `frontend/test`, `openapi/`, `docs/`, `README.md`). Die Deny-Regeln für Schutzbereiche haben Vorrang.
+- **Pfadmuster ohne führenden Schrägstrich schreiben** (`Edit(docs/**)`, nicht `Edit(/docs/**)`). Die Action legt die
+  Datei aus `settings` als Nutzer-Einstellungen ab (`~/.claude/settings.json`). Dort bedeutet `/pfad` laut Doku
+  `~/.claude/pfad`, nicht das Repo. Das erste Muster mit `/` traf deshalb nie: Der Agent konnte nicht schreiben, und
+  die Deny-Regeln für Schutzbereiche schützten auf dieser Ebene nichts. Die zweite Schicht (CODEOWNERS, Ruleset, PAT
+  ohne Workflows-Recht) hat das aufgefangen. Pfade ohne Schrägstrich gelten relativ zum Arbeitsverzeichnis.
 - Beobachtung aus dem ersten Lauf: Die Action lädt zusätzlich die Projekt-Einstellungen `.claude/settings.json`. Deren
   Allow-Regeln gelten im Lauf **mit**; Deny-Regeln beider Dateien gelten immer. Die Basisdatei darf deshalb nichts
   erlauben, was der Agent nicht dürfen soll.
