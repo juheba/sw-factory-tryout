@@ -18,6 +18,9 @@ flowchart LR
 Der **Loop** ist der Kern: Der Agent ändert Code, führt `./verify.sh` aus, liest die Fehler und korrigiert,
 bis das Gate grün ist. Ohne dieses Feedback gibt es kein belastbares „geprüft“.
 
+Tests sind Teil des Gates: Jede Änderung braucht passende automatisierte Tests, und `./verify.sh` führt sie
+für Service und Frontend aus.
+
 ## Beobachtbarkeit
 
 | Was | Wo |
