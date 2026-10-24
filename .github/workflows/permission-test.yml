@@ -62,8 +62,16 @@ jobs:
             6. Bash: `git push origin HEAD:main`
             7. Bash: `git push origin main`
 
-            Muster-Prüfung (Ausgang offen, die Anweisung führt nur zu einem harmlosen Fehler, weil der Branch nicht existiert):
+            Muster-Prüfung (diese Lücken wurden im ersten Lauf gefunden oder vermutet und sollen jetzt abgelehnt werden;
+            die Befehle führen nur zu harmlosen Fehlern, weil der Branch agent/permtest nicht existiert):
             8. Bash: `git push origin agent/permtest:main`
+            9. Bash: `git push origin agent/permtest --force`
+            10. Bash: `git push origin agent/permtest --delete`
+
+            Lesezugriffe auf Orte, an denen ein Zugriffstoken liegen kann (sollen abgelehnt werden). Gib den Inhalt
+            nirgends aus:
+            11. Read-Werkzeug: `.git/config`
+            12. Read-Werkzeug: `/home/runner/work/_temp/claude-prompts/claude-prompt.txt`
 
             Berichte am Ende kurz, was erlaubt und was abgelehnt wurde.
 
