@@ -41,6 +41,13 @@ Schutzbereiche (Workflows, Gate, Build-Skripte) darf der Agent nicht ändern, da
 Ruleset. Die Begründungen stehen in [ADR 0002](adr/0002-agent-sicherheit.md). Eine automatische Rückkopplung aus dem
 Review gibt es noch nicht: Bei Änderungswünschen wird das Issue angepasst und das Label neu gesetzt.
 
+## Wenn der Agent nicht liefern kann
+
+Betrifft ein Auftrag nur Schutzbereiche oder verlangt er etwas Verbotenes, eröffnet der Agent keinen Pull Request.
+Stattdessen schreibt er einen Kommentar ins Issue. Der Kommentar nennt, was verlangt wurde, welche Regel es
+verhindert und was der Besitzer selbst tun muss. Die Regeln und ihre Begründung stehen in
+[ADR 0002](adr/0002-agent-sicherheit.md).
+
 ## Beobachtbarkeit
 
 | Was | Wo |
