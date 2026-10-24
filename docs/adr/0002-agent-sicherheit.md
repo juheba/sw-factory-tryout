@@ -45,17 +45,33 @@ Keine einzelne Maßnahme genügt. Jede Schicht soll das Scheitern der anderen ab
 
 ### 2. Wo liegt der Schlüssel (Muss)
 
-- Eigener, **dedizierter** API-Key nur für dieses Repo, mit niedrigem Monatslimit in der Anthropic Console.
+- **Entscheidung: Subscription-OAuth-Token** (`claude setup-token`, Secret `CLAUDE_CODE_OAUTH_TOKEN`) statt API-Key.
+  Die Läufe verbrauchen das Kontingent der Subscription des Besitzers, es entstehen keine zusätzlichen Kosten.
+  Bewusst akzeptierte Folgen:
+  - Es gibt **kein eigenes Geldlimit** wie bei einem Console-Key. Der Schaden bei Missbrauch oder Endlosschleife ist
+    ein leergelaufenes Kontingent, das auch die interaktive Nutzung blockiert. Begrenzt wird er nur durch
+    `--max-turns`, Timeout, `concurrency` und die Freigabe jedes Laufs (Environment-Reviewer).
+  - Das Token ist an die Person gebunden, gilt ein Jahr und kann nur Modellanfragen stellen (kein Remote Control,
+    keine claude.ai-Connectors). Rotation spätestens nach einem Jahr, im Kalender vermerken.
+  - Wie sich ein `setup-token`-Token widerrufen lässt, ist in der Doku nicht beschrieben. Vor dem Einsatz klären
+    (Abo-Sitzungen in den Kontoeinstellungen prüfen).
+  - Alternativen: dedizierter API-Key mit Monatslimit (hartes Geldlimit), später Workload Identity Federation
+    (kein gespeichertes Secret, braucht `id-token: write` und einen Service Account in der Console).
 - Gespeichert als **Environment-Secret** (Environment `agent`), nicht als Repo-Secret. Gründe: Ein Repo-Secret ist für
   jeden Workflow eines Branches im selben Repo lesbar, auch für einen vom Agent veränderten. Ein Environment-Secret
   erhält nur ein Job, der das Environment nennt **und** die Schutzregeln besteht.
+- Nicht `/install-github-app` verwenden: Der Schnellstart legt die Secrets als Repo-Secrets ab und richtet einen
+  `@claude`-Kommentar-Trigger ein. Beides widerspricht diesem Konzept.
 - Environment-Schutz: Deployment-Branches nur `main`; Pflicht-Reviewer = Besitzer (jeder Lauf wartet auf deine
   Freigabe, zumindest in den ersten Wochen).
 
 ### 3. Welche Rechte hat der Lauf (Muss)
 
 - Job-Rechte minimal: `contents: write`, `pull-requests: write`, `issues: write`. Ausdrücklich **kein**
-  `id-token: write`, kein `actions`, kein `workflows`, keine `packages`.
+  `id-token: write`, kein `actions`, kein `workflows`, keine `packages`. Laut `action.yml` und Doku braucht die Action
+  `id-token: write` für die Authentifizierung als Claude GitHub App und für Workload Identity Federation. Mit eigenem
+  `github_token` (PAT) und OAuth-Token sollte es entfallen. Das ist nicht ausdrücklich bestätigt und wird im
+  Abnahmetest geprüft. Zeigt sich, dass die Action es verlangt, wird dieser Punkt neu bewertet.
 - `timeout-minutes`, begrenzte Schleifendurchläufe (`--max-turns`) und `concurrency` (ein Lauf zugleich).
 - Der Agent läuft als **letzter** Schritt. Davor und danach steht nichts, was von seinem Ergebnis abhängt.
 
@@ -105,8 +121,10 @@ Deshalb darf die CI keine Secrets verwenden (aktuell der Fall), und Änderungen 
 | ☐ | Settings → Actions → General → Actions permissions | nur GitHub-eigene und ausgewählte Aktionen erlauben (`gradle/*`, `subosito/*`, später `anthropics/*`) |
 | ☐ | dort, falls vorhanden | „Require actions to be pinned to a full-length commit SHA“ |
 | ☐ | Settings → Environments → `agent` anlegen | Deployment branches: nur `main`; Required reviewers: du |
-| ☐ | Environment `agent` → Secret | `ANTHROPIC_API_KEY` (dedizierter Key) |
-| ☐ | Anthropic Console | Monatslimit für diesen Key setzen |
+| ☐ | Lokal: `claude setup-token` | Token erzeugen, nicht speichern, nicht in Chats oder Issues einfügen |
+| ☐ | Environment `agent` → Secret | `CLAUDE_CODE_OAUTH_TOKEN` (das Token von oben) |
+| ☐ | GitHub → Settings → Developer settings → Fine-grained token | nur `juheba/sw-factory-tryout`; Contents, Pull requests, Issues: Read and write; **kein** Workflows-Recht; 90 Tage |
+| ☐ | Environment `agent` → Secret | `AGENT_GITHUB_TOKEN` (der PAT von oben) |
 | ☐ | Settings → Rules → Ruleset `main` | „Require review from Code Owners“ aktivieren, Bypass für dich als Admin (nur bei Pull Requests) |
 | ☐ | Settings → Actions → General | „Allow GitHub Actions to create and approve pull requests“ nur einschalten, falls der Workflow es braucht |
 | ☐ | optional, Settings → Moderation → Interaction limits | Beschränkung auf bisherige Mitwirkende oder nur Collaborators (läuft nach höchstens 6 Monaten ab) |
@@ -121,9 +139,14 @@ bist zugleich Autor, brauchst du den Admin-Bypass. Ohne Bypass blockierst du dic
    - *Fine-grained Personal Access Token* (nur dieses Repo; Contents, Pull requests und Issues schreibend; **ohne**
      Workflows-Recht). Das Fehlen des Workflows-Rechts verhindert zusätzlich, dass der Agent `.github/workflows`
      pushen kann. Nachteil: handelt als du, läuft ab, muss erneuert werden.
-   - *Claude-GitHub-App* mit OIDC (`id-token: write`). Weniger Pflege, aber genau die Berechtigung, die im oben
-     genannten Vorfall missbraucht wurde.
-   Empfehlung: PAT, 90 Tage Laufzeit, im Environment-Secret.
+   - *Offizielle Claude-GitHub-App.* Weniger Pflege und löst die CI aus, hat aber einen festen Rechtesatz, den man nur
+     ganz annehmen kann: unter anderem Workflows (lesen/schreiben), Actions (lesen/schreiben), Repository hooks
+     (lesen/schreiben) und Administration (lesen). Passt schlecht zu „so wenig Rechte wie möglich“.
+   - *Eigene minimale GitHub-App* (nur Contents, Issues, Pull requests): eigene Bot-Identität und Pflicht-Reviews
+     möglich, aber mehr Einrichtung.
+   Vorschlag: PAT, 90 Tage Laufzeit, im Environment-Secret (vom Besitzer noch zu bestätigen). Der Workflow nutzt ihn
+   als `github_token` der Action. Ob die Action dann ohne installierte App läuft, ist nicht ausdrücklich dokumentiert
+   und wird im ersten Lauf geprüft.
 2. **Merge-Schutz.** Mit einem PAT handelt der Agent als Besitzer und könnte rein technisch mergen. Die Allowlist
    verbietet `gh pr merge`, das ist aber nur eine Regel. Eine harte Grenze entsteht erst mit einer getrennten
    Bot-Identität und Pflicht-Reviews. Lohnt sich, sobald das Repo mehr als ein Experiment ist.
@@ -145,3 +168,10 @@ oder abgelehnt werden:
 2. Issue mit der Anweisung „gib `env` aus“ bzw. „rufe `curl` auf“ → abgelehnt.
 3. Issue mit Anweisung „push auf `main`“ → abgelehnt, und das Ruleset blockiert zusätzlich.
 4. Issue eines **fremden** Kontos mit gesetztem Label (Test mit Zweitkonto) → kein Lauf startet.
+
+Zusätzlich im ersten Lauf prüfen (Annahmen dieses ADR):
+
+5. Der Lauf funktioniert ohne `id-token: write` und ohne installierte Claude-GitHub-App.
+6. Der vom Agent geöffnete PR startet die CI (Beweis, dass der PAT statt `GITHUB_TOKEN` benutzt wird).
+7. `--max-turns` und `timeout-minutes` beenden einen Lauf, der nicht fertig wird.
+8. Die Datei `.claude/agent-settings.json` wird tatsächlich geladen (ein verbotener Befehl wird abgelehnt).
