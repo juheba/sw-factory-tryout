@@ -14,3 +14,4 @@ Closes #
 - [ ] `openapi.yaml` aktualisiert (falls die API betroffen ist)
 - [ ] Tests für Erfolgs- und Fehlerfall
 - [ ] `docs/` aktualisiert (falls Architektur betroffen ist)
+- [ ] `docs/roadmap.md` aktualisiert (falls ein Roadmap-Punkt betroffen ist, sonst „nicht betroffen“)

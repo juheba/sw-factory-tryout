@@ -110,6 +110,9 @@ Diese Punkte haben im Probelauf (Issue #8, „Bestellung stornieren“) konkret 
 
 - Ändert sich Architektur oder Ablauf, aktualisiere `docs/architecture.md` (Mermaid-Diagramme) im selben PR.
 - Grundlegende Entscheidungen als ADR in `docs/adr/` festhalten (Format siehe `0001-spec-first-openapi.md`).
+- Nennt das Issue eine Roadmap-ID (zum Beispiel `[P2]`) oder betrifft der Auftrag einen Punkt aus `docs/roadmap.md`,
+  aktualisierst du Status und Verweis dieses Punkts im selben PR. Ändere nur den genannten Punkt und lass das Datum
+  bei `Stand:` unverändert, das setzt der Besitzer bei der Durchsicht.
 
 ## Wenn etwas unklar ist
 

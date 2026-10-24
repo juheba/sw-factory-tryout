@@ -1,0 +1,75 @@
+name: Housekeeping
+
+# Meldet per Issue, wenn Pflegearbeit fällig ist:
+#  - die Roadmap (docs/roadmap.md) wurde länger als 30 Tage nicht durchgesehen ("Stand:"),
+#  - ein Zugang läuft in höchstens 30 Tagen ab (.github/ablaufdaten.json).
+# Es werden nur Issues angelegt, ohne Label. Der Workflow nutzt keine Secrets und keinen Agent.
+
+on:
+  schedule:
+    - cron: "17 5 * * 1" # montags, 05:17 UTC
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  pflege:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Fälligkeiten prüfen und Issues anlegen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          today="${TODAY:-$(date -u +%F)}"
+          warn_days=30
+
+          days_between() { echo $(( ( $(date -u -d "$2" +%s) - $(date -u -d "$1" +%s) ) / 86400 )); }
+
+          # Legt ein Issue nur an, wenn kein offenes mit demselben Titel existiert.
+          open_issue() {
+            local count
+            count=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --limit 100 --json title \
+              | jq --arg t "$1" '[.[] | select(.title == $t)] | length')
+            if [ "$count" = "0" ]; then
+              gh issue create --repo "$GITHUB_REPOSITORY" --title "$1" --body "$2"
+            else
+              echo "Bereits offen: $1"
+            fi
+          }
+
+          # 1. Roadmap-Durchsicht
+          stand=$(grep -m1 -oE 'Stand: [0-9]{2}\.[0-9]{2}\.[0-9]{4}' docs/roadmap.md | grep -oE '[0-9]{2}\.[0-9]{2}\.[0-9]{4}' || true)
+          if [ -z "$stand" ]; then
+            echo "::error::In docs/roadmap.md fehlt die Zeile 'Stand: TT.MM.JJJJ'."
+            exit 1
+          fi
+          stand_iso="${stand:6:4}-${stand:3:2}-${stand:0:2}"
+          age=$(days_between "$stand_iso" "$today")
+          echo "Roadmap-Stand: $stand ($age Tage)"
+          if [ "$age" -gt "$warn_days" ]; then
+            open_issue "[Betrieb] Roadmap-Durchsicht fällig" \
+              "Der Stand in \`docs/roadmap.md\` ist $stand (vor $age Tagen). Bitte Status und nächste Schritte durchsehen, in einem PR das Datum bei \`Stand:\` anpassen und dieses Issue schließen."
+          fi
+
+          # 2. Ablaufende Zugänge
+          while read -r entry; do
+            name=$(jq -r '.name' <<<"$entry")
+            expires=$(jq -r '.expires' <<<"$entry")
+            if ! [[ "$expires" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+              echo "::error::Ungültiges Datum für '$name' in .github/ablaufdaten.json: $expires"
+              exit 1
+            fi
+            left=$(days_between "$today" "$expires")
+            echo "$name: läuft am $expires ab (noch $left Tage)"
+            if [ "$left" -le "$warn_days" ]; then
+              open_issue "[Betrieb] Zugang läuft ab: $name" \
+                "Der Zugang \`$name\` läuft am $expires ab (noch $left Tage). Neu erzeugen, das Secret im Environment \`agent\` ersetzen, das Datum in \`.github/ablaufdaten.json\` anpassen und dieses Issue schließen."
+            fi
+          done < <(jq -c '.[]' .github/ablaufdaten.json)
