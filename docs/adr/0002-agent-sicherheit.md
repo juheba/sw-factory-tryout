@@ -333,3 +333,20 @@ kein Lauf. (4) Sechster Kommentar: Ablehnung wegen der Obergrenze. (5) Annotatio
 | 4 | Sechster Kommentar (PR #46, Lauf 40176269518) | bestanden: Ablehnung „Obergrenze von 5 Runden“, `agent` übersprungen. Die Runden 2 bis 5 wurden bis zur Freigabeanfrage durchgelassen und von Hand abgebrochen. |
 
 Beobachtung: Der Agent verkettete `./verify.sh` mit `echo`, was die Settings sperren. Der Exit-Code im Bericht war daher nur aus der Ausgabe abgeleitet. Die Prompts in `agent.yml` und `agent-review.yml` verlangen jetzt den Einzelbefehl; ohne Fehlermeldung des Werkzeugs gilt Exit-Code 0.
+
+### Branch auf den Stand von `main` bringen (Roadmap P6, gebaut, ungetestet)
+
+Liegt ein `agent/*`-PR hinter `main`, darf der Agent `main` per Merge-Commit nachziehen. Erlaubt sind nur
+`git fetch origin main`, `git fetch --unshallow`, `git fetch --deepen=*`, `git merge origin/main`,
+`git merge --no-edit origin/main` und `git merge --abort`. `git rebase`, Force-Push und jeder Push außerhalb
+von `agent/*` bleiben gesperrt.
+
+- **Warum Merge statt Rebase.** Ein Rebase schreibt die History um und braucht einen Force-Push. Der Merge-Commit
+  ergänzt die History nur und lässt sich mit einem normalen Push übertragen.
+- **Konflikte.** Der Agent löst sie nur, wenn die Lösung eindeutig ist. Sonst bricht er mit `git merge --abort` ab
+  und beschreibt die Konflikte im Antwortkommentar.
+- **Gate.** Nach dem Merge läuft `./verify.sh`, denn der Stand von `main` kann das Ergebnis ändern.
+- **Schutzbereiche.** Bringt `main` Änderungen in Schutzbereichen mit, stehen sie danach im PR-Diff. Der Prüfjob
+  vergleicht gegen die Merge-Basis; ob die Prüfung dann weiterhin nur eigene Änderungen des PR meldet, ist zu beobachten.
+- **Offen.** Die Checkouts sind flach (Tiefe 1). Ob `git fetch origin main` dafür genügt oder `--unshallow` nötig ist
+  (Fehler „unrelated histories“), zeigt erst der Test mit einem PR, der hinter `main` liegt.

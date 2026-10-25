@@ -53,7 +53,7 @@ flowchart LR
 | P3 | Selbstheilung bei roter CI | ⬜ offen | Abwandlung von `examples/ci-failure-auto-fix.yml` der Action: nur `agent/*`-PRs, Run-ID statt Logs im Prompt, Obergrenze, Freigabe. |
 | P4 | Vorab-Review durch einen zweiten, schreibgeschützten Lauf | ❓ zu bewerten | Zuerst manuell `/code-review` lokal ausprobieren. Plugin-Variante: Pin- und Environment-Frage klären. |
 | P5 | Rückfrage statt Raten bei mehrdeutigen Kriterien | ⬜ offen | Prompt-Ergänzung: Frage ins Issue, Lauf endet. |
-| P6 | Konflikte mit `main` | ❓ zu bewerten | Rebase bleibt verboten. Erlauben von `git merge origin/main` abwägen. |
+| P6 | Konflikte mit `main` | ⚠️ in Arbeit | Gebaut (Issue #69): Der Agent darf `main` per `git merge origin/main` holen (Merge-Commit), Rebase und Force-Push bleiben verboten. Settings, `CLAUDE.md` und der Prompt von `agent-review.yml` angepasst. Ungetestet: Test nach dem Merge mit einem PR, der hinter `main` liegt (`/agent Bringe den Branch auf den Stand von main`). |
 | P7 | Issue-Qualität | ⚠️ in Arbeit | Vorlage geschärft (PR #40). Messen, ob schlechte Issues die häufigste Ursache für Nacharbeit sind (M1). |
 | P8 | Lernschleife: wiederkehrende Review-Hinweise nach `CLAUDE.md` | ⬜ offen | Nach dem Merge kurz festhalten, was sich wiederholt. `CLAUDE.md` ist Schutzbereich, Änderung durch den Owner. |
 
