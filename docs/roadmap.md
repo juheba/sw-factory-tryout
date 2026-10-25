@@ -63,14 +63,15 @@ flowchart LR
 |---|---|---|---|
 | S1 | Technische Sperren des Agenten | ✅ erledigt | Berechtigungstest bestanden (12 von 12). Regeln in `.claude/agent-settings.json`. |
 | S2 | Aktionen auf Commit-SHAs festlegen | ✅ erledigt | PR #40. Option „Require actions to be pinned“ erst nach Test einschalten. |
-| S3 | Widerruf des `setup-token`-Tokens klären | ⬜ offen | Owner: in Doku oder Einstellungen nachsehen. Ohne bekannten Widerruf ist der Verlust des Tokens ein Risiko. |
+| S3 | Widerruf des `setup-token`-Tokens klären | ⚠️ in Arbeit | Recherche steht in [betrieb.md](betrieb.md#oauth-token-widerrufen): kein CLI-Befehl, Weg über `claude.ai/settings/claude-code`, Wirkung nicht belegt. Offen (Owner): einmal mit einem Wegwerf-Token proben (erzeugen, widerrufen, mit `claude -p` prüfen). Issue #62. |
 | S4 | Ablaufdaten: PAT 22.01.2027, OAuth-Token Oktober 2027 | ✅ erledigt | Meldung per Issue 30 Tage vorher (`housekeeping.yml`, Daten in `.github/ablaufdaten.json`). Daten vom Owner geprüft (25.10.2026). Beim Erneuern eines Zugangs das Datum anpassen. |
 | S5 | Eigene Bot-Identität mit minimaler GitHub-App | ❓ zu bewerten | Löst: PAT als statisches Token, Agent kann technisch mergen, Approve-Review nicht möglich (Autor = Owner). |
 | S6 | Pflicht-Check `agent-approval-check` | ❓ zu bewerten | Braucht S5. |
 | S7 | Secret Scanning und Push Protection | ✅ erledigt | Vom Owner per Screenshot belegt (25.10.2026): Secret Protection und Push Protection aktiv, Dependabot-Warnungen und Sicherheits-Updates an. Optional noch aus: Private Vulnerability Reporting, Malware-Warnungen. |
 | S8 | CodeQL und Egress-Filter | ⚠️ in Arbeit | CodeQL Default Setup ist aktiv (25.10.2026, Owner): GitHub Actions und Java/Kotlin, Suite „Default“. Dart/Flutter unterstützt CodeQL nicht, das Frontend ist damit nicht abgedeckt (Gate: `flutter analyze`). Offen: erste Ergebnisse unter Security → Code scanning sichten, prüfen ob die Scan-Ereignisse zu uns passen, AI Scan für Dart bewerten, Egress-Filter. Kein Pflicht-Check im Ruleset. Issue #73. |
-| S9 | Notausschalter | ⚠️ in Arbeit | Beschrieben in [betrieb.md](betrieb.md). Noch nicht geprobt, einmal durchspielen (Lauf abbrechen, Workflow abschalten). Widerruf des OAuth-Tokens ungeklärt (S3). |
+| S9 | Notausschalter | ⚠️ in Arbeit | Beschrieben in [betrieb.md](betrieb.md). Noch nicht geprobt, einmal durchspielen (Lauf abbrechen, Workflow abschalten, Widerruf mit Wegwerf-Token). Zusätzlich prüfen: Im Environment `agent` die Option „Allow administrators to bypass configured protection rules“ abschalten, falls sie an ist. Issue #63. |
 | S10 | Nutzung des Abo-Tokens im Dauerbetrieb | ❓ zu bewerten | Nutzungsbedingungen und Limits für automatisierte Läufe prüfen. Ich habe das nicht geprüft. |
+| S11 | Alternative zum statischen Abo-Token | ❓ zu bewerten | Zwei Wege: API-Key aus der Console (jederzeit löschbar) oder OIDC-Federation (kein statisches Secret). Die Action nennt im Lauf-Log Federation-Eingaben (`anthropic_federation_rule_id` und weitere), das habe ich nicht getestet. Federation bräuchte `id-token: write`, das ADR 0002 heute bewusst nicht vergibt. Der API-Key kostet pro Nutzung statt über das Abo (S10). |
 
 ## Messung und Qualität
 

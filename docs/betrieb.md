@@ -14,7 +14,7 @@ Von sanft nach hart. Jede Stufe schließt die vorherigen nicht aus.
 |---|---|---|
 | 1. Laufenden Lauf stoppen | Der aktuelle Lauf endet sofort. | Actions → Lauf öffnen → **Cancel workflow**. Per CLI: `gh run cancel <run-id>`. |
 | 2. Neue Läufe verhindern | Kein weiterer Lauf startet, oder er wartet. | Die **Freigabe** im Environment `agent` verweigern (Läufe bleiben „waiting“ und lassen sich abbrechen). Das Label `agent` nicht setzen. Den Workflow abschalten: Actions → Agent → **Disable workflow**, per CLI `gh workflow disable agent.yml`. |
-| 3. Zugänge entziehen | Der Agent kann weder schreiben noch das Modell nutzen. | Fine-grained PAT löschen: GitHub → Settings → Developer settings → Personal access tokens. Secrets `AGENT_GITHUB_TOKEN` und `CLAUDE_CODE_OAUTH_TOKEN` im Environment `agent` löschen. **Offen (Roadmap S3):** Ob und wie das OAuth-Token bei Anthropic widerrufen wird, ist nicht geklärt. Das Löschen des Secrets verhindert nur die Nutzung in der Factory. |
+| 3. Zugänge entziehen | Der Agent kann weder schreiben noch das Modell nutzen. | Fine-grained PAT löschen: GitHub → Settings → Developer settings → Personal access tokens. Secrets `AGENT_GITHUB_TOKEN` und `CLAUDE_CODE_OAUTH_TOKEN` im Environment `agent` löschen. Das Löschen des Secrets verhindert nur die Nutzung in der Factory, das Token selbst bleibt gültig. Widerruf beim Anbieter: siehe „OAuth-Token widerrufen“ unten (Roadmap S3). |
 | 4. Schaden begrenzen | Spuren beseitigen. | Offene Agent-PRs schließen, Branches `agent/*` löschen. Auf `main` verhindert das Ruleset direkte Pushes. Ist ein Agent-PR gemerged, per Revert-PR zurücknehmen. |
 
 Danach: Ursache klären (Annotationen und Ergebnis-JSON des Laufs, siehe unten), neue Zugänge erzeugen (siehe
@@ -56,6 +56,29 @@ Beim Erneuern das Datum in `.github/ablaufdaten.json` anpassen und das Housekeep
 - **OAuth-Token `CLAUDE_CODE_OAUTH_TOKEN`:** lokal `claude setup-token` ausführen, das Token nicht speichern und nirgends
   einfügen (nicht in Chats, Issues oder PR-Texte), nur als Secret im Environment `agent` ablegen.
 - **Nach Action-Updates:** Allowlist prüfen (siehe Störungen), bei Bedarf neuen SHA eintragen.
+
+## OAuth-Token widerrufen
+
+Stand der Recherche (25.10.2026, aus einer anderen Claude-Sitzung und der dort genannten Doku übernommen, nicht von mir
+geprüft). Für `claude setup-token` gibt es keinen Befehl zum Widerrufen. Das Token gilt laut Doku ein Jahr, wird nur
+im Terminal ausgegeben und nirgends gespeichert. Es hängt am Abo der Person, die es erzeugt hat, und kann nur
+Modellanfragen stellen (keine Remote-Control-Sitzungen, keine Connectoren).
+
+1. **Bei GitHub eindämmen:** Secret im Environment `agent` löschen oder ersetzen, verdächtige Läufe abbrechen,
+   Workflows abschalten (Notausschalter, Stufe 1 bis 3).
+2. **Beim Anbieter widerrufen:** `claude.ai/settings/claude-code` öffnen und die passenden Einträge widerrufen, im
+   Zweifel alle. Zusätzlich auf claude.ai alle Sitzungen abmelden.
+3. **Prüfen, ob es wirkt:** `CLAUDE_CODE_OAUTH_TOKEN=<altes Token> claude -p "ping"` lokal ausführen, erwartet wird ein
+   Fehler „OAuth token revoked“ (401). Das Token dafür nicht in Chats oder Issues einfügen.
+4. **Wirkt es nicht:** Support einschalten (support.claude.com) und als Sicherheitsvorfall melden.
+5. **Neu aufsetzen** (`/logout`, `/login`, neues Token als Secret), danach Abo-Verbrauch beobachten.
+
+**Unsicher:** Ob der Widerruf unter `claude.ai/settings/claude-code` für `setup-token`-Tokens greift und ob sie dort einzeln
+erscheinen, ist nicht belegt. Es gibt offene Meldungen im Repository `anthropics/claude-code`, nach denen widerrufene
+Tokens weiter funktionierten. Deshalb den Widerruf einmal mit einem Wegwerf-Token proben (Roadmap S3 und S9).
+
+**Robustere Alternativen (Roadmap S11):** ein API-Key aus der Console (jederzeit löschbar, klar dokumentierter Widerruf)
+oder die Anmeldung per OIDC-Federation ohne statisches Secret.
 
 ## Zuständigkeit
 
