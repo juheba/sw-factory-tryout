@@ -319,7 +319,7 @@ kein Lauf. (4) Sechster Kommentar: Ablehnung wegen der Obergrenze. (5) Annotatio
 | Nr. | Prüfung | Stand |
 |---|---|---|
 | 1 | `/agent` auf einem sauberen `agent/*`-PR (PR #46, Lauf 40138329969) | bestanden: Commit auf dem PR-Branch, Antwortkommentar, CI grün, Arbeitsverzeichnis sauber. Der Betrieb nur mit PAT (ohne Claude-GitHub-App) funktioniert. |
-| 2 | PR mit Datei in `config/` (PR #47, Läufe 40174525838 und 40176020055) | bestanden: `agent` wird übersprungen, der Prüfjob endet nach dem Fix grün. Der Ablehnungskommentar am PR scheiterte mit HTTP 403, auch mit `issues: write`; deshalb hat der Prüfjob jetzt `pull-requests: write` statt `issues: write` (ohne Secrets). Ob das allein genügt, ist ungetestet; Wiederholung steht aus. |
+| 2 | PR mit Datei in `config/` (PR #47 und #50) | bestanden: `agent` wird übersprungen, der Prüfjob endet grün. Der Ablehnungskommentar am PR scheiterte zuerst mit HTTP 403 (auch mit `issues: write`). Mit `pull-requests: write` statt `issues: write` kommt er an (PR #50, Lauf 40181119025). |
 | 3 | Kommentar eines anderen Kontos | nicht getestet (braucht ein Zweitkonto); die Bedingung prüft Kommentarautor und Absender |
 | 4 | Sechster Kommentar (PR #46, Lauf 40176269518) | bestanden: Ablehnung „Obergrenze von 5 Runden“, `agent` übersprungen. Die Runden 2 bis 5 wurden bis zur Freigabeanfrage durchgelassen und von Hand abgebrochen. |
 

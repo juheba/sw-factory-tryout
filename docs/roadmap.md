@@ -49,7 +49,7 @@ flowchart LR
 | ID | Punkt | Status | Nächster Schritt / Verweis |
 |---|---|---|---|
 | P1 | Rückmeldekanal bei verbotenem Auftrag | ✅ erledigt | Kommentar im Issue (Issue #33, PR #32). |
-| P2 | Review-Schleife per Kommentar `/agent …` | ⚠️ in Arbeit | Läuft (ADR 0002, „Ergebnisse der Review-Schleife“): Normalfall, Schutzbereich und Obergrenze bestanden. Offen: Ablehnungskommentar am PR nach Rechte-Fix erneut prüfen, dann ✅. Test mit fremdem Konto entfällt (braucht Zweitkonto). |
+| P2 | Review-Schleife per Kommentar `/agent …` | ✅ erledigt | Abgenommen (ADR 0002, „Ergebnisse der Review-Schleife“): Normalfall, Schutzbereich mit Ablehnungskommentar und Obergrenze bestanden. Der Test mit fremdem Konto entfällt (braucht Zweitkonto). Weiter mit P3 und M3. |
 | P3 | Selbstheilung bei roter CI | ⬜ offen | Abwandlung von `examples/ci-failure-auto-fix.yml` der Action: nur `agent/*`-PRs, Run-ID statt Logs im Prompt, Obergrenze, Freigabe. |
 | P4 | Vorab-Review durch einen zweiten, schreibgeschützten Lauf | ❓ zu bewerten | Zuerst manuell `/code-review` lokal ausprobieren. Plugin-Variante: Pin- und Environment-Frage klären. |
 | P5 | Rückfrage statt Raten bei mehrdeutigen Kriterien | ⬜ offen | Prompt-Ergänzung: Frage ins Issue, Lauf endet. |
