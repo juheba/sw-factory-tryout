@@ -33,12 +33,13 @@ Falls `flutter create` eigene Dateien überschrieben hat: `git checkout -- front
 ## Schnellstart
 
 ```bash
-./verify.sh                        # gesamtes Gate: Service und Frontend
-./gradlew :service:bootRun         # Service auf http://localhost:8080
-cd frontend && flutter run -d chrome
+./gradlew :service:bootRun         # Service starten (http://localhost:8080)
+./verify.sh                        # Gate gesamt: Service und Frontend
 ```
 
-Android-Emulator: `flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8080`
+Frontend: `cd frontend && flutter run -d chrome`, Android-Emulator mit `--dart-define=API_BASE_URL=http://10.0.2.2:8080`
+
+Ablauf: siehe [docs/process.md](docs/process.md)
 
 ## Arbeitsweise
 
