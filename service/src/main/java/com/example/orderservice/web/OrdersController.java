@@ -3,6 +3,7 @@ package com.example.orderservice.web;
 import com.example.orderservice.api.OrdersApi;
 import com.example.orderservice.api.model.CreateOrderRequest;
 import com.example.orderservice.api.model.Order;
+import com.example.orderservice.api.model.OrderSort;
 import com.example.orderservice.api.model.OrderStatus;
 import com.example.orderservice.service.OrderService;
 import java.net.URI;
@@ -24,8 +25,8 @@ public class OrdersController implements OrdersApi {
     }
 
     @Override
-    public ResponseEntity<List<Order>> listOrders(OrderStatus status) {
-        return ResponseEntity.ok(orderService.findAll(status));
+    public ResponseEntity<List<Order>> listOrders(OrderStatus status, OrderSort sort) {
+        return ResponseEntity.ok(orderService.findAll(status, sort));
     }
 
     @Override

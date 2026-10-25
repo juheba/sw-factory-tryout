@@ -2,6 +2,7 @@ package com.example.orderservice.service;
 
 import com.example.orderservice.api.model.CreateOrderRequest;
 import com.example.orderservice.api.model.Order;
+import com.example.orderservice.api.model.OrderSort;
 import com.example.orderservice.api.model.OrderStatus;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -60,11 +61,16 @@ public class OrderService {
         return Optional.ofNullable(orders.get(id));
     }
 
-    /** Liefert alle Bestellungen, bei gesetztem {@code status} nur die mit diesem Status. */
-    public List<Order> findAll(OrderStatus status) {
+    /**
+     * Liefert alle Bestellungen, bei gesetztem {@code status} nur die mit diesem Status.
+     * Ohne {@code sort} (oder mit {@code createdAt_asc}) aufsteigend nach Anlegedatum.
+     */
+    public List<Order> findAll(OrderStatus status, OrderSort sort) {
+        Comparator<Order> byCreatedAt = Comparator.comparing(Order::getCreatedAt);
+        Comparator<Order> comparator = sort == OrderSort.CREATED_AT_DESC ? byCreatedAt.reversed() : byCreatedAt;
         return orders.values().stream()
             .filter(order -> status == null || order.getStatus() == status)
-            .sorted(Comparator.comparing(Order::getCreatedAt))
+            .sorted(comparator)
             .toList();
     }
 }

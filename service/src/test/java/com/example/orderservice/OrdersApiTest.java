@@ -1,5 +1,6 @@
 package com.example.orderservice;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -10,6 +11,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.jayway.jsonpath.JsonPath;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -115,6 +119,48 @@ class OrdersApiTest {
     }
 
     @Test
+    void listsOldestFirstWithSortCreatedAtAsc() throws Exception {
+        List<String> ids = createOrdersWithDistinctTimestamps(3);
+
+        assertThat(listIds(ids, null, "createdAt_asc")).containsExactlyElementsOf(ids);
+    }
+
+    @Test
+    void listsNewestFirstWithSortCreatedAtDesc() throws Exception {
+        List<String> ids = createOrdersWithDistinctTimestamps(3);
+
+        assertThat(listIds(ids, null, "createdAt_desc")).containsExactlyElementsOf(List.of(
+            ids.get(2), ids.get(1), ids.get(0)));
+    }
+
+    @Test
+    void keepsCreationOrderWithoutSort() throws Exception {
+        List<String> ids = createOrdersWithDistinctTimestamps(3);
+
+        assertThat(listIds(ids, null, null)).containsExactlyElementsOf(ids);
+    }
+
+    @Test
+    void combinesSortWithStatusFilter() throws Exception {
+        List<String> ids = createOrdersWithDistinctTimestamps(4);
+        mvc.perform(post("/orders/{id}/cancel", ids.get(1))).andExpect(status().isOk());
+        mvc.perform(post("/orders/{id}/cancel", ids.get(3))).andExpect(status().isOk());
+
+        assertThat(listIds(ids, "CANCELLED", "createdAt_desc"))
+            .containsExactly(ids.get(3), ids.get(1));
+        assertThat(listIds(ids, "CREATED", "createdAt_desc"))
+            .containsExactly(ids.get(2), ids.get(0));
+    }
+
+    @Test
+    void listReturnsProblemDetailsForInvalidSort() throws Exception {
+        mvc.perform(get("/orders").param("sort", "BOGUS"))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+            .andExpect(jsonPath("$.status").value(400));
+    }
+
+    @Test
     void rejectsOrderWithoutItems()throws Exception {
         mvc.perform(post("/orders").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"customerId\": \"c-1\", \"items\": []}"))
@@ -178,6 +224,30 @@ class OrdersApiTest {
     void cancelReturnsBadRequestForMalformedId() throws Exception {
         mvc.perform(post("/orders/{id}/cancel", "not-a-uuid"))
             .andExpect(status().isBadRequest());
+    }
+
+    private List<String> createOrdersWithDistinctTimestamps(int count) throws Exception {
+        List<String> ids = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            ids.add(createOrderAndReturnId());
+            Thread.sleep(5);
+        }
+        return ids;
+    }
+
+    /** Liefert die Ids aus der Antwort in Antwortreihenfolge, beschränkt auf {@code knownIds}. */
+    private List<String> listIds(List<String> knownIds, String statusParam, String sortParam) throws Exception {
+        MockHttpServletRequestBuilder request = get("/orders");
+        if (statusParam != null) {
+            request = request.param("status", statusParam);
+        }
+        if (sortParam != null) {
+            request = request.param("sort", sortParam);
+        }
+        String body = mvc.perform(request).andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
+        List<String> all = JsonPath.read(body, "$[*].id");
+        return all.stream().filter(knownIds::contains).toList();
     }
 
     private String createOrderAndReturnId() throws Exception {
