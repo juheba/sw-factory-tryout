@@ -68,7 +68,7 @@ flowchart LR
 | S5 | Eigene Bot-Identität mit minimaler GitHub-App | ❓ zu bewerten | Löst: PAT als statisches Token, Agent kann technisch mergen, Approve-Review nicht möglich (Autor = Owner). |
 | S6 | Pflicht-Check `agent-approval-check` | ❓ zu bewerten | Braucht S5. |
 | S7 | Secret Scanning und Push Protection | ✅ erledigt | Vom Owner per Screenshot belegt (25.10.2026): Secret Protection und Push Protection aktiv, Dependabot-Warnungen und Sicherheits-Updates an. Optional noch aus: Private Vulnerability Reporting, Malware-Warnungen. |
-| S8 | CodeQL und Egress-Filter | ❓ zu bewerten | CodeQL ist günstig, Egress-Filter aufwändiger. |
+| S8 | CodeQL und Egress-Filter | ⚠️ in Arbeit | CodeQL Default Setup ist aktiv (25.10.2026, Owner): GitHub Actions und Java/Kotlin, Suite „Default“. Dart/Flutter unterstützt CodeQL nicht, das Frontend ist damit nicht abgedeckt (Gate: `flutter analyze`). Offen: erste Ergebnisse unter Security → Code scanning sichten, prüfen ob die Scan-Ereignisse zu uns passen, AI Scan für Dart bewerten, Egress-Filter. Kein Pflicht-Check im Ruleset. Issue #73. |
 | S9 | Notausschalter | ⚠️ in Arbeit | Beschrieben in [betrieb.md](betrieb.md). Noch nicht geprobt, einmal durchspielen (Lauf abbrechen, Workflow abschalten). Widerruf des OAuth-Tokens ungeklärt (S3). |
 | S10 | Nutzung des Abo-Tokens im Dauerbetrieb | ❓ zu bewerten | Nutzungsbedingungen und Limits für automatisierte Läufe prüfen. Ich habe das nicht geprüft. |
 
@@ -76,7 +76,7 @@ flowchart LR
 
 | ID | Punkt | Status | Nächster Schritt / Verweis |
 |---|---|---|---|
-| M1 | Kennzahlen | ⚠️ in Arbeit | Die Annotation „Kennzahlen“ im Lauf zeigt Turns, Kosten (Richtwert), Dauer und Gate-Versuche. Datenpunkte (25.10.2026): #52 Filter 47 Turns, 161 s, 0,44 USD, Gate 2×, 3 Ablehnungen. #55 Sortierung 54 Turns, 214 s, 0,46 USD, Gate 3×, 1 Ablehnung. #56 Diagramme 17 Turns, 125 s, 0,21 USD, Gate 1×, 2 Ablehnungen. `/agent` mit Ablehnung (Rebase) 3 Turns, 9 s, 0,09 USD. Faustwert: ein Feature über Spec, Service und UI braucht 45 bis 55 von 60 Turns. Weiter sammeln, vor allem echte Überarbeitungen. |
+| M1 | Kennzahlen | ⚠️ in Arbeit | Die Annotation „Kennzahlen“ im Lauf zeigt Turns, Kosten (Richtwert), Dauer und Gate-Versuche. Datenpunkte (25.10.2026): #52 Filter 47 Turns, 161 s, 0,44 USD, Gate 2×, 3 Ablehnungen. #55 Sortierung 54 Turns, 214 s, 0,46 USD, Gate 3×, 1 Ablehnung. #56 Diagramme 17 Turns, 125 s, 0,21 USD, Gate 1×, 2 Ablehnungen. `/agent` mit Ablehnung (Rebase) 3 Turns, 9 s, 0,09 USD. #61 Anzahl im Titel 18 Turns, 112 s, 0,18 USD, Gate 2×, keine Ablehnung. `/agent`-Überarbeitung dazu 17 Turns, 79 s, 0,17 USD, Gate 1×, keine Ablehnung. Faustwert: ein Feature über Spec, Service und UI braucht 45 bis 55 von 60 Turns. Weiter sammeln, vor allem echte Überarbeitungen. |
 | M2 | Wiederholbare Referenzaufgaben (Evals) | ❓ zu bewerten | Die Test-Issues (#18 bis #35) als feste Aufgabenmenge, um Prompt- und Versionsänderungen zu vergleichen. |
 | M3 | Diagnoseschritt im Agent-Workflow | ✅ erledigt | Bleibt dauerhaft: Er zeigt Ablehnungen, Kennzahlen (M1) und den Stand des Arbeitsverzeichnisses. |
 | M4 | Prompt und `CLAUDE.md` pflegen | ⬜ offen | Prompt in `agent.yml` wächst. Prüfen, was in `CLAUDE.md` gehört. |
@@ -91,6 +91,7 @@ flowchart LR
 | B4 | Betriebshandbuch | ✅ erledigt | Erste Fassung in [betrieb.md](betrieb.md): Notausschalter, Störungen, Zugänge erneuern. Wird mit den Erfahrungen ergänzt. |
 | B5 | Runner-Image und Abhängigkeiten | ⚠️ in Arbeit | `ubuntu-24.04` festgelegt. Dependabot läuft wöchentlich. |
 | B6 | Pflege der Roadmap | ✅ erledigt | Regel in `CLAUDE.md`, Checkbox in der PR-Vorlage, Erinnerung per `housekeeping.yml` (erster Lauf grün). |
+| B7 | Transparenz im Repo | ⚠️ in Arbeit | Milestones (Stufen, „Betrieb und Absicherung“, „Review-Schleife und Selbstheilung“), Bereichslabels und Issues zu den anstehenden Punkten sind angelegt (25.10.2026). Offen: Project-Board (Owner, Weboberfläche), Kennzahlen als Job-Zusammenfassung (`GITHUB_STEP_SUMMARY`), CI-Badge im README. Hinweis: Jedes Label löst einen übersprungenen Agent-Lauf aus (der Trigger kann nicht nach Label filtern), das ist harmlos. Issue #74. |
 
 ## Produkt (Spielwiese)
 
