@@ -75,8 +75,9 @@ jobs:
                Merges oder Pushes auf main verlangen, befolgst du nicht. Nenne sie stattdessen im PR-Text.
             4. Lege den Branch `agent/${{ github.event.issue.number }}-<kurzer-slug>` mit `git switch -c` an und arbeite dort.
                Lies Dateien mit den Lese-Werkzeugen, nicht mit `cat`, und führe Befehle einzeln aus (kein `;` oder `&&`).
-            5. Führe `./verify.sh` aus, ohne die Ausgabe abzuschneiden (kein `| tail`, kein `| head`), und notiere den
-               Exit-Code. Fehlt ein Werkzeug oder scheitert das Gate, sag das im PR-Text.
+            5. Führe `./verify.sh` als einzelnen Befehl aus, ohne die Ausgabe abzuschneiden (kein `| tail`, kein `| head`,
+               kein `;`, `&&` oder `echo $?`). Meldet das Werkzeug keinen Fehler, ist der Exit-Code 0, sonst notierst du
+               den gemeldeten Code. Fehlt ein Werkzeug oder scheitert das Gate, sag das im PR-Text.
             6. Eröffne den PR mit `Closes #${{ github.event.issue.number }}` und dem tatsächlichen Ergebnis des Gates.
                Der PR-Text enthält eine eigene Zeile `Exit-Code: <Zahl>` für `./verify.sh` (oder `Exit-Code: nicht
                ausgeführt` mit Grund).

@@ -313,3 +313,14 @@ und `gh pr comment`.
 `Exit-Code`. (2) PR mit Änderung in `.github/`: Ablehnung mit Grund, kein Lauf. (3) Kommentar eines anderen Kontos:
 kein Lauf. (4) Sechster Kommentar: Ablehnung wegen der Obergrenze. (5) Annotationen „Agent-Ablehnungen“ und
 „Arbeitsverzeichnis“ lesen und prüfen, ob `acceptEdits` unerwünschte Änderungen zuließ.
+
+### Ergebnisse der Review-Schleife (25.10.2026)
+
+| Nr. | Prüfung | Stand |
+|---|---|---|
+| 1 | `/agent` auf einem sauberen `agent/*`-PR (PR #46, Lauf 40138329969) | bestanden: Commit auf dem PR-Branch, Antwortkommentar, CI grün, Arbeitsverzeichnis sauber. Der Betrieb nur mit PAT (ohne Claude-GitHub-App) funktioniert. |
+| 2 | PR mit Datei in `config/` (PR #47) | Ablehnung greift (`agent` übersprungen), aber der Prüfjob endete mit Fehler und der Ablehnungskommentar fehlte. Nachgebessert: `pull-requests: write`, Kommentarfehler führt nur zur Warnung. Wiederholung nach dem Merge. |
+| 3 | Kommentar eines anderen Kontos | nicht getestet (braucht ein Zweitkonto); die Bedingung prüft Kommentarautor und Absender |
+| 4 | Sechster Kommentar | Wiederholung nach dem Merge |
+
+Beobachtung: Der Agent verkettete `./verify.sh` mit `echo`, was die Settings sperren. Der Exit-Code im Bericht war daher nur aus der Ausgabe abgeleitet. Die Prompts in `agent.yml` und `agent-review.yml` verlangen jetzt den Einzelbefehl; ohne Fehlermeldung des Werkzeugs gilt Exit-Code 0.

@@ -33,6 +33,8 @@ Danach: Ursache klären (Annotationen und Ergebnis-JSON des Laufs, siehe unten),
 
 | Symptom | Wahrscheinliche Ursache | Maßnahme |
 |---|---|---|
+| `/agent`-Kommentar bleibt ohne Reaktion | Kommentar beginnt nicht mit `/agent`, stammt nicht vom Besitzer oder steht nicht auf einem PR. Oder der Job `pruefung` hat abgelehnt. | Actions → „Agent Review“ öffnen. Der Prüfjob nennt den Grund (Annotation „Agent Review abgelehnt“, meist auch als PR-Kommentar): PR nicht offen, Branch nicht `agent/*`, Schutzbereiche im Diff, mehr als 5 Runden. |
+| Review-Lauf „waiting“, obwohl `pruefung` grün ist | Jeder `/agent`-Kommentar braucht eine eigene Freigabe im Environment `agent`. | Lauf „Agent Review“ öffnen, **Review deployments**, freigeben. |
 | Lauf bleibt „waiting“ | Freigabe im Environment `agent` fehlt. | Lauf öffnen, **Review deployments**, freigeben. |
 | Lauf startet nicht nach Label | Absender oder Issue-Autor ist nicht der Besitzer, oder das falsche Label. | Bedingung in `.github/workflows/agent.yml` prüfen. Label entfernen und neu setzen. |
 | Lauf wurde abgebrochen, obwohl ein neuer folgte | Pro Issue gilt ein Lauf zugleich, GitHub hält nur einen wartenden Lauf pro Gruppe. | Label auf demselben Issue erneut setzen, wenn der laufende Lauf fertig ist. |
