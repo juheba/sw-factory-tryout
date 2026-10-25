@@ -70,7 +70,9 @@ class _OrdersPageState extends State<OrdersPage> {
             final done = snapshot.connectionState == ConnectionState.done;
             return Text(
               done && !snapshot.hasError && orders != null
-                  ? 'Bestellungen (${orders.length})'
+                  ? (orders.length == 1
+                        ? '1 Bestellung'
+                        : '${orders.length} Bestellungen')
                   : 'Bestellungen',
             );
           },

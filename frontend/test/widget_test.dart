@@ -159,11 +159,11 @@ void main() {
   });
 
   group('Anzahl im Titel', () {
-    testWidgets('leere Liste zeigt (0) und Hinweis', (tester) async {
+    testWidgets('leere Liste zeigt 0 Bestellungen und Hinweis', (tester) async {
       await tester.pumpWidget(OrderApp(repository: FakeOrdersRepository()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Bestellungen (0)'), findsOneWidget);
+      expect(find.text('0 Bestellungen'), findsOneWidget);
       expect(find.text('Noch keine Bestellungen.'), findsOneWidget);
     });
 
@@ -174,11 +174,11 @@ void main() {
         await tester.tap(find.byTooltip('Demo-Bestellung anlegen'));
         await tester.pumpAndSettle();
       }
-      expect(find.text('Bestellungen (3)'), findsOneWidget);
+      expect(find.text('3 Bestellungen'), findsOneWidget);
 
       await tester.tap(find.byTooltip('Bestellung stornieren').first);
       await tester.pumpAndSettle();
-      expect(find.text('Bestellungen (3)'), findsOneWidget);
+      expect(find.text('3 Bestellungen'), findsOneWidget);
 
       await tester.tap(
         find.descendant(
@@ -187,11 +187,11 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('Bestellungen (1)'), findsOneWidget);
+      expect(find.text('1 Bestellung'), findsOneWidget);
 
       await tester.tap(find.text('Aktiv'));
       await tester.pumpAndSettle();
-      expect(find.text('Bestellungen (2)'), findsOneWidget);
+      expect(find.text('2 Bestellungen'), findsOneWidget);
     });
   });
 
