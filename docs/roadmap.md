@@ -76,7 +76,7 @@ flowchart LR
 
 | ID | Punkt | Status | Nächster Schritt / Verweis |
 |---|---|---|---|
-| M1 | Kennzahlen | ⚠️ in Arbeit | Der Diagnoseschritt gibt Turns, Kosten, Dauer und Gate-Versuche als Annotation „Kennzahlen“ aus. Erster Datenpunkt (Issue #52, Lauf 40181985150): 47 von 60 Turns, 161 s, 0,44 USD laut Ergebnis, 3 abgelehnte Befehle, Gate zweimal. Weiter sammeln, dann auswerten. |
+| M1 | Kennzahlen | ⚠️ in Arbeit | Die Annotation „Kennzahlen“ im Lauf zeigt Turns, Kosten (Richtwert), Dauer und Gate-Versuche. Datenpunkte (25.10.2026): #52 Filter 47 Turns, 161 s, 0,44 USD, Gate 2×, 3 Ablehnungen. #55 Sortierung 54 Turns, 214 s, 0,46 USD, Gate 3×, 1 Ablehnung. #56 Diagramme 17 Turns, 125 s, 0,21 USD, Gate 1×, 2 Ablehnungen. `/agent` mit Ablehnung (Rebase) 3 Turns, 9 s, 0,09 USD. Faustwert: ein Feature über Spec, Service und UI braucht 45 bis 55 von 60 Turns. Weiter sammeln, vor allem echte Überarbeitungen. |
 | M2 | Wiederholbare Referenzaufgaben (Evals) | ❓ zu bewerten | Die Test-Issues (#18 bis #35) als feste Aufgabenmenge, um Prompt- und Versionsänderungen zu vergleichen. |
 | M3 | Diagnoseschritt im Agent-Workflow | ✅ erledigt | Bleibt dauerhaft: Er zeigt Ablehnungen, Kennzahlen (M1) und den Stand des Arbeitsverzeichnisses. |
 | M4 | Prompt und `CLAUDE.md` pflegen | ⬜ offen | Prompt in `agent.yml` wächst. Prüfen, was in `CLAUDE.md` gehört. |
