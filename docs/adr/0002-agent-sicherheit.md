@@ -155,6 +155,8 @@ einschalten.
 Hinweis zum Ruleset: Ein Autor kann seinen eigenen PR nicht freigeben. Ist der Code-Owner-Review Pflicht und du
 bist zugleich Autor, brauchst du den Admin-Bypass. Ohne Bypass blockierst du dich bei Änderungen an Schutzbereichen selbst.
 
+**CodeQL (25.10.2026):** Der Owner hat CodeQL im Default Setup eingeschaltet (Sprachen GitHub Actions und Java/Kotlin, Suite „Default“, Standard-Runner). Das ergänzt Abschnitt 6 um eine statische Analyse der Workflows und des Service. Dart/Flutter unterstützt CodeQL nicht. Der Lauf „CodeQL Setup“ ist ein von GitHub erzeugter dynamischer Workflow ohne Datei im Repo. Ergebnisse: Security → Code scanning. Kein Pflicht-Check (Roadmap S8).
+
 ## Offene Entscheidungen
 
 1. **Identität des Agents.** PRs, die mit dem eingebauten `GITHUB_TOKEN` entstehen, lösen **keine** CI aus.
