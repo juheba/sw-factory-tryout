@@ -16,16 +16,29 @@ paths:
     get:
       tags: [orders]
       operationId: listOrders
-      summary: Alle Bestellungen auflisten
+      summary: Bestellungen auflisten, optional nach Status gefiltert
+      parameters:
+        - name: status
+          in: query
+          required: false
+          description: Nur Bestellungen mit diesem Status liefern
+          schema:
+            $ref: "#/components/schemas/OrderStatus"
       responses:
         "200":
-          description: Liste aller Bestellungen
+          description: Liste der Bestellungen
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/Order"
+        "400":
+          description: Ungültiger Statuswert
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
     post:
       tags: [orders]
       operationId: createOrder

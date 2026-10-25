@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:order_app/main.dart';
 import 'package:order_app/orders/orders_repository.dart';
@@ -9,7 +10,9 @@ class FakeOrdersRepository implements OrdersRepository {
   final List<OrderSummary> orders = [];
 
   @override
-  Future<List<OrderSummary>> list() async => List.of(orders);
+  Future<List<OrderSummary>> list({OrderStatus? status}) async => orders
+      .where((order) => status == null || order.status == status)
+      .toList();
 
   @override
   Future<OrderSummary> create({
@@ -73,7 +76,7 @@ void main() {
     await tester.tap(find.byTooltip('Bestellung stornieren'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Storniert'), findsOneWidget);
+    expect(find.byType(Chip), findsOneWidget);
     expect(find.byTooltip('Bestellung stornieren'), findsNothing);
   });
 
@@ -90,6 +93,59 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.textContaining('Stornieren fehlgeschlagen'), findsOneWidget);
-    expect(find.text('Storniert'), findsNothing);
+    expect(find.byType(Chip), findsNothing);
+  });
+
+  group('Statusfilter', () {
+    Future<void> pumpWithOneOfEach(WidgetTester tester) async {
+      await tester.pumpWidget(OrderApp(repository: FakeOrdersRepository()));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Demo-Bestellung anlegen'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Demo-Bestellung anlegen'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Bestellung stornieren').first);
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> selectFilter(WidgetTester tester, String label) async {
+      await tester.tap(
+        find.descendant(
+          of: find.byType(SegmentedButton<OrderStatus?>),
+          matching: find.text(label),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('Storniert zeigt nur stornierte Bestellungen', (tester) async {
+      await pumpWithOneOfEach(tester);
+
+      await selectFilter(tester, 'Storniert');
+
+      expect(find.byType(ListTile), findsOneWidget);
+      expect(find.byType(Chip), findsOneWidget);
+      expect(find.byTooltip('Bestellung stornieren'), findsNothing);
+    });
+
+    testWidgets('Aktiv zeigt nur aktive Bestellungen', (tester) async {
+      await pumpWithOneOfEach(tester);
+
+      await selectFilter(tester, 'Aktiv');
+
+      expect(find.byType(ListTile), findsOneWidget);
+      expect(find.byType(Chip), findsNothing);
+      expect(find.byTooltip('Bestellung stornieren'), findsOneWidget);
+    });
+
+    testWidgets('Alle zeigt beide Bestellungen', (tester) async {
+      await pumpWithOneOfEach(tester);
+      await selectFilter(tester, 'Aktiv');
+
+      await selectFilter(tester, 'Alle');
+
+      expect(find.byType(ListTile), findsNWidgets(2));
+      expect(find.byType(Chip), findsOneWidget);
+    });
   });
 }

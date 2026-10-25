@@ -69,7 +69,53 @@ class OrdersApiTest {
     }
 
     @Test
-    void rejectsOrderWithoutItems() throws Exception {
+    void listsOnlyCancelledOrdersWithStatusCancelled() throws Exception {
+        String activeId = createOrderAndReturnId();
+        String cancelledId = createOrderAndReturnId();
+        mvc.perform(post("/orders/{id}/cancel", cancelledId)).andExpect(status().isOk());
+
+        mvc.perform(get("/orders").param("status", "CANCELLED"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[?(@.id == '" + cancelledId + "')]", hasSize(1)))
+            .andExpect(jsonPath("$[?(@.id == '" + activeId + "')]", hasSize(0)))
+            .andExpect(jsonPath("$[?(@.status != 'CANCELLED')]", hasSize(0)));
+    }
+
+    @Test
+    void listsOnlyActiveOrdersWithStatusCreated() throws Exception {
+        String activeId = createOrderAndReturnId();
+        String cancelledId = createOrderAndReturnId();
+        mvc.perform(post("/orders/{id}/cancel", cancelledId)).andExpect(status().isOk());
+
+        mvc.perform(get("/orders").param("status", "CREATED"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[?(@.id == '" + activeId + "')]", hasSize(1)))
+            .andExpect(jsonPath("$[?(@.id == '" + cancelledId + "')]", hasSize(0)))
+            .andExpect(jsonPath("$[?(@.status != 'CREATED')]", hasSize(0)));
+    }
+
+    @Test
+    void listsAllOrdersWithoutStatus() throws Exception {
+        String activeId = createOrderAndReturnId();
+        String cancelledId = createOrderAndReturnId();
+        mvc.perform(post("/orders/{id}/cancel", cancelledId)).andExpect(status().isOk());
+
+        mvc.perform(get("/orders"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[?(@.id == '" + activeId + "')]", hasSize(1)))
+            .andExpect(jsonPath("$[?(@.id == '" + cancelledId + "')]", hasSize(1)));
+    }
+
+    @Test
+    void listReturnsProblemDetailsForInvalidStatus() throws Exception {
+        mvc.perform(get("/orders").param("status", "BOGUS"))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+            .andExpect(jsonPath("$.status").value(400));
+    }
+
+    @Test
+    void rejectsOrderWithoutItems()throws Exception {
         mvc.perform(post("/orders").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"customerId\": \"c-1\", \"items\": []}"))
             .andExpect(status().isBadRequest());

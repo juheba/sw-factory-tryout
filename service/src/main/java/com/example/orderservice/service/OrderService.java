@@ -60,8 +60,10 @@ public class OrderService {
         return Optional.ofNullable(orders.get(id));
     }
 
-    public List<Order> findAll() {
+    /** Liefert alle Bestellungen, bei gesetztem {@code status} nur die mit diesem Status. */
+    public List<Order> findAll(OrderStatus status) {
         return orders.values().stream()
+            .filter(order -> status == null || order.getStatus() == status)
             .sorted(Comparator.comparing(Order::getCreatedAt))
             .toList();
     }
