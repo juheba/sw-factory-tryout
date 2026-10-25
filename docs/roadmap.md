@@ -97,7 +97,7 @@ flowchart LR
 | ID | Punkt | Status | Nächster Schritt / Verweis |
 |---|---|---|---|
 | X1 | Flutter-Plattformordner anlegen | ⬜ offen | `flutter create --platforms=android,ios,web --project-name order_app .` in `frontend/`, danach `analysis_options.yaml` prüfen. |
-| X2 | Weitere Features als reale Aufträge | ⚠️ in Arbeit | Nach P2, damit die Schleife an echten Änderungen getestet wird. Erstes Feature: Bestellliste nach Status filtern (Issue #52). Zweites Feature: Bestellliste nach Anlegedatum sortieren (Issue #55). |
+| X2 | Weitere Features als reale Aufträge | ⚠️ in Arbeit | Nach P2, damit die Schleife an echten Änderungen getestet wird. Erstes Feature: Bestellliste nach Status filtern (Issue #52). Zweites Feature: Bestellliste nach Anlegedatum sortieren (Issue #55). Drittes Feature: Anzahl der Bestellungen im Titel anzeigen (Issue #61). |
 
 ## Wiederverwendung
 
