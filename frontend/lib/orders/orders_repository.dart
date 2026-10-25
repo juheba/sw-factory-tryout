@@ -19,7 +19,8 @@ class OrderSummary {
 }
 
 abstract class OrdersRepository {
-  Future<List<OrderSummary>> list();
+  /// Liefert alle Bestellungen, mit [status] nur die mit diesem Status.
+  Future<List<OrderSummary>> list({OrderStatus? status});
 
   Future<OrderSummary> create({
     required String customerId,
@@ -38,8 +39,9 @@ class ApiOrdersRepository implements OrdersRepository {
   final api.OrdersApi _api;
 
   @override
-  Future<List<OrderSummary>> list() async {
-    final orders = await _api.listOrders() ?? <api.Order>[];
+  Future<List<OrderSummary>> list({OrderStatus? status}) async {
+    final orders =
+        await _api.listOrders(status: _toApiStatus(status)) ?? <api.Order>[];
     return orders.map(_toSummary).toList();
   }
 
@@ -68,6 +70,12 @@ class ApiOrdersRepository implements OrdersRepository {
     }
     return _toSummary(cancelled);
   }
+
+  api.OrderStatus? _toApiStatus(OrderStatus? status) => switch (status) {
+    null => null,
+    OrderStatus.created => api.OrderStatus.CREATED,
+    OrderStatus.cancelled => api.OrderStatus.CANCELLED,
+  };
 
   OrderSummary _toSummary(api.Order order) => OrderSummary(
     id: order.id,
