@@ -22,7 +22,7 @@ bis das Gate grün ist. Ohne dieses Feedback gibt es kein belastbares „geprüf
 
 ```mermaid
 flowchart LR
-    O[Besitzer legt Issue an und setzt Label agent] --> T{Auslöser geprüft: Label agent, Absender und Autor = Besitzer}
+    O[Owner legt Issue an und setzt Label agent] --> T{Auslöser geprüft: Label agent, Absender und Autor = Owner}
     T -->|nein| X[Kein Lauf]
     T -->|ja| E[Freigabe im Environment agent]
     E --> A[Agent liest CLAUDE.md und Issue, arbeitet auf agent/nr-slug]
@@ -36,23 +36,23 @@ flowchart LR
     R -->|ok| M[Merge in main]
 ```
 
-Gegenüber Stufe 1 startet der Lauf automatisch, sobald der Besitzer das Label `agent` setzt, und nur dann, wenn
-Absender und Issue-Autor der Besitzer sind. Jeder Lauf wartet auf eine Freigabe im GitHub-Environment `agent`.
+Gegenüber Stufe 1 startet der Lauf automatisch, sobald der Owner das Label `agent` setzt, und nur dann, wenn
+Absender und Issue-Autor der Owner sind. Jeder Lauf wartet auf eine Freigabe im GitHub-Environment `agent`.
 Schutzbereiche (Workflows, Gate, Build-Skripte) darf der Agent nicht ändern, dafür sorgen Code-Owner-Review und
 Ruleset. Die Begründungen stehen in [ADR 0002](adr/0002-agent-sicherheit.md).
 
-**Review-Schleife (Spike, Roadmap P2):** Bei Änderungswünschen schreibt der Besitzer auf dem `agent/*`-PR einen
+**Review-Schleife (Spike, Roadmap P2):** Bei Änderungswünschen schreibt der Owner auf dem `agent/*`-PR einen
 Kommentar, der mit `/agent` beginnt. Der Workflow `agent-review.yml` prüft zuerst ohne Secrets (offener PR, Branch
 `agent/*`, keine Schutzbereiche im Diff, höchstens 5 Runden) und fragt dann die Freigabe im Environment an. Der Agent
 arbeitet auf demselben Branch, führt `./verify.sh` aus und antwortet mit einem Kommentar. Ändert der PR Schutzbereiche,
-lehnt die Prüfung ab und nennt den Grund; dann arbeitet der Besitzer selbst weiter. Geht der Wunsch über den PR hinaus,
+lehnt die Prüfung ab und nennt den Grund; dann arbeitet der Owner selbst weiter. Geht der Wunsch über den PR hinaus,
 wird das Issue angepasst und das Label neu gesetzt.
 
 ## Wenn der Agent nicht liefern kann
 
 Betrifft ein Auftrag nur Schutzbereiche oder verlangt er etwas Verbotenes, eröffnet der Agent keinen Pull Request.
 Stattdessen schreibt er einen Kommentar ins Issue. Der Kommentar nennt, was verlangt wurde, welche Regel es
-verhindert und was der Besitzer selbst tun muss. Die Regeln und ihre Begründung stehen in
+verhindert und was der Owner selbst tun muss. Die Regeln und ihre Begründung stehen in
 [ADR 0002](adr/0002-agent-sicherheit.md).
 
 ## Beobachtbarkeit

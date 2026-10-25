@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   agent:
-    # Nur der Besitzer löst Läufe aus, und nur auf eigenen Issues.
+    # Nur der Owner löst Läufe aus, und nur auf eigenen Issues.
     # Kein issue_comment, kein pull_request_target, keine Wildcard-Nutzer.
     if: >-
       github.event.label.name == 'agent' &&
@@ -27,7 +27,7 @@ jobs:
       github.event.issue.user.login == 'juheba'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
-    # Die Secrets liegen im Environment "agent" (nur Branch main, Freigabe durch den Besitzer).
+    # Die Secrets liegen im Environment "agent" (nur Branch main, Freigabe durch den Owner).
     environment: agent
     permissions:
       contents: write
@@ -85,7 +85,7 @@ jobs:
                mit `gh pr create --title "<Titel>" --body-file .agent-tmp/pr-body.md`. Committe `.agent-tmp/` nicht.
             7. Lässt sich der Auftrag nach diesen Regeln gar nicht umsetzen (zum Beispiel, weil er nur Schutzbereiche
                betrifft), eröffnest du keinen PR. Schreibe stattdessen einen Kommentar ins Issue: Was verlangt wurde,
-               welche Regel es verhindert, was der Besitzer selbst tun muss. Text nach `.agent-tmp/comment.md`, dann
+               welche Regel es verhindert, was der Owner selbst tun muss. Text nach `.agent-tmp/comment.md`, dann
                `gh issue comment ${{ github.event.issue.number }} --body-file .agent-tmp/comment.md`.
 
       # Diagnose (vorübergehend, nach den ersten Abnahmeläufen entfernen): Der Job meldet Erfolg, auch wenn Aktionen

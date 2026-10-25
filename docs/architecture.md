@@ -61,7 +61,7 @@ eine bereits stornierte Bestellung liefert 409; beide Fehler als RFC-9457-Proble
 
 ```mermaid
 sequenceDiagram
-    actor O as Besitzer
+    actor O as Owner
     participant GH as GitHub
     participant WF as Workflow agent.yml
     participant Env as Environment agent
@@ -69,7 +69,7 @@ sequenceDiagram
     participant CI as CI (ci.yml)
     O->>GH: Issue anlegen, Label "agent" setzen
     GH->>WF: Ereignis issues/labeled
-    WF->>WF: Prüfung: Label, Sender und Issue-Autor = Besitzer
+    WF->>WF: Prüfung: Label, Sender und Issue-Autor = Owner
     WF->>Env: Freigabe anfordern (Branch main)
     O-->>Env: Lauf freigeben
     Env-->>WF: Secrets (OAuth-Token, PAT)
@@ -87,7 +87,7 @@ darf er nicht ändern; die Grenze setzen `CODEOWNERS` und das Ruleset. Details: 
 
 ```mermaid
 sequenceDiagram
-    actor O as Besitzer
+    actor O as Owner
     participant GH as GitHub
     participant P as Job pruefung (ohne Secrets)
     participant Env as Environment agent
@@ -95,12 +95,12 @@ sequenceDiagram
     participant CI as CI (ci.yml)
     O->>GH: Kommentar "/agent Wunsch" auf einem agent/*-PR
     GH->>P: Ereignis issue_comment (Workflow-Stand von main)
-    P->>P: PR offen, Branch agent/*, gleiches Repo, Autor Besitzer, keine Schutzbereiche im Diff, höchstens 5 Runden
+    P->>P: PR offen, Branch agent/*, gleiches Repo, Autor Owner, keine Schutzbereiche im Diff, höchstens 5 Runden
     P-->>GH: bei Ablehnung: Kommentar mit Grund, kein Agent-Lauf
     P->>Env: Freigabe anfordern (Branch main)
     O-->>Env: Lauf freigeben
     Env-->>A: Secrets (OAuth-Token, PAT)
-    A->>GH: liest Kommentare des Besitzers, ändert Code, ./verify.sh, Push auf den PR-Branch, Antwortkommentar
+    A->>GH: liest Kommentare des Owners, ändert Code, ./verify.sh, Push auf den PR-Branch, Antwortkommentar
     GH->>CI: Gate service und frontend
     O->>GH: erneut prüfen, weiteren Kommentar schreiben oder mergen
 ```
