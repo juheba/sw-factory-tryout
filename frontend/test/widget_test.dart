@@ -158,6 +158,43 @@ void main() {
     });
   });
 
+  group('Anzahl im Titel', () {
+    testWidgets('leere Liste zeigt 0 Bestellungen und Hinweis', (tester) async {
+      await tester.pumpWidget(OrderApp(repository: FakeOrdersRepository()));
+      await tester.pumpAndSettle();
+
+      expect(find.text('0 Bestellungen'), findsOneWidget);
+      expect(find.text('Noch keine Bestellungen.'), findsOneWidget);
+    });
+
+    testWidgets('folgt Statusfilter und Anlegen', (tester) async {
+      await tester.pumpWidget(OrderApp(repository: FakeOrdersRepository()));
+      await tester.pumpAndSettle();
+      for (var i = 0; i < 3; i++) {
+        await tester.tap(find.byTooltip('Demo-Bestellung anlegen'));
+        await tester.pumpAndSettle();
+      }
+      expect(find.text('3 Bestellungen'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('Bestellung stornieren').first);
+      await tester.pumpAndSettle();
+      expect(find.text('3 Bestellungen'), findsOneWidget);
+
+      await tester.tap(
+        find.descendant(
+          of: find.byType(SegmentedButton<OrderStatus?>),
+          matching: find.text('Storniert'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('1 Bestellung'), findsOneWidget);
+
+      await tester.tap(find.text('Aktiv'));
+      await tester.pumpAndSettle();
+      expect(find.text('2 Bestellungen'), findsOneWidget);
+    });
+  });
+
   group('Sortierung', () {
     Future<void> pumpWithThreeOrders(WidgetTester tester) async {
       await tester.pumpWidget(OrderApp(repository: FakeOrdersRepository()));

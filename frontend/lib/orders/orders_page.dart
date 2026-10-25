@@ -62,7 +62,22 @@ class _OrdersPageState extends State<OrdersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Bestellungen')),
+      appBar: AppBar(
+        title: FutureBuilder<List<OrderSummary>>(
+          future: _orders,
+          builder: (context, snapshot) {
+            final orders = snapshot.data;
+            final done = snapshot.connectionState == ConnectionState.done;
+            return Text(
+              done && !snapshot.hasError && orders != null
+                  ? (orders.length == 1
+                        ? '1 Bestellung'
+                        : '${orders.length} Bestellungen')
+                  : 'Bestellungen',
+            );
+          },
+        ),
+      ),
       body: Column(
         children: [
           Padding(
