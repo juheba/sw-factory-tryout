@@ -39,6 +39,8 @@ Falls `flutter create` eigene Dateien überschrieben hat: `git checkout -- front
 
 Frontend: `cd frontend && flutter run -d chrome`, Android-Emulator mit `--dart-define=API_BASE_URL=http://10.0.2.2:8080`
 
+Ablauf: siehe [docs/process.md](docs/process.md)
+
 ## Arbeitsweise
 
 - `CLAUDE.md` beschreibt Regeln, Befehle und Definition of Done für Agents.
