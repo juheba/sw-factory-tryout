@@ -67,7 +67,7 @@ flowchart LR
 | S4 | Ablaufdaten: PAT 22.01.2027, OAuth-Token Oktober 2027 | ✅ erledigt | Meldung per Issue 30 Tage vorher (`housekeeping.yml`, Daten in `.github/ablaufdaten.json`). Daten vom Besitzer geprüft (25.10.2026). Beim Erneuern eines Zugangs das Datum anpassen. |
 | S5 | Eigene Bot-Identität mit minimaler GitHub-App | ❓ zu bewerten | Löst: PAT als statisches Token, Agent kann technisch mergen, Approve-Review nicht möglich (Autor = Besitzer). |
 | S6 | Pflicht-Check `agent-approval-check` | ❓ zu bewerten | Braucht S5. |
-| S7 | Secret Scanning und Push Protection | ❓ zu bewerten | Repo-Einstellung prüfen (öffentliches Repo). Sicht darauf hat nur der Besitzer. |
+| S7 | Secret Scanning und Push Protection | ✅ erledigt | Vom Besitzer per Screenshot belegt (25.10.2026): Secret Protection und Push Protection aktiv, Dependabot-Warnungen und Sicherheits-Updates an. Optional noch aus: Private Vulnerability Reporting, Malware-Warnungen. |
 | S8 | CodeQL und Egress-Filter | ❓ zu bewerten | CodeQL ist günstig, Egress-Filter aufwändiger. |
 | S9 | Notausschalter | ⚠️ in Arbeit | Beschrieben in [betrieb.md](betrieb.md). Noch nicht geprobt, einmal durchspielen (Lauf abbrechen, Workflow abschalten). Widerruf des OAuth-Tokens ungeklärt (S3). |
 | S10 | Nutzung des Abo-Tokens im Dauerbetrieb | ❓ zu bewerten | Nutzungsbedingungen und Limits für automatisierte Läufe prüfen. Ich habe das nicht geprüft. |
