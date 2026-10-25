@@ -279,8 +279,8 @@ startet auf einem `agent/*`-PR eine Überarbeitung (`.github/workflows/agent-rev
 - **Ereignis `issue_comment`.** Es läuft immer mit der Workflow-Datei der Standardbranch. Ein PR kann den Workflow
   deshalb nicht ändern, und das Environment `agent` (nur Branch `main`) bleibt nutzbar. `pull_request_review(_comment)`
   liefe dagegen vom PR-Stand und würde vom Environment blockiert.
-- **Zwei Jobs.** Der Job `pruefung` hat keine Secrets und keine Freigabe, nur lesende Rechte plus `issues: write` für
-  die Ablehnungsmeldung. Er lässt nur durch: offener PR im selben Repo, Autor Besitzer, Branch `agent/*`, Absender und
+- **Zwei Jobs.** Der Job `pruefung` hat keine Secrets und keine Freigabe, nur lesende Rechte plus `pull-requests: write` für
+  die Ablehnungsmeldung am PR. Er lässt nur durch: offener PR im selben Repo, Autor Besitzer, Branch `agent/*`, Absender und
   Kommentarautor Besitzer, höchstens 5 `/agent`-Kommentare, und keine Datei des PR in einem Schutzbereich. Erst danach
   fragt der Job `agent` die Freigabe im Environment an. So muss der Besitzer keine Läufe freigeben, die ohnehin
   abgelehnt würden.
@@ -319,7 +319,7 @@ kein Lauf. (4) Sechster Kommentar: Ablehnung wegen der Obergrenze. (5) Annotatio
 | Nr. | Prüfung | Stand |
 |---|---|---|
 | 1 | `/agent` auf einem sauberen `agent/*`-PR (PR #46, Lauf 40138329969) | bestanden: Commit auf dem PR-Branch, Antwortkommentar, CI grün, Arbeitsverzeichnis sauber. Der Betrieb nur mit PAT (ohne Claude-GitHub-App) funktioniert. |
-| 2 | PR mit Datei in `config/` (PR #47, Läufe 40174525838 und 40176020055) | bestanden: `agent` wird übersprungen, der Prüfjob endet nach dem Fix grün. Der Ablehnungskommentar am PR scheiterte mit HTTP 403, auch mit `issues: write`; deshalb ist `pull-requests: write` ergänzt (nur im Prüfjob, ohne Secrets). Wiederholung steht aus. |
+| 2 | PR mit Datei in `config/` (PR #47, Läufe 40174525838 und 40176020055) | bestanden: `agent` wird übersprungen, der Prüfjob endet nach dem Fix grün. Der Ablehnungskommentar am PR scheiterte mit HTTP 403, auch mit `issues: write`; deshalb hat der Prüfjob jetzt `pull-requests: write` statt `issues: write` (ohne Secrets). Ob das allein genügt, ist ungetestet; Wiederholung steht aus. |
 | 3 | Kommentar eines anderen Kontos | nicht getestet (braucht ein Zweitkonto); die Bedingung prüft Kommentarautor und Absender |
 | 4 | Sechster Kommentar (PR #46, Lauf 40176269518) | bestanden: Ablehnung „Obergrenze von 5 Runden“, `agent` übersprungen. Die Runden 2 bis 5 wurden bis zur Freigabeanfrage durchgelassen und von Hand abgebrochen. |
 
