@@ -1,6 +1,6 @@
 # Betriebshandbuch
 
-Erste Fassung, Stand 24.10.2026. Für den Besitzer. Sie sagt, was bei einem Notfall und bei den häufigsten Störungen zu
+Erste Fassung, Stand 24.10.2026. Für den Owner. Sie sagt, was bei einem Notfall und bei den häufigsten Störungen zu
 tun ist. Hintergründe stehen in [ADR 0002](adr/0002-agent-sicherheit.md), der Gesamtplan in der [Roadmap](roadmap.md).
 
 **Nicht geprobt:** Der Notausschalter ist beschrieben, aber noch nie durchgespielt worden (Roadmap S9). Einmal ruhig
@@ -33,10 +33,10 @@ Danach: Ursache klären (Annotationen und Ergebnis-JSON des Laufs, siehe unten),
 
 | Symptom | Wahrscheinliche Ursache | Maßnahme |
 |---|---|---|
-| `/agent`-Kommentar bleibt ohne Reaktion | Kommentar beginnt nicht mit `/agent`, stammt nicht vom Besitzer oder steht nicht auf einem PR. Oder der Job `pruefung` hat abgelehnt. | Actions → „Agent Review“ öffnen. Der Prüfjob nennt den Grund (Annotation „Agent Review abgelehnt“, meist auch als PR-Kommentar): PR nicht offen, Branch nicht `agent/*`, Schutzbereiche im Diff, mehr als 5 Runden. |
+| `/agent`-Kommentar bleibt ohne Reaktion | Kommentar beginnt nicht mit `/agent`, stammt nicht vom Owner oder steht nicht auf einem PR. Oder der Job `pruefung` hat abgelehnt. | Actions → „Agent Review“ öffnen. Der Prüfjob nennt den Grund (Annotation „Agent Review abgelehnt“, meist auch als PR-Kommentar): PR nicht offen, Branch nicht `agent/*`, Schutzbereiche im Diff, mehr als 5 Runden. |
 | Review-Lauf „waiting“, obwohl `pruefung` grün ist | Jeder `/agent`-Kommentar braucht eine eigene Freigabe im Environment `agent`. | Lauf „Agent Review“ öffnen, **Review deployments**, freigeben. |
 | Lauf bleibt „waiting“ | Freigabe im Environment `agent` fehlt. | Lauf öffnen, **Review deployments**, freigeben. |
-| Lauf startet nicht nach Label | Absender oder Issue-Autor ist nicht der Besitzer, oder das falsche Label. | Bedingung in `.github/workflows/agent.yml` prüfen. Label entfernen und neu setzen. |
+| Lauf startet nicht nach Label | Absender oder Issue-Autor ist nicht der Owner, oder das falsche Label. | Bedingung in `.github/workflows/agent.yml` prüfen. Label entfernen und neu setzen. |
 | Lauf wurde abgebrochen, obwohl ein neuer folgte | Pro Issue gilt ein Lauf zugleich, GitHub hält nur einen wartenden Lauf pro Gruppe. | Label auf demselben Issue erneut setzen, wenn der laufende Lauf fertig ist. |
 | „Action is not allowed“ | Die Allowlist (Settings → Actions → General) kennt die Version nicht. Beim `setup-bun` in der Claude-Action ist der genaue SHA nötig. | Fehlenden Eintrag ergänzen, nach jedem Action-Update neu prüfen. |
 | Authentifizierungsfehler im Lauf | Ein Zugang ist abgelaufen oder widerrufen. | `.github/ablaufdaten.json` und das Secret im Environment prüfen, Zugang erneuern. |
@@ -59,5 +59,5 @@ Beim Erneuern das Datum in `.github/ablaufdaten.json` anpassen und das Housekeep
 
 ## Zuständigkeit
 
-Alles läuft über den Besitzer: Freigabe der Läufe, Review, Merge, Zugänge. Wird die Factory von mehr Personen genutzt,
+Alles läuft über den Owner: Freigabe der Läufe, Review, Merge, Zugänge. Wird die Factory von mehr Personen genutzt,
 gehört das hier überarbeitet (Roadmap S5, eigene Bot-Identität).

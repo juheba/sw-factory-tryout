@@ -1,6 +1,6 @@
 # Roadmap der Software-Factory
 
-Stand: 24.10.2026 (letzte vollständige Durchsicht durch den Besitzer). Diese Datei ist die langfristige Sicht auf Ausbau, Betrieb und Absicherung der Factory. Die
+Stand: 24.10.2026 (letzte vollständige Durchsicht durch den Owner). Diese Datei ist die langfristige Sicht auf Ausbau, Betrieb und Absicherung der Factory. Die
 Stufen selbst beschreibt [process.md](process.md), die Entscheidungen stehen in den [ADRs](adr/).
 
 **Pflege:** Wer einen Punkt umsetzt, ändert Status und Verweis im selben PR. Wird ein Punkt konkret, bekommt er ein
@@ -9,7 +9,7 @@ Datei hält fest, **was** und **warum** gilt, die Issues halten fest, **wer gera
 
 **Erinnerungen:** Der Workflow `housekeeping.yml` legt jeden Montag bei Bedarf ein Issue an, wenn der Stand älter als
 30 Tage ist oder ein Zugang (`.github/ablaufdaten.json`) in höchstens 30 Tagen abläuft. Agent-PRs aktualisieren nur den
-Status ihres Punkts (Regel in `CLAUDE.md`), das Datum bei `Stand:` setzt der Besitzer bei der Durchsicht.
+Status ihres Punkts (Regel in `CLAUDE.md`), das Datum bei `Stand:` setzt der Owner bei der Durchsicht.
 
 Status: ✅ erledigt, ⚠️ in Arbeit, ⬜ offen, ❓ zu bewerten (noch nicht entschieden, ob und wann).
 
@@ -55,7 +55,7 @@ flowchart LR
 | P5 | Rückfrage statt Raten bei mehrdeutigen Kriterien | ⬜ offen | Prompt-Ergänzung: Frage ins Issue, Lauf endet. |
 | P6 | Konflikte mit `main` | ❓ zu bewerten | Rebase bleibt verboten. Erlauben von `git merge origin/main` abwägen. |
 | P7 | Issue-Qualität | ⚠️ in Arbeit | Vorlage geschärft (PR #40). Messen, ob schlechte Issues die häufigste Ursache für Nacharbeit sind (M1). |
-| P8 | Lernschleife: wiederkehrende Review-Hinweise nach `CLAUDE.md` | ⬜ offen | Nach dem Merge kurz festhalten, was sich wiederholt. `CLAUDE.md` ist Schutzbereich, Änderung durch den Besitzer. |
+| P8 | Lernschleife: wiederkehrende Review-Hinweise nach `CLAUDE.md` | ⬜ offen | Nach dem Merge kurz festhalten, was sich wiederholt. `CLAUDE.md` ist Schutzbereich, Änderung durch den Owner. |
 
 ## Sicherheit
 
@@ -63,11 +63,11 @@ flowchart LR
 |---|---|---|---|
 | S1 | Technische Sperren des Agenten | ✅ erledigt | Berechtigungstest bestanden (12 von 12). Regeln in `.claude/agent-settings.json`. |
 | S2 | Aktionen auf Commit-SHAs festlegen | ✅ erledigt | PR #40. Option „Require actions to be pinned“ erst nach Test einschalten. |
-| S3 | Widerruf des `setup-token`-Tokens klären | ⬜ offen | Besitzer: in Doku oder Einstellungen nachsehen. Ohne bekannten Widerruf ist der Verlust des Tokens ein Risiko. |
-| S4 | Ablaufdaten: PAT 22.01.2027, OAuth-Token Oktober 2027 | ✅ erledigt | Meldung per Issue 30 Tage vorher (`housekeeping.yml`, Daten in `.github/ablaufdaten.json`). Daten vom Besitzer geprüft (25.10.2026). Beim Erneuern eines Zugangs das Datum anpassen. |
-| S5 | Eigene Bot-Identität mit minimaler GitHub-App | ❓ zu bewerten | Löst: PAT als statisches Token, Agent kann technisch mergen, Approve-Review nicht möglich (Autor = Besitzer). |
+| S3 | Widerruf des `setup-token`-Tokens klären | ⬜ offen | Owner: in Doku oder Einstellungen nachsehen. Ohne bekannten Widerruf ist der Verlust des Tokens ein Risiko. |
+| S4 | Ablaufdaten: PAT 22.01.2027, OAuth-Token Oktober 2027 | ✅ erledigt | Meldung per Issue 30 Tage vorher (`housekeeping.yml`, Daten in `.github/ablaufdaten.json`). Daten vom Owner geprüft (25.10.2026). Beim Erneuern eines Zugangs das Datum anpassen. |
+| S5 | Eigene Bot-Identität mit minimaler GitHub-App | ❓ zu bewerten | Löst: PAT als statisches Token, Agent kann technisch mergen, Approve-Review nicht möglich (Autor = Owner). |
 | S6 | Pflicht-Check `agent-approval-check` | ❓ zu bewerten | Braucht S5. |
-| S7 | Secret Scanning und Push Protection | ✅ erledigt | Vom Besitzer per Screenshot belegt (25.10.2026): Secret Protection und Push Protection aktiv, Dependabot-Warnungen und Sicherheits-Updates an. Optional noch aus: Private Vulnerability Reporting, Malware-Warnungen. |
+| S7 | Secret Scanning und Push Protection | ✅ erledigt | Vom Owner per Screenshot belegt (25.10.2026): Secret Protection und Push Protection aktiv, Dependabot-Warnungen und Sicherheits-Updates an. Optional noch aus: Private Vulnerability Reporting, Malware-Warnungen. |
 | S8 | CodeQL und Egress-Filter | ❓ zu bewerten | CodeQL ist günstig, Egress-Filter aufwändiger. |
 | S9 | Notausschalter | ⚠️ in Arbeit | Beschrieben in [betrieb.md](betrieb.md). Noch nicht geprobt, einmal durchspielen (Lauf abbrechen, Workflow abschalten). Widerruf des OAuth-Tokens ungeklärt (S3). |
 | S10 | Nutzung des Abo-Tokens im Dauerbetrieb | ❓ zu bewerten | Nutzungsbedingungen und Limits für automatisierte Läufe prüfen. Ich habe das nicht geprüft. |
@@ -115,6 +115,6 @@ Dinge, die beim Gestalten leicht untergehen, weil der Alltag sie nicht einforder
 3. **Notfall.** Ein Weg, schnell zu stoppen (S9), und ein bekannter Widerruf der Tokens (S3).
 4. **Ablaufende Zugänge** (S4): ein Token, das stillschweigend abläuft, stoppt den Betrieb.
 5. **Nutzungsbedingungen** für den Dauerbetrieb mit dem Abo-Token (S10).
-6. **Ein Einzelner als Engpass.** Review, Freigabe im Environment und Merge laufen über den Besitzer. Mehr
+6. **Ein Einzelner als Engpass.** Review, Freigabe im Environment und Merge laufen über den Owner. Mehr
    Parallelität (B2) verschiebt die Last dorthin.
 7. **Wissen, das im Chat bleibt.** Entscheidungen gehören in ADRs, offene Punkte in diese Datei, Lehren in `CLAUDE.md`.

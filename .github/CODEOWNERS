@@ -1,4 +1,4 @@
-# Schutzbereiche: Hier dürfen Agents nichts ohne Review des Besitzers ändern.
+# Schutzbereiche: Hier dürfen Agents nichts ohne Review des Owners ändern.
 # Wirksam erst, wenn im Ruleset für main "Require review from Code Owners" aktiv ist.
 # Begründung und Einrichtung: docs/adr/0002-agent-sicherheit.md
 

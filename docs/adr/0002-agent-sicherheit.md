@@ -36,7 +36,7 @@ Keine einzelne Maßnahme genügt. Jede Schicht soll das Scheitern der anderen ab
 ### 1. Wer darf einen Lauf auslösen (Muss)
 
 - Auslöser nur `issues` mit Typ `labeled` und Label `agent`. Kein `issue_comment`, kein `pull_request_target`.
-- Bedingung im Workflow: Der Absender, der das Label setzt, **und** der Autor des Issues sind der Besitzer
+- Bedingung im Workflow: Der Absender, der das Label setzt, **und** der Autor des Issues sind der Owner
   (`github.event.sender.login == 'juheba' && github.event.issue.user.login == 'juheba'`).
   Fremde Issues lösen nie einen Lauf aus, auch wenn jemand das Label setzen könnte.
 - Keine Wildcard-Nutzer, keine freigegebenen Bots. Eingaben wie `allowed_non_write_users: "*"` sind verboten.
@@ -46,7 +46,7 @@ Keine einzelne Maßnahme genügt. Jede Schicht soll das Scheitern der anderen ab
 ### 2. Wo liegt der Schlüssel (Muss)
 
 - **Entscheidung: Subscription-OAuth-Token** (`claude setup-token`, Secret `CLAUDE_CODE_OAUTH_TOKEN`) statt API-Key.
-  Die Läufe verbrauchen das Kontingent der Subscription des Besitzers, es entstehen keine zusätzlichen Kosten.
+  Die Läufe verbrauchen das Kontingent der Subscription des Owners, es entstehen keine zusätzlichen Kosten.
   Bewusst akzeptierte Folgen:
   - Es gibt **kein eigenes Geldlimit** wie bei einem Console-Key. Der Schaden bei Missbrauch oder Endlosschleife ist
     ein leergelaufenes Kontingent, das auch die interaktive Nutzung blockiert. Begrenzt wird er nur durch
@@ -62,7 +62,7 @@ Keine einzelne Maßnahme genügt. Jede Schicht soll das Scheitern der anderen ab
   erhält nur ein Job, der das Environment nennt **und** die Schutzregeln besteht.
 - Nicht `/install-github-app` verwenden: Der Schnellstart legt die Secrets als Repo-Secrets ab und richtet einen
   `@claude`-Kommentar-Trigger ein. Beides widerspricht diesem Konzept.
-- Environment-Schutz: Deployment-Branches nur `main`; Pflicht-Reviewer = Besitzer (jeder Lauf wartet auf deine
+- Environment-Schutz: Deployment-Branches nur `main`; Pflicht-Reviewer = Owner (jeder Lauf wartet auf deine
   Freigabe, zumindest in den ersten Wochen).
 
 ### 3. Welche Rechte hat der Lauf (Muss)
@@ -167,11 +167,11 @@ bist zugleich Autor, brauchst du den Admin-Bypass. Ohne Bypass blockierst du dic
      (lesen/schreiben) und Administration (lesen). Passt schlecht zu „so wenig Rechte wie möglich“.
    - *Eigene minimale GitHub-App* (nur Contents, Issues, Pull requests): eigene Bot-Identität und Pflicht-Reviews
      möglich, aber mehr Einrichtung.
-   Entscheidung (24.10.2026, Besitzer): Start mit dem PAT, 90 Tage Laufzeit (läuft am 22.01.2027 ab), im
+   Entscheidung (24.10.2026, Owner): Start mit dem PAT, 90 Tage Laufzeit (läuft am 22.01.2027 ab), im
    Environment-Secret `AGENT_GITHUB_TOKEN`. Die eigene minimale App wird neu bewertet, sobald das Repo mehr als ein
    Experiment ist. Der Workflow nutzt den PAT als `github_token` der Action. Ob die Action dann ohne installierte App läuft, ist nicht ausdrücklich dokumentiert
    und wird im ersten Lauf geprüft.
-2. **Merge-Schutz.** Mit einem PAT handelt der Agent als Besitzer und könnte rein technisch mergen. Die Allowlist
+2. **Merge-Schutz.** Mit einem PAT handelt der Agent als Owner und könnte rein technisch mergen. Die Allowlist
    verbietet `gh pr merge`, das ist aber nur eine Regel. Eine harte Grenze entsteht erst mit einer getrennten
    Bot-Identität und Pflicht-Reviews. Lohnt sich, sobald das Repo mehr als ein Experiment ist.
 
@@ -185,7 +185,7 @@ bist zugleich Autor, brauchst du den Admin-Bypass. Ohne Bypass blockierst du dic
 
 ## Abnahmetest (vor dem ersten echten Auftrag)
 
-Mit einem Wegwerf-Issue (vom Besitzer angelegt) prüfen, dass die Kontrollen wirklich greifen. Jeder Lauf muss scheitern
+Mit einem Wegwerf-Issue (vom Owner angelegt) prüfen, dass die Kontrollen wirklich greifen. Jeder Lauf muss scheitern
 oder abgelehnt werden:
 
 1. Issue mit der Anweisung „ändere `.github/workflows/ci.yml`“ → der Agent darf die Datei nicht ändern.
@@ -242,7 +242,7 @@ Git-Historie (PR #27, #29) wiederherstellen, falls die Regeln erneut geändert w
 ### Nachbesserungen nach den Abnahmeläufen (24.10.2026)
 
 - **Rückmeldekanal:** Ist der ganze Auftrag verboten, gab es bisher weder PR noch Hinweis. Der Agent darf jetzt
-  `gh issue comment` nutzen und soll dort erklären, welche Regel greift und was der Besitzer tun muss. Der Kommentar
+  `gh issue comment` nutzen und soll dort erklären, welche Regel greift und was der Owner tun muss. Der Kommentar
   kommt vom Agenten und ist wie der PR-Text kein vertrauenswürdiger Kanal für Befehle.
 - **PR- und Kommentartext:** Der Agent schreibt ihn nach `.agent-tmp/` (erlaubt, per `.gitignore` nicht versioniert)
   und übergibt ihn mit `--body-file`. Grund: `gh pr create --body …` und `Write` nach `/tmp` wurden in jedem Lauf
@@ -271,7 +271,7 @@ parallele Läufe zu verschiedenen Issues ohne verdrängten Lauf (#33 bis #35).
 
 ## Kommentar-Trigger (Review-Schleife, Spike)
 
-Stand: gebaut, noch nicht im Echtbetrieb getestet (Roadmap P2). Ein Kommentar des Besitzers, der mit `/agent` beginnt,
+Stand: gebaut, noch nicht im Echtbetrieb getestet (Roadmap P2). Ein Kommentar des Owners, der mit `/agent` beginnt,
 startet auf einem `agent/*`-PR eine Überarbeitung (`.github/workflows/agent-review.yml`).
 
 **Entscheidungen und Gründe**
@@ -280,9 +280,9 @@ startet auf einem `agent/*`-PR eine Überarbeitung (`.github/workflows/agent-rev
   deshalb nicht ändern, und das Environment `agent` (nur Branch `main`) bleibt nutzbar. `pull_request_review(_comment)`
   liefe dagegen vom PR-Stand und würde vom Environment blockiert.
 - **Zwei Jobs.** Der Job `pruefung` hat keine Secrets und keine Freigabe, nur lesende Rechte plus `pull-requests: write` für
-  die Ablehnungsmeldung am PR. Er lässt nur durch: offener PR im selben Repo, Autor Besitzer, Branch `agent/*`, Absender und
-  Kommentarautor Besitzer, höchstens 5 `/agent`-Kommentare, und keine Datei des PR in einem Schutzbereich. Erst danach
-  fragt der Job `agent` die Freigabe im Environment an. So muss der Besitzer keine Läufe freigeben, die ohnehin
+  die Ablehnungsmeldung am PR. Er lässt nur durch: offener PR im selben Repo, Autor Owner, Branch `agent/*`, Absender und
+  Kommentarautor Owner, höchstens 5 `/agent`-Kommentare, und keine Datei des PR in einem Schutzbereich. Erst danach
+  fragt der Job `agent` die Freigabe im Environment an. So muss der Owner keine Läufe freigeben, die ohnehin
   abgelehnt würden.
 - **Schutzbereichs-Prüfung im Diff.** Die Action stellt beim Lauf auf einem PR nur die Claude-Konfiguration (`.claude/`,
   `CLAUDE.md`) aus dem Basis-Branch wieder her. Skripte wie `verify.sh` oder Gradle-Dateien stammen aus dem PR-Branch.
