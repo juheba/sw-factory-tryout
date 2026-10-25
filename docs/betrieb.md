@@ -79,7 +79,7 @@ Modellanfragen stellen (keine Remote-Control-Sitzungen, keine Connectoren).
 
 **Unsicher:** Ob der Widerruf unter `claude.ai/settings/claude-code` für `setup-token`-Tokens greift und ob sie dort einzeln
 erscheinen, ist nicht belegt. Es gibt offene Meldungen im Repository `anthropics/claude-code`, nach denen widerrufene
-Tokens weiter funktionierten. Deshalb den Widerruf einmal mit einem Wegwerf-Token proben (Roadmap S3 und S9).
+Tokens weiter funktionierten. Der Owner hat entschieden, den Widerruf nicht zu proben und das Restrisiko zu akzeptieren (ADR 0002, Roadmap S3). Im Ernstfall also die Schritte oben ausführen und das Ergebnis des Tests mit `claude -p` selbst prüfen.
 
 **Robustere Alternativen (Roadmap S11):** ein API-Key aus der Console (jederzeit löschbar, klar dokumentierter Widerruf)
 oder die Anmeldung per OIDC-Federation ohne statisches Secret.

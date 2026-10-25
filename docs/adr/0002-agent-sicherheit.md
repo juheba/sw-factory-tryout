@@ -184,6 +184,13 @@ bist zugleich Autor, brauchst du den Admin-Bypass. Ohne Bypass blockierst du dic
   Freigabe jedes Laufs, Review jedes PRs. Optional später: Egress-Filter für den Runner.
 - `Bash`-Regeln sind Muster und keine Sandbox. Sie fangen Fehlverhalten ab, nicht jeden gezielten Umgehungsversuch.
   Deshalb gibt es die Schichten 1 bis 3 und 5 außerhalb des Agents.
+- **Das `setup-token`-Token lässt sich nicht belegt widerrufen** (Entscheidung des Owners vom 26.10.2026, Roadmap S3).
+  Es ist ein Abo-Token ohne CLI-Befehl zum Widerrufen. Ein Löschen des GitHub-Secrets macht es nicht ungültig. Ein
+  Widerruf unter `claude.ai/settings/claude-code` ist der einzige genannte Weg, seine Wirkung ist nicht belegt und
+  wird bewusst nicht geprobt. Das Token kann nur Modellanfragen stellen, der Schaden bei Verlust ist Abo-Verbrauch und
+  der Inhalt, den ein Workflow an Claude schickt. Gegenmittel: Environment `agent` mit Prüfer und Branch `main`,
+  kein Admin-Bypass, Rotation vor Ablauf (`.github/ablaufdaten.json`). Alternative bei Bedarf: API-Key oder
+  OIDC-Federation (Roadmap S11).
 
 ## Abnahmetest (vor dem ersten echten Auftrag)
 
