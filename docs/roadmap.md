@@ -26,9 +26,9 @@ flowchart LR
     SEC -.-> S3
     OPS[Querschnitt: Betrieb und Messung] -.-> S2
     OPS -.-> S4
-    classDef done fill:#d4edda,stroke:#2d6a3e
-    classDef active fill:#fff3cd,stroke:#8a6d1c
-    classDef planned fill:#eef0f3,stroke:#6b7280
+    classDef done fill:#d4edda,stroke:#2d6a3e,color:#1f2328
+    classDef active fill:#fff3cd,stroke:#8a6d1c,color:#1f2328
+    classDef planned fill:#eef0f3,stroke:#6b7280,color:#1f2328
     class S1,S2 done
     class RV active
     class S3,S4,S5,SEC,OPS planned
