@@ -71,7 +71,11 @@ Modellanfragen stellen (keine Remote-Control-Sitzungen, keine Connectoren).
 3. **Prüfen, ob es wirkt:** `CLAUDE_CODE_OAUTH_TOKEN=<altes Token> claude -p "ping"` lokal ausführen, erwartet wird ein
    Fehler „OAuth token revoked“ (401). Das Token dafür nicht in Chats oder Issues einfügen.
 4. **Wirkt es nicht:** Support einschalten (support.claude.com) und als Sicherheitsvorfall melden.
-5. **Neu aufsetzen** (`/logout`, `/login`, neues Token als Secret), danach Abo-Verbrauch beobachten.
+5. **Neu aufsetzen** (`/logout`, `/login`, neues Token als Secret).
+6. **Spuren suchen und auswerten:** Prüfen, ob das Token in Logs, PRs, Issues oder Dateien aufgetaucht sein könnte, und
+   dort bereinigen. Auf unerwarteten Abo-Verbrauch achten. Das GitHub-Audit-Log (Kategorie `workflows`, 180 Tage) gibt es
+   nur für Organisationen, nicht für dieses persönliche Repo. Hier hilft die Lauf-Historie unter Actions.
+   Bei Teams oder Enterprise zusätzlich den Org-Admin informieren.
 
 **Unsicher:** Ob der Widerruf unter `claude.ai/settings/claude-code` für `setup-token`-Tokens greift und ob sie dort einzeln
 erscheinen, ist nicht belegt. Es gibt offene Meldungen im Repository `anthropics/claude-code`, nach denen widerrufene
@@ -79,6 +83,19 @@ Tokens weiter funktionierten. Deshalb den Widerruf einmal mit einem Wegwerf-Toke
 
 **Robustere Alternativen (Roadmap S11):** ein API-Key aus der Console (jederzeit löschbar, klar dokumentierter Widerruf)
 oder die Anmeldung per OIDC-Federation ohne statisches Secret.
+
+**Quellen der Recherche** (vom Owner aus einer anderen Sitzung übernommen, von mir nicht abgerufen):
+[Authentifizierung, langlebiges Token](https://code.claude.com/docs/en/authentication#generate-a-long-lived-token),
+[GitHub Actions](https://code.claude.com/docs/en/github-actions),
+[Fehlermeldungen](https://code.claude.com/docs/en/errors),
+[Feature-Wunsch `--list`/`--revoke` (#48373)](https://github.com/anthropics/claude-code/issues/48373),
+[weiterer Feature-Wunsch (#57400)](https://github.com/anthropics/claude-code/issues/57400),
+[serverseitiger Widerruf (#34198)](https://github.com/anthropics/claude-code/issues/34198),
+[Widerruf wirkungslos (#43801)](https://github.com/anthropics/claude-code/issues/43801),
+[Widerruf-Schaltfläche reagiert nicht (#98582)](https://github.com/anthropics/claude-code/issues/98582),
+[Einrichtung der Action inkl. Federation](https://github.com/anthropics/claude-code-action/blob/main/docs/setup.md),
+[GitHub Environments](https://docs.github.com/en/actions/reference/environments).
+Ein Suchtreffer deutete an, dass ein Widerruf inzwischen sofort wirkt. Bestätigt ist das nicht.
 
 ## Zuständigkeit
 
