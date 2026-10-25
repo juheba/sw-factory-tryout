@@ -109,6 +109,15 @@ sequenceDiagram
 `pruefung` entscheidet vor der Freigabe, ob der Befehl zulässig ist. Pro PR läuft höchstens ein Lauf. Die Schleife ist
 ein Spike und noch nicht im Echtbetrieb bewertet (Roadmap P2).
 
+## Gestaltung von Mermaid-Diagrammen
+
+Diagramme ohne eigenes Styling übernehmen das Theme von GitHub und sind im hellen wie im dunklen Modus lesbar. Wer
+Knoten einfärbt (zum Beispiel Status im Überblick von [roadmap.md](roadmap.md)), setzt in jedem `classDef` neben `fill`
+und `stroke` auch eine feste Schriftfarbe `color`, denn GitHub färbt den Text im Darkmode hell, die Füllung bliebe aber
+hell. Verwendet werden helle Füllungen mit `color:#1f2328`: erledigt `fill:#d4edda,stroke:#2d6a3e`, in Arbeit
+`fill:#fff3cd,stroke:#8a6d1c`, geplant `fill:#eef0f3,stroke:#6b7280`. Der Kontrast von Text zu Füllung muss mindestens
+4,5 : 1 (WCAG AA) betragen; mit diesen Farben liegt er bei etwa 12 : 1 bis 14 : 1.
+
 ## Entscheidungen
 
 - [ADR 0001: Spec-first mit OpenAPI](adr/0001-spec-first-openapi.md)
