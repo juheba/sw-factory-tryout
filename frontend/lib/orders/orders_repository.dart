@@ -2,6 +2,9 @@ import 'package:order_api/api.dart' as api;
 
 enum OrderStatus { created, cancelled }
 
+/// Sortierung nach Anlegedatum.
+enum OrderSort { newestFirst, oldestFirst }
+
 /// Frontend-eigenes Modell. Entkoppelt die UI vom generierten Client:
 /// Ändert sich die Spec, muss nur diese Datei angepasst werden.
 class OrderSummary {
@@ -20,7 +23,8 @@ class OrderSummary {
 
 abstract class OrdersRepository {
   /// Liefert alle Bestellungen, mit [status] nur die mit diesem Status.
-  Future<List<OrderSummary>> list({OrderStatus? status});
+  /// Ohne [sort] bleibt die Reihenfolge des Anlegens.
+  Future<List<OrderSummary>> list({OrderStatus? status, OrderSort? sort});
 
   Future<OrderSummary> create({
     required String customerId,
@@ -39,9 +43,16 @@ class ApiOrdersRepository implements OrdersRepository {
   final api.OrdersApi _api;
 
   @override
-  Future<List<OrderSummary>> list({OrderStatus? status}) async {
+  Future<List<OrderSummary>> list({
+    OrderStatus? status,
+    OrderSort? sort,
+  }) async {
     final orders =
-        await _api.listOrders(status: _toApiStatus(status)) ?? <api.Order>[];
+        await _api.listOrders(
+          status: _toApiStatus(status),
+          sort: _toApiSort(sort),
+        ) ??
+        <api.Order>[];
     return orders.map(_toSummary).toList();
   }
 
@@ -75,6 +86,12 @@ class ApiOrdersRepository implements OrdersRepository {
     null => null,
     OrderStatus.created => api.OrderStatus.CREATED,
     OrderStatus.cancelled => api.OrderStatus.CANCELLED,
+  };
+
+  api.OrderSort? _toApiSort(OrderSort? sort) => switch (sort) {
+    null => null,
+    OrderSort.newestFirst => api.OrderSort.createdAtDesc,
+    OrderSort.oldestFirst => api.OrderSort.createdAtAsc,
   };
 
   OrderSummary _toSummary(api.Order order) => OrderSummary(

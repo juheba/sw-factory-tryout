@@ -14,17 +14,23 @@ class OrdersPage extends StatefulWidget {
 class _OrdersPageState extends State<OrdersPage> {
   late Future<List<OrderSummary>> _orders;
   OrderStatus? _filter;
+  OrderSort _sort = OrderSort.oldestFirst;
 
   @override
   void initState() {
     super.initState();
-    _orders = widget.repository.list(status: _filter);
+    _orders = widget.repository.list(status: _filter, sort: _sort);
   }
 
   void _reload() {
     setState(() {
-      _orders = widget.repository.list(status: _filter);
+      _orders = widget.repository.list(status: _filter, sort: _sort);
     });
+  }
+
+  void _setSort(OrderSort sort) {
+    _sort = sort;
+    _reload();
   }
 
   void _setFilter(OrderStatus? status) {
@@ -72,6 +78,23 @@ class _OrdersPageState extends State<OrdersPage> {
               ],
               selected: {_filter},
               onSelectionChanged: (selection) => _setFilter(selection.first),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: SegmentedButton<OrderSort>(
+              segments: const [
+                ButtonSegment(
+                  value: OrderSort.newestFirst,
+                  label: Text('Neueste zuerst'),
+                ),
+                ButtonSegment(
+                  value: OrderSort.oldestFirst,
+                  label: Text('Älteste zuerst'),
+                ),
+              ],
+              selected: {_sort},
+              onSelectionChanged: (selection) => _setSort(selection.first),
             ),
           ),
           Expanded(

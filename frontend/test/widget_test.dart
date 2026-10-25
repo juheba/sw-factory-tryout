@@ -10,9 +10,18 @@ class FakeOrdersRepository implements OrdersRepository {
   final List<OrderSummary> orders = [];
 
   @override
-  Future<List<OrderSummary>> list({OrderStatus? status}) async => orders
-      .where((order) => status == null || order.status == status)
-      .toList();
+  Future<List<OrderSummary>> list({
+    OrderStatus? status,
+    OrderSort? sort,
+  }) async {
+    final filtered = orders
+        .where((order) => status == null || order.status == status)
+        .toList();
+    // `orders` ist in Anlegereihenfolge (älteste zuerst) gespeichert.
+    return sort == OrderSort.newestFirst
+        ? filtered.reversed.toList()
+        : filtered;
+  }
 
   @override
   Future<OrderSummary> create({
@@ -146,6 +155,63 @@ void main() {
 
       expect(find.byType(ListTile), findsNWidgets(2));
       expect(find.byType(Chip), findsOneWidget);
+    });
+  });
+
+  group('Sortierung', () {
+    Future<void> pumpWithThreeOrders(WidgetTester tester) async {
+      await tester.pumpWidget(OrderApp(repository: FakeOrdersRepository()));
+      await tester.pumpAndSettle();
+      for (var i = 0; i < 3; i++) {
+        await tester.tap(find.byTooltip('Demo-Bestellung anlegen'));
+        await tester.pumpAndSettle();
+      }
+    }
+
+    List<String> visibleIds(WidgetTester tester) => tester
+        .widgetList<ListTile>(find.byType(ListTile))
+        .map((tile) => (tile.subtitle! as Text).data!)
+        .map((text) => text.split(' · ').last)
+        .toList();
+
+    Future<void> tapLabel(WidgetTester tester, String label) async {
+      await tester.tap(find.text(label));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('Älteste zuerst ist voreingestellt', (tester) async {
+      await pumpWithThreeOrders(tester);
+
+      expect(visibleIds(tester), ['id-1', 'id-2', 'id-3']);
+    });
+
+    testWidgets('Neueste zuerst kehrt die Reihenfolge um', (tester) async {
+      await pumpWithThreeOrders(tester);
+
+      await tapLabel(tester, 'Neueste zuerst');
+
+      expect(visibleIds(tester), ['id-3', 'id-2', 'id-1']);
+
+      await tapLabel(tester, 'Älteste zuerst');
+
+      expect(visibleIds(tester), ['id-1', 'id-2', 'id-3']);
+    });
+
+    testWidgets('Sortierung bleibt beim Filterwechsel erhalten', (
+      tester,
+    ) async {
+      await pumpWithThreeOrders(tester);
+      await tester.tap(find.byTooltip('Bestellung stornieren').at(1));
+      await tester.pumpAndSettle();
+      await tapLabel(tester, 'Neueste zuerst');
+
+      await tapLabel(tester, 'Aktiv');
+
+      expect(visibleIds(tester), ['id-3', 'id-1']);
+
+      await tapLabel(tester, 'Alle');
+
+      expect(visibleIds(tester), ['id-3', 'id-2', 'id-1']);
     });
   });
 }

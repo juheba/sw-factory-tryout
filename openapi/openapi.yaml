@@ -24,6 +24,12 @@ paths:
           description: Nur Bestellungen mit diesem Status liefern
           schema:
             $ref: "#/components/schemas/OrderStatus"
+        - name: sort
+          in: query
+          required: false
+          description: Sortierung nach Anlegedatum; ohne Angabe bleibt die Reihenfolge des Anlegens
+          schema:
+            $ref: "#/components/schemas/OrderSort"
       responses:
         "200":
           description: Liste der Bestellungen
@@ -34,7 +40,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/Order"
         "400":
-          description: Ungültiger Statuswert
+          description: Ungültiger Wert für status oder sort
           content:
             application/problem+json:
               schema:
@@ -159,6 +165,10 @@ components:
     OrderStatus:
       type: string
       enum: [CREATED, CANCELLED]
+
+    OrderSort:
+      type: string
+      enum: [createdAt_asc, createdAt_desc]
 
     Order:
       type: object
