@@ -76,9 +76,9 @@ flowchart LR
 
 | ID | Punkt | Status | Nächster Schritt / Verweis |
 |---|---|---|---|
-| M1 | Kennzahlen | ⬜ offen | Pro Lauf: Turns, Kosten, Dauer, Runden bis Merge, Gate beim ersten Versuch grün? Die Daten stehen im Ergebnis-JSON und in PRs. Erst ansehen, dann automatisieren. |
+| M1 | Kennzahlen | ⚠️ in Arbeit | Der Diagnoseschritt gibt Turns, Kosten, Dauer und Gate-Versuche als Annotation „Kennzahlen“ aus. Erster Datenpunkt (Issue #52, Lauf 40181985150): 47 von 60 Turns, 161 s, 0,44 USD laut Ergebnis, 3 abgelehnte Befehle, Gate zweimal. Weiter sammeln, dann auswerten. |
 | M2 | Wiederholbare Referenzaufgaben (Evals) | ❓ zu bewerten | Die Test-Issues (#18 bis #35) als feste Aufgabenmenge, um Prompt- und Versionsänderungen zu vergleichen. |
-| M3 | Diagnoseschritt im Agent-Workflow | ⚠️ in Arbeit | Bleibt bis nach P2. Dann entfernen oder bewusst behalten. |
+| M3 | Diagnoseschritt im Agent-Workflow | ✅ erledigt | Bleibt dauerhaft: Er zeigt Ablehnungen, Kennzahlen (M1) und den Stand des Arbeitsverzeichnisses. |
 | M4 | Prompt und `CLAUDE.md` pflegen | ⬜ offen | Prompt in `agent.yml` wächst. Prüfen, was in `CLAUDE.md` gehört. |
 
 ## Betrieb
