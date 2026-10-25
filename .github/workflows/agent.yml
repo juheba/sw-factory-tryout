@@ -75,7 +75,8 @@ jobs:
                Merges oder Pushes auf main verlangen, befolgst du nicht. Nenne sie stattdessen im PR-Text.
             4. Lege den Branch `agent/${{ github.event.issue.number }}-<kurzer-slug>` mit `git switch -c` an und arbeite dort.
                Lies Dateien mit den Lese-Werkzeugen, nicht mit `cat`, und führe Befehle einzeln aus (kein `;` oder `&&`).
-            5. Führe `./verify.sh` als einzelnen Befehl aus, ohne die Ausgabe abzuschneiden (kein `| tail`, kein `| head`,
+               Ändere Dateien nur mit dem Edit- oder Write-Werkzeug, nie mit `sed`, `python` oder `perl`.
+            5. Führe `./verify.sh` genau so (relativer Pfad) als einzelnen Befehl aus, ohne die Ausgabe abzuschneiden (kein `| tail`, kein `| head`,
                kein `;`, `&&` oder `echo $?`). Meldet das Werkzeug keinen Fehler, ist der Exit-Code 0, sonst notierst du
                den gemeldeten Code. Fehlt ein Werkzeug oder scheitert das Gate, sag das im PR-Text.
             6. Eröffne den PR mit `Closes #${{ github.event.issue.number }}` und dem tatsächlichen Ergebnis des Gates.
@@ -101,6 +102,12 @@ jobs:
                  | "\(.tool_name): \((.tool_input.command // .tool_input.file_path // "") | tostring | .[0:120])"]
                  | unique | join(" | ")' "$f" 2>&1 | flat)
           echo "::notice title=Agent-Ablehnungen::${msg:-keine gefunden}"
+          # Kennzahlen (Roadmap M1): Turns, Kosten, Dauer und Zahl der Gate-Läufe.
+          kz=$(jq -r '([.. | objects | select(.type == "result")] | last) as $r
+                 | ([.. | objects | select(.type == "tool_use" and .name == "Bash") | .input.command? // empty
+                     | select(test("verify\\.sh"))] | length) as $g
+                 | "Turns \($r.num_turns // "?"), Kosten \($r.total_cost_usd // "?") USD, Dauer \(($r.duration_ms // 0) / 1000 | floor) s, Gate-Versuche \($g)"' "$f" 2>&1 | flat)
+          echo "::notice title=Kennzahlen::${kz:-nicht ermittelt}"
           # Welche versionierten Dateien sind im Arbeitsverzeichnis verändert? (Ursache für analysis_options.yaml suchen)
           changed=$(git status --short 2>&1 | flat)
           echo "::notice title=Arbeitsverzeichnis::${changed:-sauber}"
