@@ -49,7 +49,7 @@ flowchart LR
 | ID | Punkt | Status | Nächster Schritt / Verweis |
 |---|---|---|---|
 | P1 | Rückmeldekanal bei verbotenem Auftrag | ✅ erledigt | Kommentar im Issue (Issue #33, PR #32). |
-| P2 | Review-Schleife per Kommentar `/agent …` | ⚠️ in Arbeit | Spike gebaut (`agent-review.yml`, Interaktiv-Modus, Prüfjob mit Schutzbereichs-Check, ADR 0002 „Kommentar-Trigger“). Läuft erst nach dem Merge (`issue_comment` nutzt `main`). Danach mit echtem `agent/*`-PR testen, dann ggf. Eigenbau. |
+| P2 | Review-Schleife per Kommentar `/agent …` | ⚠️ in Arbeit | Läuft (ADR 0002, „Ergebnisse der Review-Schleife“): Normalfall, Schutzbereich und Obergrenze bestanden. Offen: Ablehnungskommentar am PR nach Rechte-Fix erneut prüfen, dann ✅. Test mit fremdem Konto entfällt (braucht Zweitkonto). |
 | P3 | Selbstheilung bei roter CI | ⬜ offen | Abwandlung von `examples/ci-failure-auto-fix.yml` der Action: nur `agent/*`-PRs, Run-ID statt Logs im Prompt, Obergrenze, Freigabe. |
 | P4 | Vorab-Review durch einen zweiten, schreibgeschützten Lauf | ❓ zu bewerten | Zuerst manuell `/code-review` lokal ausprobieren. Plugin-Variante: Pin- und Environment-Frage klären. |
 | P5 | Rückfrage statt Raten bei mehrdeutigen Kriterien | ⬜ offen | Prompt-Ergänzung: Frage ins Issue, Lauf endet. |
@@ -64,7 +64,7 @@ flowchart LR
 | S1 | Technische Sperren des Agenten | ✅ erledigt | Berechtigungstest bestanden (12 von 12). Regeln in `.claude/agent-settings.json`. |
 | S2 | Aktionen auf Commit-SHAs festlegen | ✅ erledigt | PR #40. Option „Require actions to be pinned“ erst nach Test einschalten. |
 | S3 | Widerruf des `setup-token`-Tokens klären | ⬜ offen | Besitzer: in Doku oder Einstellungen nachsehen. Ohne bekannten Widerruf ist der Verlust des Tokens ein Risiko. |
-| S4 | Ablaufdaten: PAT 22.01.2027, OAuth-Token Oktober 2027 | ✅ erledigt | Meldung per Issue 30 Tage vorher (`housekeeping.yml`, Daten in `.github/ablaufdaten.json`). Erster Lauf auf GitHub grün. Das OAuth-Datum (15.10.2027) ist eine vorsichtige Schätzung, bitte prüfen. Beim Erneuern eines Zugangs das Datum anpassen. |
+| S4 | Ablaufdaten: PAT 22.01.2027, OAuth-Token Oktober 2027 | ✅ erledigt | Meldung per Issue 30 Tage vorher (`housekeeping.yml`, Daten in `.github/ablaufdaten.json`). Daten vom Besitzer geprüft (25.10.2026). Beim Erneuern eines Zugangs das Datum anpassen. |
 | S5 | Eigene Bot-Identität mit minimaler GitHub-App | ❓ zu bewerten | Löst: PAT als statisches Token, Agent kann technisch mergen, Approve-Review nicht möglich (Autor = Besitzer). |
 | S6 | Pflicht-Check `agent-approval-check` | ❓ zu bewerten | Braucht S5. |
 | S7 | Secret Scanning und Push Protection | ❓ zu bewerten | Repo-Einstellung prüfen (öffentliches Repo). Sicht darauf hat nur der Besitzer. |

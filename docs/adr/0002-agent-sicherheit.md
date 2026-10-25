@@ -319,8 +319,8 @@ kein Lauf. (4) Sechster Kommentar: Ablehnung wegen der Obergrenze. (5) Annotatio
 | Nr. | Prüfung | Stand |
 |---|---|---|
 | 1 | `/agent` auf einem sauberen `agent/*`-PR (PR #46, Lauf 40138329969) | bestanden: Commit auf dem PR-Branch, Antwortkommentar, CI grün, Arbeitsverzeichnis sauber. Der Betrieb nur mit PAT (ohne Claude-GitHub-App) funktioniert. |
-| 2 | PR mit Datei in `config/` (PR #47) | Ablehnung greift (`agent` übersprungen), aber der Prüfjob endete mit Fehler und der Ablehnungskommentar fehlte. Nachgebessert: Ein fehlgeschlagener Kommentar führt nur noch zu einer Warnung mit der Fehlermeldung (die Rechte bleiben bei `issues: write`, das für PR-Kommentare genügen sollte). Wiederholung nach dem Merge. |
+| 2 | PR mit Datei in `config/` (PR #47, Läufe 40174525838 und 40176020055) | bestanden: `agent` wird übersprungen, der Prüfjob endet nach dem Fix grün. Der Ablehnungskommentar am PR scheiterte mit HTTP 403, auch mit `issues: write`; deshalb ist `pull-requests: write` ergänzt (nur im Prüfjob, ohne Secrets). Wiederholung steht aus. |
 | 3 | Kommentar eines anderen Kontos | nicht getestet (braucht ein Zweitkonto); die Bedingung prüft Kommentarautor und Absender |
-| 4 | Sechster Kommentar | Wiederholung nach dem Merge |
+| 4 | Sechster Kommentar (PR #46, Lauf 40176269518) | bestanden: Ablehnung „Obergrenze von 5 Runden“, `agent` übersprungen. Die Runden 2 bis 5 wurden bis zur Freigabeanfrage durchgelassen und von Hand abgebrochen. |
 
 Beobachtung: Der Agent verkettete `./verify.sh` mit `echo`, was die Settings sperren. Der Exit-Code im Bericht war daher nur aus der Ausgabe abgeleitet. Die Prompts in `agent.yml` und `agent-review.yml` verlangen jetzt den Einzelbefehl; ohne Fehlermeldung des Werkzeugs gilt Exit-Code 0.
