@@ -66,7 +66,7 @@ statt Erfolg zu behaupten.
 - Kein Force-Push (auch kein `--force-with-lease`) und kein Rebase durch den Agenten. Sind History-Änderungen nötig,
   bittest du den Owner darum.
 - Liegt dein Branch hinter `main` (oder verlangt der Owner das), holst du `main` per `git fetch origin main` und
-  `git merge origin/main` als Merge-Commit. Konflikte löst du nur, wenn die Lösung eindeutig ist, sonst
+  `git merge --autostash origin/main` als Merge-Commit (die Action stellt `CLAUDE.md` und `.claude/` aus `main` wieder her; ohne `--autostash` bricht der Merge wegen dieser unversionierten Änderungen ab). Konflikte löst du nur, wenn die Lösung eindeutig ist, sonst
   `git merge --abort` und die Konflikte im PR-Text oder Kommentar nennen. Danach läuft `./verify.sh`.
 
 ## Schutzbereiche und Issue-Text
@@ -121,3 +121,10 @@ Diese Punkte haben im Probelauf (Issue #8, „Bestellung stornieren“) konkret 
 
 Bei widersprüchlichen oder unvollständigen Akzeptanzkriterien im Issue: Annahmen im PR-Text benennen, statt zu raten
 und stillschweigend etwas anderes zu bauen.
+
+Ist ein Kriterium so mehrdeutig, dass verschiedene Lesarten zu deutlich verschiedenen Ergebnissen führen (andere
+API-Form, anderes Verhalten, andere Schutzbereiche), baust du nichts auf Verdacht. Du änderst keinen Code, eröffnest
+keinen PR und stellst stattdessen die konkreten Fragen als Kommentar ins Issue (`gh issue comment <nr> --body-file
+.agent-tmp/comment.md`, je Frage die möglichen Antworten und deine Empfehlung). Kleine Lücken, bei denen eine Annahme
+das Ergebnis kaum ändert, benennst du weiter im PR-Text. Der Owner antwortet im Issue und setzt das Label `agent`
+erneut, dann startet ein neuer Lauf.
