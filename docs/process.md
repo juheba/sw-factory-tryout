@@ -51,6 +51,20 @@ wird das Issue angepasst und das Label neu gesetzt.
 **Rückfrage statt Raten (Roadmap P5):** Ist ein Akzeptanzkriterium deutlich mehrdeutig, baut der Agent nichts auf
 Verdacht. Er stellt seine Fragen als Kommentar ins Issue und beendet den Lauf. Der Owner antwortet im Issue und
 setzt das Label `agent` erneut (Label entfernen, wieder setzen).
+
+**Freigabe und Lauf sichtbar machen (Roadmap B7):** Jeder Lauf braucht eine Freigabe im Environment `agent`. Damit du
+nicht unter Actions suchen musst, zeigt die Factory den Zustand dort, wo du arbeitest:
+- **Label `wartet-auf-freigabe`** am Issue bzw. PR, solange der Lauf wartet. In der Liste filterst du mit
+  `label:wartet-auf-freigabe`.
+- **Ein Kommentar pro Lauf mit Link** auf die Lauf-Seite, auf der du freigibst. Er wird aktualisiert: ⏳ wartet →
+  ▶️ läuft → ✅ abgeschlossen, ❌ ohne Erfolg (Fehler oder abgelehnt) oder ⛔ abgebrochen. Den Kommentar legt beim Issue
+  der Job `anmelden` an, beim PR der Job `pruefung`; der Job `abschluss` schließt ihn ab und entfernt das Label, auch
+  nach einer Ablehnung. Alle drei Jobs laufen ohne Environment und ohne Secrets.
+
+Kommentare von `GITHUB_TOKEN` lösen keinen weiteren Workflow aus und zählen nicht als `/agent`-Runde (gezählt werden
+nur Kommentare des Owners). Schlägt das Kommentieren fehl, bleibt es bei einer Warnung und der Lauf läuft weiter.
+Soll der Ablauf um einen weiteren Schritt oder Zustand wachsen, wird der Kommentar im selben Job aktualisiert und nicht
+durch zusätzliche Kommentare ergänzt.
 Liegt der Branch hinter `main`, holt der Agent `main` per Merge-Commit nach (kein Rebase, kein Force-Push, Roadmap P6).
 
 ## Wenn der Agent nicht liefern kann
