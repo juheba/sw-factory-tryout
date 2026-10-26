@@ -184,6 +184,15 @@ jobs:
           echo "::notice title=Kennzahlen::${kz:-nicht ermittelt}"
           changed=$(git status --short 2>&1 | flat)
           echo "::notice title=Arbeitsverzeichnis::${changed:-sauber}"
+          # Dieselben Angaben als Job-Zusammenfassung (Roadmap B7): ohne Annotationen suchen zu müssen.
+          md() { sed 's/%25/%/g; s/`/'"'"'/g; s/</\&lt;/g'; }
+          {
+            echo "### Agent-Lauf"
+            echo
+            echo "- **Kennzahlen:** $(echo "${kz:-nicht ermittelt}" | md)"
+            echo "- **Abgelehnte Aktionen:** $(echo "${msg:-keine gefunden}" | md)"
+            echo "- **Arbeitsverzeichnis:** $(echo "${changed:-sauber}" | md)"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   # Räumt das Label auf, wenn die Freigabe abgelehnt oder der Lauf abgebrochen wurde.
   abschluss:
