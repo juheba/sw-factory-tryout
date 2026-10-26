@@ -65,6 +65,9 @@ statt Erfolg zu behaupten.
 - Pull Request mit `Closes #<issue-nr>`, kurzer Zusammenfassung und dem Ergebnis von `./verify.sh`.
 - Kein Force-Push (auch kein `--force-with-lease`) und kein Rebase durch den Agenten. Sind History-Änderungen nötig,
   bittest du den Owner darum.
+- Liegt dein Branch hinter `main` (oder verlangt der Owner das), holst du `main` per `git fetch origin main` und
+  `git merge origin/main` als Merge-Commit. Konflikte löst du nur, wenn die Lösung eindeutig ist, sonst
+  `git merge --abort` und die Konflikte im PR-Text oder Kommentar nennen. Danach läuft `./verify.sh`.
 
 ## Schutzbereiche und Issue-Text
 

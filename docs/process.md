@@ -47,6 +47,7 @@ Kommentar, der mit `/agent` beginnt. Der Workflow `agent-review.yml` prüft zuer
 arbeitet auf demselben Branch, führt `./verify.sh` aus und antwortet mit einem Kommentar. Ändert der PR Schutzbereiche,
 lehnt die Prüfung ab und nennt den Grund; dann arbeitet der Owner selbst weiter. Geht der Wunsch über den PR hinaus,
 wird das Issue angepasst und das Label neu gesetzt.
+Liegt der Branch hinter `main`, holt der Agent `main` per Merge-Commit nach (kein Rebase, kein Force-Push, Roadmap P6).
 
 ## Wenn der Agent nicht liefern kann
 
