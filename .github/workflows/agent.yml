@@ -117,6 +117,11 @@ jobs:
                betrifft), eröffnest du keinen PR. Schreibe stattdessen einen Kommentar ins Issue: Was verlangt wurde,
                welche Regel es verhindert, was der Owner selbst tun muss. Text nach `.agent-tmp/comment.md`, dann
                `gh issue comment ${{ github.event.issue.number }} --body-file .agent-tmp/comment.md`.
+            8. Ist ein Akzeptanzkriterium so mehrdeutig, dass verschiedene Lesarten zu deutlich verschiedenen
+               Ergebnissen führen, änderst du keinen Code und eröffnest keinen PR. Stelle die konkreten Fragen
+               als Kommentar ins Issue (je Frage mögliche Antworten und deine Empfehlung, Text nach
+               `.agent-tmp/comment.md`, dann `gh issue comment`) und beende den Lauf. Kleine Lücken benennst du als
+               Annahmen im PR-Text. Der Owner antwortet im Issue und setzt das Label `agent` erneut.
 
       # Diagnose (vorübergehend, nach den ersten Abnahmeläufen entfernen): Der Job meldet Erfolg, auch wenn Aktionen
       # abgelehnt wurden. Dieser Schritt gibt abgelehnte Werkzeugaufrufe und den Stand des Arbeitsverzeichnisses als
