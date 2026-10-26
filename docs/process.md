@@ -63,6 +63,7 @@ verhindert und was der Owner selbst tun muss. Die Regeln und ihre Begründung st
 | Auftrag und Diskussion | GitHub Issue |
 | Ergebnis | Pull Request mit Diff und Beschreibung |
 | Prüfung | GitHub Actions (Jobs `service` und `frontend`), Berichte als Artefakt |
+| Wartende Freigabe | Label `wartet-auf-freigabe` an Issue oder PR (Filter `label:wartet-auf-freigabe`) |
 | Architektur und Entscheidungen | `docs/architecture.md`, `docs/adr/` |
 
 ## Ausbaustufen
