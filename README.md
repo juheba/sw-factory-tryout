@@ -1,5 +1,7 @@
 # sw-factory-tryout
 
+[![CI](https://github.com/juheba/sw-factory-tryout/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/juheba/sw-factory-tryout/actions/workflows/ci.yml)
+
 Spec-first Monorepo als Ausgangspunkt für die eigene Software Factory (Stufe 1):
 Ein Issue wird von einem Coding-Agent (Claude Code) bearbeitet, die CI prüft das Ergebnis, ein Mensch reviewt den PR.
 

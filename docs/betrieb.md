@@ -24,6 +24,8 @@ Danach: Ursache klären (Annotationen und Ergebnis-JSON des Laufs, siehe unten),
 
 - **Annotationen am Lauf** (Actions → Lauf → Job → Zusammenfassung): „Agent-Ablehnungen“ (welche Aktionen die Regeln
   abgelehnt haben) und „Arbeitsverzeichnis“ (welche versionierten Dateien nach dem Lauf verändert waren).
+- **Job-Zusammenfassung** (Actions → Lauf, Seite „Summary“, Abschnitt „Agent-Lauf“): Kennzahlen (Turns, Kosten,
+  Dauer, Gate-Versuche), abgelehnte Aktionen und Arbeitsverzeichnis auf einen Blick, ohne Annotationen zu suchen.
 - **Ergebnis des Agenten im Log:** `num_turns`, `total_cost_usd`, `permission_denials_count`. Das Log selbst ist
   absichtlich knapp, die volle Ausgabe ist ausgeschaltet.
 - **Kommentar im Issue:** Betrifft der Auftrag nur Schutzbereiche, schreibt der Agent dort, warum er keinen PR öffnet.
