@@ -34,6 +34,7 @@ jobs:
       pull-requests: write
     outputs:
       erlaubt: ${{ steps.pruefen.outputs.erlaubt }}
+      kommentar_id: ${{ steps.pruefen.outputs.kommentar_id }}
     steps:
       - name: PR, Branch, Schutzbereiche und Rundenzahl prüfen
         id: pruefen
@@ -42,6 +43,8 @@ jobs:
           REPO: ${{ github.repository }}
           PR: ${{ github.event.issue.number }}
           MAX_RUNDEN: "5"
+          SERVER_URL: ${{ github.server_url }}
+          RUN_ID: ${{ github.run_id }}
         run: |
           set -euo pipefail
 
@@ -89,6 +92,12 @@ jobs:
           gh api "repos/$REPO/issues/$PR/labels" -f "labels[]=wartet-auf-freigabe" > /dev/null \
             || echo "::warning title=Freigabe-Label::Label konnte nicht gesetzt werden"
 
+          # Link zum wartenden Lauf; der Kommentar wird später aktualisiert (läuft, fertig).
+          url="$SERVER_URL/$REPO/actions/runs/$RUN_ID"
+          id=$(gh api "repos/$REPO/issues/$PR/comments" -f body="⏳ Agent-Lauf wartet auf deine Freigabe: [Lauf öffnen]($url)" --jq .id) \
+            && echo "kommentar_id=$id" >> "$GITHUB_OUTPUT" \
+            || echo "::warning title=Lauf-Kommentar::Kommentar konnte nicht angelegt werden"
+
   agent:
     needs: pruefung
     if: needs.pruefung.outputs.erlaubt == 'true'
@@ -109,6 +118,17 @@ jobs:
           REPO: ${{ github.repository }}
           NR: ${{ github.event.issue.number }}
         run: gh api -X DELETE "repos/$REPO/issues/$NR/labels/wartet-auf-freigabe" > /dev/null || true
+
+      - name: Lauf-Kommentar aktualisieren
+        if: needs.pruefung.outputs.kommentar_id != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ID: ${{ needs.pruefung.outputs.kommentar_id }}
+          URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh api -X PATCH "repos/$REPO/issues/comments/$ID" -f body="▶️ Agent-Lauf läuft: [Lauf öffnen]($URL)" > /dev/null \
+            || echo "::warning title=Lauf-Kommentar::Kommentar konnte nicht aktualisiert werden"
 
       # Läuft auf dem Stand von main. Den PR-Branch checkt die Action selbst aus und stellt .claude/ und CLAUDE.md
       # aus dem Basis-Branch wieder her, bevor Claude startet.
@@ -180,3 +200,20 @@ jobs:
           REPO: ${{ github.repository }}
           NR: ${{ github.event.issue.number }}
         run: gh api -X DELETE "repos/$REPO/issues/$NR/labels/wartet-auf-freigabe" > /dev/null || true
+
+      - name: Lauf-Kommentar abschließen
+        if: needs.pruefung.outputs.kommentar_id != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ID: ${{ needs.pruefung.outputs.kommentar_id }}
+          URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ERGEBNIS: ${{ needs.agent.result }}
+        run: |
+          case "$ERGEBNIS" in
+            success) text="✅ Agent-Lauf abgeschlossen" ;;
+            cancelled) text="⛔ Agent-Lauf abgebrochen" ;;
+            *) text="❌ Agent-Lauf ohne Erfolg beendet (Fehler oder Freigabe abgelehnt)" ;;
+          esac
+          gh api -X PATCH "repos/$REPO/issues/comments/$ID" -f body="$text: [Lauf öffnen]($URL)" > /dev/null \
+            || echo "::warning title=Lauf-Kommentar::Kommentar konnte nicht aktualisiert werden"

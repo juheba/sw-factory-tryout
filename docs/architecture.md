@@ -70,11 +70,14 @@ sequenceDiagram
     O->>GH: Issue anlegen, Label "agent" setzen
     GH->>WF: Ereignis issues/labeled
     WF->>WF: Prüfung: Label, Sender und Issue-Autor = Owner
+    WF->>GH: Label wartet-auf-freigabe und Kommentar mit Link zum Lauf (Job anmelden)
     WF->>Env: Freigabe anfordern (Branch main)
     O-->>Env: Lauf freigeben
     Env-->>WF: Secrets (OAuth-Token, PAT)
+    WF->>GH: Label entfernen, Kommentar auf "läuft" setzen
     WF->>A: Issue-Nummer, agent-settings.json, max-turns
     A->>GH: Branch agent/nr-slug, Commits, Pull Request (oder Kommentar im Issue, wenn der Auftrag verboten ist)
+    WF->>GH: Kommentar auf "abgeschlossen" setzen (Job abschluss)
     GH->>CI: Gate service und frontend
     O->>GH: PR prüfen und mergen (Code-Owner-Review bei Schutzbereichen)
 ```
@@ -97,10 +100,13 @@ sequenceDiagram
     GH->>P: Ereignis issue_comment (Workflow-Stand von main)
     P->>P: PR offen, Branch agent/*, gleiches Repo, Autor Owner, keine Schutzbereiche im Diff, höchstens 5 Runden
     P-->>GH: bei Ablehnung: Kommentar mit Grund, kein Agent-Lauf
+    P->>GH: Label wartet-auf-freigabe und Kommentar mit Link zum Lauf
     P->>Env: Freigabe anfordern (Branch main)
     O-->>Env: Lauf freigeben
     Env-->>A: Secrets (OAuth-Token, PAT)
+    A->>GH: Label entfernen, Kommentar auf "läuft" setzen
     A->>GH: liest Kommentare des Owners, ändert Code, ./verify.sh, Push auf den PR-Branch, Antwortkommentar
+    A->>GH: Kommentar auf "abgeschlossen" setzen (Job abschluss)
     GH->>CI: Gate service und frontend
     O->>GH: erneut prüfen, weiteren Kommentar schreiben oder mergen
 ```

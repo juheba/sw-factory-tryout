@@ -29,6 +29,8 @@ jobs:
     timeout-minutes: 2
     permissions:
       issues: write
+    outputs:
+      kommentar_id: ${{ steps.kommentar.outputs.id }}
     steps:
       - name: Label "wartet-auf-freigabe" setzen
         env:
@@ -38,6 +40,19 @@ jobs:
         run: |
           gh api "repos/$REPO/issues/$NR/labels" -f "labels[]=wartet-auf-freigabe" > /dev/null \
             || echo "::warning title=Freigabe-Label::Label konnte nicht gesetzt werden"
+
+      # Link zum wartenden Lauf. Der Kommentar wird später aktualisiert (läuft, fertig).
+      - name: Lauf-Kommentar anlegen
+        id: kommentar
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NR: ${{ github.event.issue.number }}
+          URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          id=$(gh api "repos/$REPO/issues/$NR/comments" -f body="⏳ Agent-Lauf wartet auf deine Freigabe: [Lauf öffnen]($URL)" --jq .id) \
+            && echo "id=$id" >> "$GITHUB_OUTPUT" \
+            || echo "::warning title=Lauf-Kommentar::Kommentar konnte nicht angelegt werden"
 
   agent:
     # Nur der Owner löst Läufe aus, und nur auf eigenen Issues.
@@ -63,6 +78,17 @@ jobs:
           REPO: ${{ github.repository }}
           NR: ${{ github.event.issue.number }}
         run: gh api -X DELETE "repos/$REPO/issues/$NR/labels/wartet-auf-freigabe" > /dev/null || true
+
+      - name: Lauf-Kommentar aktualisieren
+        if: needs.anmelden.outputs.kommentar_id != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ID: ${{ needs.anmelden.outputs.kommentar_id }}
+          URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh api -X PATCH "repos/$REPO/issues/comments/$ID" -f body="▶️ Agent-Lauf läuft: [Lauf öffnen]($URL)" > /dev/null \
+            || echo "::warning title=Lauf-Kommentar::Kommentar konnte nicht aktualisiert werden"
 
       # Läuft auf dem Stand von main. Der PAT (nicht GITHUB_TOKEN) sorgt dafür, dass Pushes des Agents die CI auslösen.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -161,3 +187,20 @@ jobs:
           REPO: ${{ github.repository }}
           NR: ${{ github.event.issue.number }}
         run: gh api -X DELETE "repos/$REPO/issues/$NR/labels/wartet-auf-freigabe" > /dev/null || true
+
+      - name: Lauf-Kommentar abschließen
+        if: needs.anmelden.outputs.kommentar_id != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ID: ${{ needs.anmelden.outputs.kommentar_id }}
+          URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ERGEBNIS: ${{ needs.agent.result }}
+        run: |
+          case "$ERGEBNIS" in
+            success) text="✅ Agent-Lauf abgeschlossen" ;;
+            cancelled) text="⛔ Agent-Lauf abgebrochen" ;;
+            *) text="❌ Agent-Lauf ohne Erfolg beendet (Fehler oder Freigabe abgelehnt)" ;;
+          esac
+          gh api -X PATCH "repos/$REPO/issues/comments/$ID" -f body="$text: [Lauf öffnen]($URL)" > /dev/null \
+            || echo "::warning title=Lauf-Kommentar::Kommentar konnte nicht aktualisiert werden"
