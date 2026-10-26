@@ -85,6 +85,10 @@ jobs:
           echo "erlaubt=true" >> "$GITHUB_OUTPUT"
           echo "Geprüft: PR $PR, Branch $head_ref, Runde $runden von $MAX_RUNDEN"
 
+          # Ausstehende Freigabe am PR sichtbar machen; ein Fehler hier ist nur eine Warnung.
+          gh api "repos/$REPO/issues/$PR/labels" -f "labels[]=wartet-auf-freigabe" > /dev/null \
+            || echo "::warning title=Freigabe-Label::Label konnte nicht gesetzt werden"
+
   agent:
     needs: pruefung
     if: needs.pruefung.outputs.erlaubt == 'true'
@@ -98,6 +102,14 @@ jobs:
       issues: write
       # Bewusst kein id-token, kein actions, kein workflows.
     steps:
+      # Die Freigabe ist erteilt: Label entfernen (der Job `abschluss` räumt auf, falls die Freigabe abgelehnt wird).
+      - name: Label "wartet-auf-freigabe" entfernen
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NR: ${{ github.event.issue.number }}
+        run: gh api -X DELETE "repos/$REPO/issues/$NR/labels/wartet-auf-freigabe" > /dev/null || true
+
       # Läuft auf dem Stand von main. Den PR-Branch checkt die Action selbst aus und stellt .claude/ und CLAUDE.md
       # aus dem Basis-Branch wieder her, bevor Claude startet.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -152,3 +164,19 @@ jobs:
           echo "::notice title=Kennzahlen::${kz:-nicht ermittelt}"
           changed=$(git status --short 2>&1 | flat)
           echo "::notice title=Arbeitsverzeichnis::${changed:-sauber}"
+
+  # Räumt das Label auf, wenn die Freigabe abgelehnt oder der Lauf abgebrochen wurde.
+  abschluss:
+    needs: [pruefung, agent]
+    if: always() && needs.pruefung.outputs.erlaubt == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Label "wartet-auf-freigabe" entfernen
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NR: ${{ github.event.issue.number }}
+        run: gh api -X DELETE "repos/$REPO/issues/$NR/labels/wartet-auf-freigabe" > /dev/null || true

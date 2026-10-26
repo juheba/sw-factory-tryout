@@ -18,6 +18,27 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Macht die ausstehende Freigabe am Issue sichtbar (Label). Läuft ohne Environment, also ohne Freigabe und ohne
+  # Secrets. Mit GITHUB_TOKEN gesetzte Labels lösen keinen weiteren Workflow aus.
+  anmelden:
+    if: >-
+      github.event.label.name == 'agent' &&
+      github.event.sender.login == 'juheba' &&
+      github.event.issue.user.login == 'juheba'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    permissions:
+      issues: write
+    steps:
+      - name: Label "wartet-auf-freigabe" setzen
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NR: ${{ github.event.issue.number }}
+        run: |
+          gh api "repos/$REPO/issues/$NR/labels" -f "labels[]=wartet-auf-freigabe" > /dev/null \
+            || echo "::warning title=Freigabe-Label::Label konnte nicht gesetzt werden"
+
   agent:
     # Nur der Owner löst Läufe aus, und nur auf eigenen Issues.
     # Kein issue_comment, kein pull_request_target, keine Wildcard-Nutzer.
@@ -35,6 +56,14 @@ jobs:
       issues: write
       # Bewusst kein id-token, kein actions, kein workflows.
     steps:
+      # Die Freigabe ist erteilt: Label entfernen (der Job `abschluss` räumt auf, falls die Freigabe abgelehnt wird).
+      - name: Label "wartet-auf-freigabe" entfernen
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NR: ${{ github.event.issue.number }}
+        run: gh api -X DELETE "repos/$REPO/issues/$NR/labels/wartet-auf-freigabe" > /dev/null || true
+
       # Läuft auf dem Stand von main. Der PAT (nicht GITHUB_TOKEN) sorgt dafür, dass Pushes des Agents die CI auslösen.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -111,3 +140,19 @@ jobs:
           # Welche versionierten Dateien sind im Arbeitsverzeichnis verändert? (Ursache für analysis_options.yaml suchen)
           changed=$(git status --short 2>&1 | flat)
           echo "::notice title=Arbeitsverzeichnis::${changed:-sauber}"
+
+  # Räumt das Label auf, wenn die Freigabe abgelehnt oder der Lauf abgebrochen wurde.
+  abschluss:
+    needs: [anmelden, agent]
+    if: always() && needs.anmelden.result != 'skipped'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    permissions:
+      issues: write
+    steps:
+      - name: Label "wartet-auf-freigabe" entfernen
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NR: ${{ github.event.issue.number }}
+        run: gh api -X DELETE "repos/$REPO/issues/$NR/labels/wartet-auf-freigabe" > /dev/null || true
