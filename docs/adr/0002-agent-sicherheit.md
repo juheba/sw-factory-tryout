@@ -350,3 +350,5 @@ von `agent/*` bleiben gesperrt.
   vergleicht gegen die Merge-Basis; ob die Prüfung dann weiterhin nur eigene Änderungen des PR meldet, ist zu beobachten.
 - **Offen.** Die Checkouts sind flach (Tiefe 1). Ob `git fetch origin main` dafür genügt oder `--unshallow` nötig ist
   (Fehler „unrelated histories“), zeigt erst der Test mit einem PR, der hinter `main` liegt.
+
+**Erster Test (26.10.2026, PR #80):** Der Merge scheiterte an der Allowlist, nicht am Konzept. Der Checkout war flach, `git merge-base` fand keine Basis, und der Agent versuchte `git fetch --unshallow origin`, `git fetch --unshallow origin main` und `git fetch --depth=500 origin main`. Erlaubt war nur `git fetch --unshallow` ohne Argumente. Ergänzt wurden genau diese Formen (nur gegen `origin`, nie gegen fremde URLs) und `git merge-base *` (nur lesend). Beobachtung: Das Arbeitsverzeichnis zeigt `M CLAUDE.md`, weil die Action `CLAUDE.md` aus dem Basis-Branch wiederherstellt und der PR-Branch älter ist. Das ist keine Änderung des Agenten.
