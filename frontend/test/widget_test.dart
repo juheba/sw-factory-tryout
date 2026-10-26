@@ -34,9 +34,17 @@ class FakeOrdersRepository implements OrdersRepository {
       customerId: customerId,
       itemCount: 1,
       status: OrderStatus.created,
+      items: [OrderLine(sku: sku, quantity: quantity)],
     );
     orders.add(order);
     return order;
+  }
+
+  @override
+  Future<OrderSummary> get(String id) async {
+    final matches = orders.where((order) => order.id == id);
+    if (matches.isEmpty) throw OrderNotFoundException(id);
+    return matches.first;
   }
 
   @override
@@ -103,6 +111,38 @@ void main() {
 
     expect(find.textContaining('Stornieren fehlgeschlagen'), findsOneWidget);
     expect(find.byType(Chip), findsNothing);
+  });
+
+  group('Detailansicht', () {
+    testWidgets('zeigt alle Felder der Bestellung', (tester) async {
+      await tester.pumpWidget(OrderApp(repository: FakeOrdersRepository()));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Demo-Bestellung anlegen'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(ListTile));
+      await tester.pumpAndSettle();
+
+      expect(find.text('id-1'), findsOneWidget);
+      expect(find.text('demo-customer'), findsOneWidget);
+      expect(find.text('DEMO-1'), findsOneWidget);
+      expect(find.text('1'), findsOneWidget);
+      expect(find.text('Aktiv'), findsOneWidget);
+    });
+
+    testWidgets('zeigt Fehlermeldung bei 404', (tester) async {
+      final repository = FakeOrdersRepository();
+      await tester.pumpWidget(OrderApp(repository: repository));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Demo-Bestellung anlegen'));
+      await tester.pumpAndSettle();
+      repository.orders.clear();
+
+      await tester.tap(find.byType(ListTile));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('nicht gefunden'), findsOneWidget);
+    });
   });
 
   group('Statusfilter', () {
