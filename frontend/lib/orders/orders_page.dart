@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'order_detail_page.dart';
 import 'orders_repository.dart';
 
 class OrdersPage extends StatefulWidget {
@@ -132,6 +133,14 @@ class _OrdersPageState extends State<OrdersPage> {
                     final order = orders[index];
                     final cancelled = order.status == OrderStatus.cancelled;
                     return ListTile(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => OrderDetailPage(
+                            repository: widget.repository,
+                            orderId: order.id,
+                          ),
+                        ),
+                      ),
                       title: Text(
                         order.customerId,
                         style: cancelled

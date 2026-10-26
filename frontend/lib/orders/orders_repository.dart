@@ -5,6 +5,24 @@ enum OrderStatus { created, cancelled }
 /// Sortierung nach Anlegedatum.
 enum OrderSort { newestFirst, oldestFirst }
 
+/// Eine Position einer Bestellung (Artikelnummer und Menge).
+class OrderLine {
+  const OrderLine({required this.sku, required this.quantity});
+
+  final String sku;
+  final int quantity;
+}
+
+/// Wird von [OrdersRepository.get] geworfen, wenn es die Bestellung nicht gibt.
+class OrderNotFoundException implements Exception {
+  const OrderNotFoundException(this.id);
+
+  final String id;
+
+  @override
+  String toString() => 'Bestellung $id nicht gefunden';
+}
+
 /// Frontend-eigenes Modell. Entkoppelt die UI vom generierten Client:
 /// Ändert sich die Spec, muss nur diese Datei angepasst werden.
 class OrderSummary {
@@ -13,12 +31,14 @@ class OrderSummary {
     required this.customerId,
     required this.itemCount,
     required this.status,
+    this.items = const [],
   });
 
   final String id;
   final String customerId;
   final int itemCount;
   final OrderStatus status;
+  final List<OrderLine> items;
 }
 
 abstract class OrdersRepository {
@@ -33,6 +53,9 @@ abstract class OrdersRepository {
   });
 
   Future<OrderSummary> cancel(String id);
+
+  /// Liefert die Bestellung [id] oder wirft [OrderNotFoundException].
+  Future<OrderSummary> get(String id);
 }
 
 /// Implementierung auf Basis des aus openapi.yaml generierten Clients.
@@ -82,6 +105,21 @@ class ApiOrdersRepository implements OrdersRepository {
     return _toSummary(cancelled);
   }
 
+  @override
+  Future<OrderSummary> get(String id) async {
+    final api.Order? order;
+    try {
+      order = await _api.getOrder(id);
+    } on api.ApiException catch (error) {
+      if (error.code == 404) throw OrderNotFoundException(id);
+      rethrow;
+    }
+    if (order == null) {
+      throw StateError('Der Service hat keine Bestellung zurückgegeben.');
+    }
+    return _toSummary(order);
+  }
+
   api.OrderStatus? _toApiStatus(OrderStatus? status) => switch (status) {
     null => null,
     OrderStatus.created => api.OrderStatus.CREATED,
@@ -101,5 +139,8 @@ class ApiOrdersRepository implements OrdersRepository {
     status: order.status == api.OrderStatus.CANCELLED
         ? OrderStatus.cancelled
         : OrderStatus.created,
+    items: order.items
+        .map((item) => OrderLine(sku: item.sku, quantity: item.quantity))
+        .toList(),
   );
 }
