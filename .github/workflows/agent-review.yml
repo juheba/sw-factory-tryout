@@ -71,7 +71,7 @@ jobs:
           [[ "$head_ref" == agent/* ]] || ablehnen "Der Branch heißt nicht agent/*."
 
           # Schutzbereiche: Berührt der PR einen, bringt sein Branch eigene Regeln oder Skripte mit.
-          geschuetzt='^(\.github/|\.claude/|\.mcp\.json$|\.husky/|CLAUDE\.md$|verify\.sh$|frontend/tool/|config/|gradle/|gradlew(\.bat)?$|(.*/)?[^/]*\.gradle\.kts$|frontend/pubspec\.yaml$)'
+          geschuetzt='^(\.github/|\.claude/|\.mcp\.json$|\.husky/|CLAUDE\.md$|verify\.sh$|frontend/tool/|site/|config/|gradle/|gradlew(\.bat)?$|(.*/)?[^/]*\.gradle\.kts$|frontend/pubspec\.yaml$)'
           treffer=$(gh api --paginate "repos/$REPO/pulls/$PR/files" --jq '.[].filename' | grep -E "$geschuetzt" | head -5 || true)
           if [ -n "$treffer" ]; then
             ablehnen "Der Pull Request ändert Schutzbereiche ($(echo "$treffer" | tr '\n' ' ')). Bitte diese Änderung zuerst selbst klären oder in einen eigenen PR auslagern."

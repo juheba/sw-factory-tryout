@@ -10,6 +10,7 @@ flowchart TB
     Spec[/openapi/openapi.yaml/]
     Spec -->|OpenAPI Generator: spring| Gen[Generierte Interfaces und Modelle]
     Spec -->|OpenAPI Generator: dart| Cli[Generierter Dart-Client]
+    Spec -->|site/build.sh, Workflow pages.yml| Doc[API-Doku: Swagger UI auf GitHub Pages]
 
     subgraph service [service: Spring Boot]
         Gen --> Ctl[OrdersController]
@@ -27,6 +28,11 @@ flowchart TB
     Test[OpenApiContractTest] -.prüft.-> Spec
     Test -.prüft.-> Ctl
 ```
+
+Die API-Doku wird nicht von Hand gepflegt: Bei jeder Änderung an `openapi/` auf `main` baut `site/build.sh` die Seite
+(Spec prüfen, Swagger UI per Commit-SHA holen, Seite erzeugen), der Workflow `pages.yml` veröffentlicht sie auf GitHub
+Pages. Die Seite ist nur lesend („Try it out“ ist abgeschaltet, es gibt keinen erreichbaren Service) und verlinkt
+Architektur, Prozess, Betrieb und ADRs.
 
 ## Ablauf: Bestellung anlegen
 

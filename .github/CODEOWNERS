@@ -10,6 +10,7 @@
 # Das Gate selbst (ein Agent darf die eigene Prüfung nicht abschwächen)
 /verify.sh                  @juheba
 /frontend/tool/             @juheba
+/site/                      @juheba
 /config/                    @juheba
 
 # Build, Abhängigkeiten und Wrapper (Lieferkette)

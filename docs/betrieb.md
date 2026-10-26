@@ -43,6 +43,8 @@ Danach: Ursache klären (Annotationen und Ergebnis-JSON des Laufs, siehe unten),
 | Lauf startet nicht nach Label | Absender oder Issue-Autor ist nicht der Owner, oder das falsche Label. | Bedingung in `.github/workflows/agent.yml` prüfen. Label entfernen und neu setzen. |
 | Lauf wurde abgebrochen, obwohl ein neuer folgte | Pro Issue gilt ein Lauf zugleich, GitHub hält nur einen wartenden Lauf pro Gruppe. | Label auf demselben Issue erneut setzen, wenn der laufende Lauf fertig ist. |
 | „Action is not allowed“ | Die Allowlist (Settings → Actions → General) kennt die Version nicht. Beim `setup-bun` in der Claude-Action ist der genaue SHA nötig. | Fehlenden Eintrag ergänzen, nach jedem Action-Update neu prüfen. |
+| API-Doku ist veraltet oder fehlt | Der Workflow „API-Doku“ ist nicht gelaufen oder fehlgeschlagen (nur Änderungen an `openapi/**`, `site/**` und `pages.yml` lösen ihn aus). | Actions → **API-Doku** ansehen, bei Fehler die Meldung von `site/build.sh` lesen (ungültige Spec, Swagger-UI-Commit stimmt nicht). Neu starten: **Run workflow**. |
+| Deploy der API-Doku scheitert an „Branch not allowed“ | Das Environment `github-pages` erlaubt nur bestimmte Branches. | Settings → Environments → `github-pages` → Deployment branches: `main` erlauben (nur `main`). |
 | Authentifizierungsfehler im Lauf | Ein Zugang ist abgelaufen oder widerrufen. | `.github/ablaufdaten.json` und das Secret im Environment prüfen, Zugang erneuern. |
 | Agent eröffnet keinen PR, kommentiert nur | Der Auftrag betrifft einen Schutzbereich oder verlangt Verbotenes. | Kommentar lesen. Die Änderung selbst durchführen oder das Issue anpassen. |
 | `gh pr create` oder ein Befehl wird abgelehnt | Eine Deny-Regel oder fehlende Erlaubnis in `.claude/agent-settings.json`. | Annotation „Agent-Ablehnungen“ lesen. Regel nur mit Bedacht ändern (Schutzbereich, Admin-Bypass). |
@@ -50,6 +52,19 @@ Danach: Ursache klären (Annotationen und Ergebnis-JSON des Laufs, siehe unten),
 | Gate verändert Dateien | Flutter oder ein Generator schreibt in versionierte Dateien. | Annotation „Arbeitsverzeichnis“ lesen und die Datei einmal passend einchecken. |
 | Rote CI auf `main` | Ein gemergter PR hat etwas gebrochen. | Per Revert-PR zurücknehmen, nicht per Force-Push. Den Agenten damit nicht beauftragen, solange die Ursache offen ist. |
 | PR lässt sich nicht mergen | Code-Owner-Review fehlt (der Agent ist du, du kannst dich nicht selbst freigeben). | Mit Admin-Bypass mergen, wenn der PR Schutzbereiche berührt. Sonst Checks abwarten. |
+
+## Swagger UI aktualisieren
+
+Die API-Doku (`site/build.sh`) holt Swagger UI per Commit-SHA aus dem Repository `swagger-api/swagger-ui`, nicht aus einem
+Paketregister. Dependabot sieht das nicht, es ist eine Handarbeit des Owners (`site/` ist Schutzbereich).
+
+1. Neues Release-Tag auf https://github.com/swagger-api/swagger-ui/releases ansehen (Änderungen, Sicherheitshinweise). Ein
+   Tag, das mindestens zwei Wochen alt ist, ist ein guter Kandidat.
+2. Den Commit des Tags notieren: `git ls-remote https://github.com/swagger-api/swagger-ui.git "refs/tags/<tag>^{}"` (bei
+   einem nicht annotierten Tag ohne `^{}`).
+3. In `site/build.sh` `SWAGGER_UI_TAG` und `SWAGGER_UI_SHA` gemeinsam ändern, lokal `./site/build.sh` ausführen und die Seite
+   ansehen (hell und dunkel).
+4. PR öffnen (Schutzbereich, Admin-Bypass nötig). Nach dem Merge läuft der Workflow „API-Doku“ und veröffentlicht die Seite.
 
 ## Zugänge erneuern
 
@@ -60,6 +75,7 @@ Beim Erneuern das Datum in `.github/ablaufdaten.json` anpassen und das Housekeep
 - **OAuth-Token `CLAUDE_CODE_OAUTH_TOKEN`:** lokal `claude setup-token` ausführen, das Token nicht speichern und nirgends
   einfügen (nicht in Chats, Issues oder PR-Texte), nur als Secret im Environment `agent` ablegen.
 - **Nach Action-Updates:** Allowlist prüfen (siehe Störungen), bei Bedarf neuen SHA eintragen.
+- **Allowlist für die API-Doku (einmalig):** Settings → Actions → General → „Allow select actions“: `actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9`, `actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346` und die von `upload-pages-artifact` genutzte `actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f` ergänzen.
 
 ## Updates der Action und von Claude Code
 

@@ -110,6 +110,7 @@ Der Agent darf seine eigene Kontrolle nicht verändern. Geschützt sind:
 |---|---|
 | `.github/`, `.claude/`, `CLAUDE.md` | Automatisierung und Agent-Konfiguration |
 | `verify.sh`, `frontend/tool/`, `config/` | das Gate: Ein Agent darf seine Prüfung nicht abschwächen |
+| `site/` | Baut die öffentliche API-Doku (GitHub Pages): Ein Agent könnte sonst Inhalte auf der öffentlichen Seite platzieren |
 | `gradle/`, `gradlew*`, `*.gradle.kts`, `pubspec.yaml` | Lieferkette: Abhängigkeiten, Wrapper, Build-Skripte |
 
 Durchgesetzt auf zwei Ebenen:
