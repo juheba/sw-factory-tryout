@@ -121,3 +121,10 @@ Diese Punkte haben im Probelauf (Issue #8, „Bestellung stornieren“) konkret 
 
 Bei widersprüchlichen oder unvollständigen Akzeptanzkriterien im Issue: Annahmen im PR-Text benennen, statt zu raten
 und stillschweigend etwas anderes zu bauen.
+
+Ist ein Kriterium so mehrdeutig, dass verschiedene Lesarten zu deutlich verschiedenen Ergebnissen führen (andere
+API-Form, anderes Verhalten, andere Schutzbereiche), baust du nichts auf Verdacht. Du änderst keinen Code, eröffnest
+keinen PR und stellst stattdessen die konkreten Fragen als Kommentar ins Issue (`gh issue comment <nr> --body-file
+.agent-tmp/comment.md`, je Frage die möglichen Antworten und deine Empfehlung). Kleine Lücken, bei denen eine Annahme
+das Ergebnis kaum ändert, benennst du weiter im PR-Text. Der Owner antwortet im Issue und setzt das Label `agent`
+erneut, dann startet ein neuer Lauf.
