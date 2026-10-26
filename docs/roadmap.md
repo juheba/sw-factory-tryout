@@ -86,7 +86,7 @@ flowchart LR
 
 | ID | Punkt | Status | Nächster Schritt / Verweis |
 |---|---|---|---|
-| B1 | Updates der Action und von Claude Code | ⬜ offen | Die Action installiert Claude Code zur Laufzeit (zuletzt 2.1.310). Vorgehen für Versionssprünge festlegen: neues Tag lesen, Referenzaufgaben laufen lassen, dann pinnen. |
+| B1 | Updates der Action und von Claude Code | ⚠️ in Arbeit | Die Action installiert Claude Code zur Laufzeit (zuletzt 2.1.310). Vorgehen für Versionssprünge ist festgelegt: neues Tag lesen, Referenzaufgaben laufen lassen, dann pinnen, siehe [betrieb.md](betrieb.md#updates-der-action-und-von-claude-code). Offen: ob sich Claude Code selbst pinnen lässt (Owner prüft die `action.yml`), und feste Referenzaufgaben (M2). Issue #66. |
 | B2 | Kontingent bei parallelen Läufen | ❓ zu bewerten | Concurrency pro Issue erlaubt Parallelität. Beobachten, ob das Abo-Limit greift. |
 | B3 | Aufräumen übrig gebliebener `agent/*`-Branches | ❓ zu bewerten | „Branch nach Merge löschen“ ist aktiv. Branches ohne PR bleiben liegen. |
 | B4 | Betriebshandbuch | ✅ erledigt | Erste Fassung in [betrieb.md](betrieb.md): Notausschalter, Störungen, Zugänge erneuern. Wird mit den Erfahrungen ergänzt. |

@@ -58,6 +58,42 @@ Beim Erneuern das Datum in `.github/ablaufdaten.json` anpassen und das Housekeep
   einfügen (nicht in Chats, Issues oder PR-Texte), nur als Secret im Environment `agent` ablegen.
 - **Nach Action-Updates:** Allowlist prüfen (siehe Störungen), bei Bedarf neuen SHA eintragen.
 
+## Updates der Action und von Claude Code
+
+Roadmap B1. Die Action `anthropics/claude-code-action` ist in `agent.yml` und `agent-review.yml` per Commit-SHA
+gepinnt (Kommentar mit Tag, zuletzt v1.0.261). Claude Code selbst installiert die Action zur Laufzeit (zuletzt
+2.1.310), dort steht also nichts Gepinntes im Repo. Beides kann das Verhalten der Factory ändern, ohne dass im Repo
+eine Zeile auffällt. Deshalb gilt: nie unbeobachtet springen, erst prüfen, dann pinnen.
+
+**Wann:** Dependabot meldet eine neue Action-Version, oder der Owner will bewusst aktualisieren. Kleine Patch-Sprünge
+dürfen warten, bis ohnehin ein Lauf ansteht. Bei Sicherheitshinweisen sofort.
+
+**Vorgehen (Owner, denn die Workflows sind Schutzbereich):**
+
+1. **Neues Tag lesen.** Release-Notes der Action und die Änderungen an Claude Code zwischen alter und neuer Version
+   ansehen. Auf geänderte Eingaben, Berechtigungen, Standardwerte und Verhalten der Settings (`.claude/agent-settings.json`,
+   Deny-Regeln) achten. Den SHA des Tags notieren (`gh api repos/anthropics/claude-code-action/git/ref/tags/<tag>`).
+2. **Allowlist anpassen.** Settings → Actions → General: neuen SHA und, falls die Action ihre eigenen Unter-Actions
+   ändert (zum Beispiel `setup-bun`), deren genauen SHA eintragen (siehe Störungen, „Action is not allowed“).
+3. **In einem Branch ausprobieren.** Nur den SHA (und den Tag-Kommentar) in beiden Workflows ändern, als eigener PR.
+   Der PR enthält nichts anderes.
+4. **Referenzaufgaben laufen lassen.** Ein kleiner Satz bekannter Test-Issues (Roadmap M2, bis dahin zum Beispiel ein
+   Fehlerfall, eine Spec-Änderung und ein Schutzbereich-Auftrag aus den Issues #18 bis #35) wird mit der neuen
+   Version bearbeitet, auf einem Testbranch oder in einer Kopie des Issues. Vergleichen mit der alten Version:
+   Gate grün, Exit-Code im PR-Text, `num_turns` und `total_cost_usd` im Log, keine neuen Einträge unter
+   „Agent-Ablehnungen“, Schutzbereiche unangetastet, Review-Lauf (`/agent`) funktioniert.
+5. **Entscheiden und pinnen.** Passt alles, wird der PR gemerged, der SHA bleibt damit gepinnt. Passt etwas nicht,
+   bleibt es bei der alten Version, und die Abweichung kommt als Issue oder in die Roadmap.
+6. **Festhalten.** Die neue Version (Action-Tag und die im Log sichtbare Claude-Code-Version) in `docs/roadmap.md`
+   unter B1 nachtragen.
+
+**Zurückrollen:** Revert-PR auf den alten SHA, kein Force-Push. Die Allowlist-Einträge der alten Version bleiben
+dafür vorerst bestehen.
+
+**Offen:** Ob die Action eine feste Claude-Code-Version erlaubt (Eingabe oder `claude_args`), ist hier nicht geprüft.
+Der Owner sollte das in der `action.yml` des gewählten Tags nachlesen. Wenn ja, den Wert zusätzlich pinnen; ohne
+Pin kann sich Claude Code zwischen zwei Läufen ändern, und Schritt 4 gilt nur für den Zeitpunkt der Prüfung.
+
 ## OAuth-Token widerrufen
 
 Stand der Recherche (25.10.2026, aus einer anderen Claude-Sitzung und der dort genannten Doku übernommen, nicht von mir
