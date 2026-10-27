@@ -189,7 +189,11 @@ claude.ai → Settings → Usage). Die Job-Zusammenfassung jedes Laufs hat die Z
 fehlgeschlagenen Ergebnisses. Steht dort „keine Daten in der Ausgabe“, liefert der Lauf keine Kontingentangaben
 (Stand 27.10.2026 nicht belegt, ob er sie liefert). Dann gilt die Nutzungsseite als einzige Quelle: vor und nach einem
 Block mit Läufen nachsehen. Die Kosten in „Kennzahlen“ sind Schätzungen zum Listenpreis und keine Prozentwerte des
-Kontingents. Hintergrund und Checkliste: Issue #102, übergeordnet #100.
+Kontingents. Die Zeile **Auslastung** fasst das lesbar zusammen: Sitzung und Woche in Prozent (aus dem letzten `rate_limit_info` mit
+`unifiedWindows`, Auflösung 1 %) und die Reset-Zeiten in UTC. Die Zeile **Kennzahlen** nennt zusätzlich Tokens
+(Eingabe, Ausgabe, Cache gelesen, Cache geschrieben); fehlt ein Feld, steht dort `?`. Ein einzelner Lauf bewegt die
+Auslastung meist um weniger als einen Prozentpunkt, die Anzeige ändert sich erst über mehrere Läufe. Die Werte
+teilen sich Läufe und deine eigene Nutzung. Hintergrund und Checkliste: Issue #102 und #118, übergeordnet #100.
 
 ## Zuständigkeit
 
