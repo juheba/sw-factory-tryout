@@ -76,7 +76,7 @@ SHA und ignoriert alles andere. Es wird nichts deployt, das Environment `github-
 | Symptom | Ursache | Maßnahme |
 |---|---|---|
 | Kein Kommentar am PR | `openapi/` nicht berührt, PR aus einem Fork, Workflow-Lauf rot | Lauf „Vertrag-Vorschau“ unter Actions ansehen |
-| „Nachher“ zeigt einen Ladefehler | Der Browser darf `raw.githubusercontent.com` nicht laden (CORS, ungeprüft) oder die SHA gibt es nicht mehr | Konsole der Seite ansehen, Issue #113 |
+| „Nachher“ zeigt einen Ladefehler | Der Browser darf `raw.githubusercontent.com` nicht laden (CORS; am 27.10.2026 funktionierte das Laden) oder die SHA gibt es nicht mehr | Konsole der Seite ansehen, Issue #113 |
 | Link „Nachher“ zeigt den Vertrag von `main` mit Hinweis | Ältere Seite ohne `?spec=` oder Parameter nicht erlaubt | Workflow „API-Doku“ ausführen, die Seite neu bauen |
 
 ## Statische Badges im README pflegen
