@@ -67,6 +67,18 @@ Paketregister. Dependabot sieht das nicht, es ist eine Handarbeit des Owners (`s
    ansehen (hell und dunkel).
 4. PR öffnen (Schutzbereich, Admin-Bypass nötig). Nach dem Merge läuft der Workflow „API-Doku“ und veröffentlicht die Seite.
 
+## Vertrag-Vorschau pro PR
+
+Der Workflow `vertrag-vorschau.yml` kommentiert PRs, die `openapi/**` ändern. Der Link „Nachher“ ruft die Pages-Seite mit
+`?spec=<Raw-URL mit Commit-SHA>` auf. Die Seite (`site/index.html`) akzeptiert nur Raw-URLs dieses Repos mit 40-stelliger
+SHA und ignoriert alles andere. Es wird nichts deployt, das Environment `github-pages` bleibt auf `main` beschränkt.
+
+| Symptom | Ursache | Maßnahme |
+|---|---|---|
+| Kein Kommentar am PR | `openapi/` nicht berührt, PR aus einem Fork, Workflow-Lauf rot | Lauf „Vertrag-Vorschau“ unter Actions ansehen |
+| „Nachher“ zeigt einen Ladefehler | Der Browser darf `raw.githubusercontent.com` nicht laden (CORS, ungeprüft) oder die SHA gibt es nicht mehr | Konsole der Seite ansehen, Issue #113 |
+| Link „Nachher“ zeigt den Vertrag von `main` mit Hinweis | Ältere Seite ohne `?spec=` oder Parameter nicht erlaubt | Workflow „API-Doku“ ausführen, die Seite neu bauen |
+
 ## Statische Badges im README pflegen
 
 Die Badges „OpenAPI“, „Java“ und „Spring Boot“ im README sind Handarbeit und müssen zu den Dateien passen. Beim Update
