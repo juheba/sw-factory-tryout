@@ -17,14 +17,21 @@ flowchart TB
         Ctl --> Svc[OrderService]
         Svc --> Mem[(In-Memory-Map)]
         Ctl -.Fehler.-> Err[GlobalExceptionHandler]
+        Gen --> PCtl[ProductsController]
+        PCtl --> PSvc[ProductService]
+        PSvc --> Cat[(Fester Katalog im Speicher)]
+        PCtl -.Fehler.-> Err
     end
 
     subgraph frontend [frontend: Flutter]
         Cli --> Repo[OrdersRepository]
         Repo --> UI[OrdersPage]
+        Cli --> PRepo[ProductsRepository]
+        PRepo --> Detail[OrderDetailPage]
     end
 
     UI -->|HTTP/JSON| Ctl
+    Detail -->|HTTP/JSON| PCtl
     Test[OpenApiContractTest] -.prüft.-> Spec
     Test -.prüft.-> Ctl
 ```

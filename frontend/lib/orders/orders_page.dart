@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../products/products_repository.dart';
 import 'order_detail_page.dart';
 import 'orders_repository.dart';
 
 class OrdersPage extends StatefulWidget {
-  const OrdersPage({super.key, required this.repository});
+  const OrdersPage({
+    super.key,
+    required this.repository,
+    this.productsRepository,
+  });
 
   final OrdersRepository repository;
+  final ProductsRepository? productsRepository;
 
   @override
   State<OrdersPage> createState() => _OrdersPageState();
@@ -138,6 +144,7 @@ class _OrdersPageState extends State<OrdersPage> {
                           builder: (_) => OrderDetailPage(
                             repository: widget.repository,
                             orderId: order.id,
+                            productsRepository: widget.productsRepository,
                           ),
                         ),
                       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:order_app/main.dart';
 import 'package:order_app/orders/orders_repository.dart';
+import 'package:order_app/products/products_repository.dart';
 
 class FakeOrdersRepository implements OrdersRepository {
   FakeOrdersRepository({this.failCancel = false});
@@ -62,6 +63,21 @@ class FakeOrdersRepository implements OrdersRepository {
     );
     orders[index] = cancelled;
     return cancelled;
+  }
+}
+
+class FakeProductsRepository extends ProductsRepository {
+  FakeProductsRepository(this.products) : fail = false;
+
+  FakeProductsRepository.failing() : products = const [], fail = true;
+
+  final List<Product> products;
+  final bool fail;
+
+  @override
+  Future<List<Product>> listAll() async {
+    if (fail) throw StateError('Katalog nicht erreichbar');
+    return products;
   }
 }
 
@@ -142,6 +158,60 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.textContaining('nicht gefunden'), findsOneWidget);
+    });
+  });
+
+  group('Produktnamen in der Detailansicht', () {
+    Future<void> openDetail(
+      WidgetTester tester,
+      ProductsRepository products,
+    ) async {
+      await tester.pumpWidget(
+        OrderApp(
+          repository: FakeOrdersRepository(),
+          productsRepository: products,
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Demo-Bestellung anlegen'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ListTile));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('zeigt den Namen zu einer bekannten sku', (tester) async {
+      await openDetail(
+        tester,
+        FakeProductsRepository([
+          const Product(sku: 'DEMO-1', name: 'Demo-Produkt', priceCents: 100),
+        ]),
+      );
+
+      expect(find.text('Demo-Produkt'), findsOneWidget);
+      expect(find.text('DEMO-1'), findsOneWidget);
+    });
+
+    testWidgets('fällt bei unbekannter sku auf die Artikelnummer zurück', (
+      tester,
+    ) async {
+      await openDetail(
+        tester,
+        FakeProductsRepository([
+          const Product(sku: 'MUG-001', name: 'Kaffeebecher', priceCents: 899),
+        ]),
+      );
+
+      expect(find.text('Kaffeebecher'), findsNothing);
+      expect(find.text('DEMO-1'), findsOneWidget);
+    });
+
+    testWidgets('fällt zurück, wenn der Katalog nicht ladbar ist', (
+      tester,
+    ) async {
+      await openDetail(tester, FakeProductsRepository.failing());
+
+      expect(find.text('DEMO-1'), findsOneWidget);
+      expect(find.text('Aktiv'), findsOneWidget);
     });
   });
 
