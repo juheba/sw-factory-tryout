@@ -1,0 +1,53 @@
+name: Vertrag-Vorschau
+
+# Ändert ein Pull Request den OpenAPI-Vertrag (openapi/**), steht im PR ein Kommentar mit zwei Links auf die
+# Swagger-UI-Seite: Vorher (main) und Nachher (Stand des PR). Es wird nichts deployt, die Seite lädt den Vertrag des PR
+# per ?spec= direkt von raw.githubusercontent.com (nur dieses Repo, nur mit Commit-SHA, siehe site/index.html).
+# Issue #113, Roadmap X3.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "openapi/**"
+
+# Standard: keine Rechte. Der Job vergibt sich unten nur, was er braucht.
+permissions: {}
+
+concurrency:
+  group: vertrag-vorschau-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  kommentar:
+    # Nur PRs aus diesem Repo (Forks bekommen ohnehin keine Schreibrechte).
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Kommentar mit Vorher-/Nachher-Link anlegen oder aktualisieren
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if ! echo "$SHA" | grep -Eq '^[0-9a-f]{40}$'; then echo "::warning title=Vertrag-Vorschau::Ungültige SHA"; exit 0; fi
+          owner="${REPO%%/*}"; name="${REPO##*/}"
+          site="https://$(echo "$owner" | tr 'A-Z' 'a-z').github.io/$name/"
+          raw="https://raw.githubusercontent.com/$REPO/$SHA/openapi/openapi.yaml"
+          after="${site}?spec=$(jq -rn --arg u "$raw" '$u | @uri')"
+          marker="<!-- vertrag-vorschau -->"
+          body="$marker
+          📄 **OpenAPI-Vertrag geändert** (Stand \`${SHA:0:7}\`): [Vorher (main)]($site) · [Nachher (dieser PR)]($after)"
+          id=$(gh api "repos/$REPO/issues/$NR/comments" --paginate \
+                 --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | head -1) || id=""
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$id" -f body="$body" > /dev/null \
+              || echo "::warning title=Vertrag-Vorschau::Kommentar konnte nicht aktualisiert werden"
+          else
+            gh api "repos/$REPO/issues/$NR/comments" -f body="$body" > /dev/null \
+              || echo "::warning title=Vertrag-Vorschau::Kommentar konnte nicht angelegt werden"
+          fi

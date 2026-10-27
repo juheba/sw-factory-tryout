@@ -65,6 +65,10 @@ nicht unter Actions suchen musst, zeigt die Factory den Zustand dort, wo du arbe
 Agents (Branch `agent/<issue>-*`, nur wenn der PR noch keinen hat). Hat das Issue keinen, bleibt der PR ohne. Den
 Meilenstein setzt du also einmal am Issue.
 
+**Vertrag ansehen (Roadmap X3):** Berührt ein PR `openapi/**`, legt der Workflow `vertrag-vorschau.yml` einen Kommentar mit
+twei Links an: **Vorher** (Seite von `main`) und **Nachher** (dieselbe Seite mit dem Vertrag des PR-Stands). Der Kommentar
+wird bei jedem neuen Push aktualisiert. Ohne Änderung an `openapi/` gibt es ihn nicht.
+
 Kommentare von `GITHUB_TOKEN` lösen keinen weiteren Workflow aus und zählen nicht als `/agent`-Runde (gezählt werden
 nur Kommentare des Owners). Schlägt das Kommentieren fehl, bleibt es bei einer Warnung und der Lauf läuft weiter.
 Soll der Ablauf um einen weiteren Schritt oder Zustand wachsen, wird der Kommentar im selben Job aktualisiert und nicht
