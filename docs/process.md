@@ -61,6 +61,10 @@ nicht unter Actions suchen musst, zeigt die Factory den Zustand dort, wo du arbe
   der Job `anmelden` an, beim PR der Job `pruefung`; der Job `abschluss` schließt ihn ab und entfernt das Label, auch
   nach einer Ablehnung. Alle drei Jobs laufen ohne Environment und ohne Secrets.
 
+**Meilenstein:** Der Job `abschluss` übernimmt nach einem erfolgreichen Lauf den Meilenstein des Issues auf den PR des
+Agents (Branch `agent/<issue>-*`, nur wenn der PR noch keinen hat). Hat das Issue keinen, bleibt der PR ohne. Den
+Meilenstein setzt du also einmal am Issue.
+
 Kommentare von `GITHUB_TOKEN` lösen keinen weiteren Workflow aus und zählen nicht als `/agent`-Runde (gezählt werden
 nur Kommentare des Owners). Schlägt das Kommentieren fehl, bleibt es bei einer Warnung und der Lauf läuft weiter.
 Soll der Ablauf um einen weiteren Schritt oder Zustand wachsen, wird der Kommentar im selben Job aktualisiert und nicht

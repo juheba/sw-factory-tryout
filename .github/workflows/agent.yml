@@ -221,3 +221,23 @@ jobs:
           esac
           gh api -X PATCH "repos/$REPO/issues/comments/$ID" -f body="$text: [Lauf öffnen]($URL)" > /dev/null \
             || echo "::warning title=Lauf-Kommentar::Kommentar konnte nicht aktualisiert werden"
+
+      # Der Agent legt den PR ohne Meilenstein an. Dieser Schritt übernimmt den Meilenstein des Issues auf den PR
+      # (nur wenn der PR noch keinen hat). Er sucht den PR über den Branch `agent/<issue>-*`. Fehler sind nur Warnungen.
+      - name: Meilenstein vom Issue auf den PR übertragen
+        if: needs.agent.result == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NR: ${{ github.event.issue.number }}
+        run: |
+          ms=$(gh api "repos/$REPO/issues/$NR" --jq '.milestone.number // empty') || { echo "::warning title=Meilenstein::Issue nicht lesbar"; exit 0; }
+          if [ -z "$ms" ]; then echo "Das Issue hat keinen Meilenstein."; exit 0; fi
+          prs=$(gh api "repos/$REPO/pulls?state=open&per_page=100" \
+                --jq ".[] | select((.head.ref | startswith(\"agent/$NR-\")) and (.milestone == null)) | .number") \
+                || { echo "::warning title=Meilenstein::PRs nicht lesbar"; exit 0; }
+          for pr in $prs; do
+            gh api -X PATCH "repos/$REPO/issues/$pr" -F milestone="$ms" > /dev/null \
+              && echo "Meilenstein $ms auf PR #$pr gesetzt." \
+              || echo "::warning title=Meilenstein::PR #$pr konnte nicht aktualisiert werden"
+          done
