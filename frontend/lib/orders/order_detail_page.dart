@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../products/products_repository.dart';
 import 'orders_repository.dart';
 
 class OrderDetailPage extends StatefulWidget {
@@ -7,10 +8,14 @@ class OrderDetailPage extends StatefulWidget {
     super.key,
     required this.repository,
     required this.orderId,
+    this.productsRepository,
   });
 
   final OrdersRepository repository;
   final String orderId;
+
+  /// Katalog für Produktnamen; ohne Katalog wird nur die Artikelnummer gezeigt.
+  final ProductsRepository? productsRepository;
 
   @override
   State<OrderDetailPage> createState() => _OrderDetailPageState();
@@ -20,6 +25,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   late final Future<OrderSummary> _order = widget.repository.get(
     widget.orderId,
   );
+
+  late final Future<Map<String, String>> _names =
+      widget.productsRepository?.namesBySku() ?? Future.value(const {});
 
   String _errorText(Object? error) => error is OrderNotFoundException
       ? 'Die Bestellung wurde nicht gefunden. '
@@ -40,36 +48,48 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             return Center(child: Text(_errorText(snapshot.error)));
           }
           final order = snapshot.requireData;
-          return ListView(
-            children: [
-              ListTile(
-                title: const Text('Bestell-ID'),
-                subtitle: Text(order.id),
-              ),
-              ListTile(
-                title: const Text('Kunden-ID'),
-                subtitle: Text(order.customerId),
-              ),
-              ListTile(
-                title: const Text('Status'),
-                subtitle: Text(
-                  order.status == OrderStatus.cancelled ? 'Storniert' : 'Aktiv',
-                ),
-              ),
-              for (final line in order.items) ...[
-                ListTile(
-                  title: const Text('Artikelnummer'),
-                  subtitle: Text(line.sku),
-                ),
-                ListTile(
-                  title: const Text('Menge'),
-                  subtitle: Text('${line.quantity}'),
-                ),
-              ],
-            ],
+          return FutureBuilder<Map<String, String>>(
+            future: _names,
+            builder: (context, namesSnapshot) {
+              if (namesSnapshot.connectionState != ConnectionState.done) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final names = namesSnapshot.data ?? const <String, String>{};
+              return _buildDetails(order, names);
+            },
           );
         },
       ),
+    );
+  }
+
+  Widget _buildDetails(OrderSummary order, Map<String, String> names) {
+    return ListView(
+      children: [
+        ListTile(title: const Text('Bestell-ID'), subtitle: Text(order.id)),
+        ListTile(
+          title: const Text('Kunden-ID'),
+          subtitle: Text(order.customerId),
+        ),
+        ListTile(
+          title: const Text('Status'),
+          subtitle: Text(
+            order.status == OrderStatus.cancelled ? 'Storniert' : 'Aktiv',
+          ),
+        ),
+        for (final line in order.items) ...[
+          if (names[line.sku] case final name?)
+            ListTile(title: const Text('Produkt'), subtitle: Text(name)),
+          ListTile(
+            title: const Text('Artikelnummer'),
+            subtitle: Text(line.sku),
+          ),
+          ListTile(
+            title: const Text('Menge'),
+            subtitle: Text('${line.quantity}'),
+          ),
+        ],
+      ],
     );
   }
 }

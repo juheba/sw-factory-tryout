@@ -10,6 +10,8 @@ servers:
 tags:
   - name: orders
     description: Bestellungen anlegen und abrufen
+  - name: products
+    description: Produktkatalog (lesend)
 
 paths:
   /orders:
@@ -132,8 +134,61 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
+  /products:
+    get:
+      tags: [products]
+      operationId: listProducts
+      summary: Alle Produkte des Katalogs auflisten, nach sku aufsteigend
+      responses:
+        "200":
+          description: Liste der Produkte
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+
+  /products/{sku}:
+    get:
+      tags: [products]
+      operationId: getProduct
+      summary: Ein Produkt abrufen
+      parameters:
+        - name: sku
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Das Produkt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Produkt nicht gefunden
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
 components:
   schemas:
+    Product:
+      type: object
+      required: [sku, name, priceCents]
+      properties:
+        sku:
+          type: string
+        name:
+          type: string
+        priceCents:
+          type: integer
+          format: int32
+          minimum: 0
+
     OrderItem:
       type: object
       required: [sku, quantity]
