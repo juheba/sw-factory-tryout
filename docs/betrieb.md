@@ -79,7 +79,8 @@ der Versionen mitpflegen:
 | Spring Boot (4.x) | `gradle/libs.versions.toml` (`spring-boot`) |
 | Flutter (stable) | `frontend/` (Kanal stable) |
 
-CI und API-Doku sind Live-Badges (Workflows `ci.yml`, `pages.yml`) und brauchen keine Pflege.
+CI, API-Doku und CodeQL sind Live-Badges (Workflows `ci.yml`, `pages.yml` und das CodeQL-Default-Setup von GitHub) und
+brauchen keine Pflege. Das CodeQL-Badge zeigt den letzten Lauf auf `main` und verlinkt auf die Code-Scanning-Ergebnisse.
 
 ## Zugänge erneuern
 
