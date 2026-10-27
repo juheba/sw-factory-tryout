@@ -3,6 +3,7 @@ package com.example.orderservice.web;
 import com.example.orderservice.service.OrderAlreadyCancelledException;
 import com.example.orderservice.service.OrderNotFoundException;
 import com.example.orderservice.service.ProductNotFoundException;
+import com.example.orderservice.service.UnknownProductException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -27,6 +28,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(OrderAlreadyCancelledException.class)
     public ProblemDetail handleOrderAlreadyCancelled(OrderAlreadyCancelledException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(UnknownProductException.class)
+    public ProblemDetail handleUnknownProduct(UnknownProductException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

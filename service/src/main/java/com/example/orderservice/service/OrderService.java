@@ -2,17 +2,21 @@ package com.example.orderservice.service;
 
 import com.example.orderservice.api.model.CreateOrderRequest;
 import com.example.orderservice.api.model.Order;
+import com.example.orderservice.api.model.OrderItem;
 import com.example.orderservice.api.model.OrderSort;
 import com.example.orderservice.api.model.OrderStatus;
+import com.example.orderservice.api.model.Product;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 /** Einfache In-Memory-Verwaltung der Bestellungen. Ersetzt später eine Persistenzschicht. */
@@ -21,7 +25,29 @@ public class OrderService {
 
     private final Map<UUID, Order> orders = new ConcurrentHashMap<>();
 
+    private final ProductService productService;
+
+    public OrderService(ProductService productService) {
+        this.productService = productService;
+    }
+
+    /**
+     * Legt eine Bestellung an.
+     *
+     * @throws UnknownProductException wenn mindestens eine Artikelnummer nicht im Katalog steht
+     */
     public Order create(CreateOrderRequest request) {
+        Set<String> known = productService.findAll().stream()
+            .map(Product::getSku)
+            .collect(Collectors.toSet());
+        List<String> unknown = request.getItems().stream()
+            .map(OrderItem::getSku)
+            .filter(sku -> !known.contains(sku))
+            .distinct()
+            .toList();
+        if (!unknown.isEmpty()) {
+            throw new UnknownProductException(unknown);
+        }
         Order order = new Order();
         order.setId(UUID.randomUUID());
         order.setCustomerId(request.getCustomerId());

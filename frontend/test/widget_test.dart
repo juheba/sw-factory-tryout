@@ -5,9 +5,10 @@ import 'package:order_app/orders/orders_repository.dart';
 import 'package:order_app/products/products_repository.dart';
 
 class FakeOrdersRepository implements OrdersRepository {
-  FakeOrdersRepository({this.failCancel = false});
+  FakeOrdersRepository({this.failCancel = false, this.failCreate = false});
 
   final bool failCancel;
+  final bool failCreate;
   final List<OrderSummary> orders = [];
 
   @override
@@ -30,6 +31,9 @@ class FakeOrdersRepository implements OrdersRepository {
     required String sku,
     required int quantity,
   }) async {
+    if (failCreate) {
+      throw StateError('Unbekannte Artikelnummer: $sku');
+    }
     final order = OrderSummary(
       id: 'id-${orders.length + 1}',
       customerId: customerId,
@@ -129,6 +133,22 @@ void main() {
     expect(find.byType(Chip), findsNothing);
   });
 
+  testWidgets('zeigt Fehlermeldung, wenn Anlegen fehlschlägt', (tester) async {
+    final repository = FakeOrdersRepository(failCreate: true);
+    await tester.pumpWidget(OrderApp(repository: repository));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Demo-Bestellung anlegen'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.textContaining('Bestellung anlegen fehlgeschlagen'),
+      findsOneWidget,
+    );
+    expect(find.byType(ListTile), findsNothing);
+    expect(find.text('Noch keine Bestellungen.'), findsOneWidget);
+  });
+
   group('Detailansicht', () {
     testWidgets('zeigt alle Felder der Bestellung', (tester) async {
       await tester.pumpWidget(OrderApp(repository: FakeOrdersRepository()));
@@ -141,7 +161,7 @@ void main() {
 
       expect(find.text('id-1'), findsOneWidget);
       expect(find.text('demo-customer'), findsOneWidget);
-      expect(find.text('DEMO-1'), findsOneWidget);
+      expect(find.text('BOOK-001'), findsOneWidget);
       expect(find.text('1'), findsOneWidget);
       expect(find.text('Aktiv'), findsOneWidget);
     });
@@ -183,12 +203,12 @@ void main() {
       await openDetail(
         tester,
         FakeProductsRepository([
-          const Product(sku: 'DEMO-1', name: 'Demo-Produkt', priceCents: 100),
+          const Product(sku: 'BOOK-001', name: 'Roman', priceCents: 1299),
         ]),
       );
 
-      expect(find.text('Demo-Produkt'), findsOneWidget);
-      expect(find.text('DEMO-1'), findsOneWidget);
+      expect(find.text('Roman'), findsOneWidget);
+      expect(find.text('BOOK-001'), findsOneWidget);
     });
 
     testWidgets('fällt bei unbekannter sku auf die Artikelnummer zurück', (
@@ -202,7 +222,7 @@ void main() {
       );
 
       expect(find.text('Kaffeebecher'), findsNothing);
-      expect(find.text('DEMO-1'), findsOneWidget);
+      expect(find.text('BOOK-001'), findsOneWidget);
     });
 
     testWidgets('fällt zurück, wenn der Katalog nicht ladbar ist', (
@@ -210,7 +230,7 @@ void main() {
     ) async {
       await openDetail(tester, FakeProductsRepository.failing());
 
-      expect(find.text('DEMO-1'), findsOneWidget);
+      expect(find.text('BOOK-001'), findsOneWidget);
       expect(find.text('Aktiv'), findsOneWidget);
     });
   });
