@@ -63,6 +63,8 @@ jobs:
       github.event.issue.user.login == 'juheba'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
+    # Wartet auf `anmelden`, damit die Kommentar-ID (needs.anmelden.outputs) hier verfügbar ist.
+    needs: anmelden
     # Die Secrets liegen im Environment "agent" (nur Branch main, Freigabe durch den Owner).
     environment: agent
     permissions:
@@ -170,7 +172,7 @@ jobs:
           echo "::notice title=Kennzahlen::${kz:-nicht ermittelt}"
           # Kontingent (Roadmap B2, Issue #102): Welche Limit-Angaben kommen im Runner an? Sucht Felder mit
           # "rate_limit" im Namen, Wiederholungsereignisse (system/api_retry) und den Text eines Fehlerergebnisses.
-          kg=$(jq -r '[.. | objects | to_entries[] | select(.key | test("rate_limit")) | "\(.key)=\(.value | tojson | .[0:200])"]
+          kg=$(jq -r '[.. | objects | to_entries[] | select(.key | test("rate_limit")) | "\(.key)=\(.value | tojson | .[0:800])"]
                  + [.. | objects | select(.subtype? == "api_retry") | "api_retry \(.error_status // "-") \(.error // "-")"]
                  + [([.. | objects | select(.type == "result")] | last) | select(.is_error == true) | "Fehler: \(.result // "" | tostring | .[0:200])"]
                  | unique | .[0:12] | join(" | ")' "$f" 2>&1 | flat)
@@ -197,6 +199,7 @@ jobs:
     timeout-minutes: 2
     permissions:
       issues: write
+      pull-requests: write
     steps:
       - name: Label "wartet-auf-freigabe" entfernen
         env:
@@ -237,7 +240,9 @@ jobs:
                 --jq ".[] | select((.head.ref | startswith(\"agent/$NR-\")) and (.milestone == null)) | .number") \
                 || { echo "::warning title=Meilenstein::PRs nicht lesbar"; exit 0; }
           for pr in $prs; do
-            gh api -X PATCH "repos/$REPO/issues/$pr" -F milestone="$ms" > /dev/null \
-              && echo "Meilenstein $ms auf PR #$pr gesetzt." \
-              || echo "::warning title=Meilenstein::PR #$pr konnte nicht aktualisiert werden"
+            if err=$(gh api -X PATCH "repos/$REPO/issues/$pr" -F milestone="$ms" 2>&1 > /dev/null); then
+              echo "Meilenstein $ms auf PR #$pr gesetzt."
+            else
+              echo "::warning title=Meilenstein::PR #$pr konnte nicht aktualisiert werden: $(echo "$err" | head -c 300 | tr '\r\n' '  ')"
+            fi
           done

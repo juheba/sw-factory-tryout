@@ -184,7 +184,7 @@ jobs:
           echo "::notice title=Kennzahlen::${kz:-nicht ermittelt}"
           # Kontingent (Roadmap B2, Issue #102): Welche Limit-Angaben kommen im Runner an? Sucht Felder mit
           # "rate_limit" im Namen, Wiederholungsereignisse (system/api_retry) und den Text eines Fehlerergebnisses.
-          kg=$(jq -r '[.. | objects | to_entries[] | select(.key | test("rate_limit")) | "\(.key)=\(.value | tojson | .[0:200])"]
+          kg=$(jq -r '[.. | objects | to_entries[] | select(.key | test("rate_limit")) | "\(.key)=\(.value | tojson | .[0:800])"]
                  + [.. | objects | select(.subtype? == "api_retry") | "api_retry \(.error_status // "-") \(.error // "-")"]
                  + [([.. | objects | select(.type == "result")] | last) | select(.is_error == true) | "Fehler: \(.result // "" | tostring | .[0:200])"]
                  | unique | .[0:12] | join(" | ")' "$f" 2>&1 | flat)
