@@ -1,6 +1,13 @@
 # sw-factory-tryout
 
-[![CI](https://github.com/juheba/sw-factory-tryout/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/juheba/sw-factory-tryout/actions/workflows/ci.yml)
+[![CI](https://github.com/juheba/sw-factory-tryout/actions/workflows/ci.yml/badge.svg?branch=main&style=flat)](https://github.com/juheba/sw-factory-tryout/actions/workflows/ci.yml)
+[![API-Doku](https://github.com/juheba/sw-factory-tryout/actions/workflows/pages.yml/badge.svg?branch=main&style=flat)](https://juheba.github.io/sw-factory-tryout/)
+[![CodeQL](https://github.com/juheba/sw-factory-tryout/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/juheba/sw-factory-tryout/security/code-scanning)
+
+[![OpenAPI 3.0.3](https://img.shields.io/badge/OpenAPI-3.0.3-6BA539?style=flat)](openapi/openapi.yaml)
+[![Java 25](https://img.shields.io/badge/Java-25-007396?style=flat)](service/build.gradle.kts)
+[![Spring Boot 4.x](https://img.shields.io/badge/Spring%20Boot-4.x-6DB33F?style=flat)](gradle/libs.versions.toml)
+[![Flutter stable](https://img.shields.io/badge/Flutter-stable-02569B?style=flat)](frontend/)
 
 Spec-first Monorepo als Ausgangspunkt für die eigene Software Factory (Stufe 1):
 Ein Issue wird von einem Coding-Agent (Claude Code) bearbeitet, die CI prüft das Ergebnis, ein Mensch reviewt den PR.
