@@ -46,12 +46,19 @@ class _OrdersPageState extends State<OrdersPage> {
   }
 
   Future<void> _createDemoOrder() async {
-    await widget.repository.create(
-      customerId: 'demo-customer',
-      sku: 'DEMO-1',
-      quantity: 1,
-    );
-    _reload();
+    try {
+      await widget.repository.create(
+        customerId: 'demo-customer',
+        sku: 'BOOK-001',
+        quantity: 1,
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Bestellung anlegen fehlgeschlagen: $error')),
+      );
+    }
+    if (mounted) _reload();
   }
 
   Future<void> _cancel(OrderSummary order) async {

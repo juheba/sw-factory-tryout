@@ -28,7 +28,7 @@ import org.springframework.web.context.WebApplicationContext;
 class OrdersApiTest {
 
     private static final String VALID_ORDER = """
-        {"customerId": "c-1", "items": [{"sku": "ABC-1", "quantity": 2}]}
+        {"customerId": "c-1", "items": [{"sku": "BOOK-001", "quantity": 2}]}
         """;
 
     @Autowired
@@ -170,8 +170,46 @@ class OrdersApiTest {
     @Test
     void rejectsItemWithZeroQuantity() throws Exception {
         mvc.perform(post("/orders").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"customerId\": \"c-1\", \"items\": [{\"sku\": \"A\", \"quantity\": 0}]}"))
+                .content("{\"customerId\": \"c-1\", \"items\": [{\"sku\": \"BOOK-001\", \"quantity\": 0}]}"))
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void rejectsUnknownSku() throws Exception {
+        mvc.perform(post("/orders").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"customerId\": \"c-1\", \"items\": [{\"sku\": \"X-1\", \"quantity\": 1}]}"))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.detail").value("Unbekannte Artikelnummer: X-1"));
+    }
+
+    @Test
+    void listsAllUnknownSkusInRequestOrder() throws Exception {
+        mvc.perform(post("/orders").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"customerId\": \"c-1\", \"items\": [{\"sku\": \"X-1\", \"quantity\": 1},"
+                    + " {\"sku\": \"BOOK-001\", \"quantity\": 1}, {\"sku\": \"Y-2\", \"quantity\": 1}]}"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.detail").value("Unbekannte Artikelnummer: X-1, Y-2"));
+    }
+
+    @Test
+    void storesNothingForMixedKnownAndUnknownSkus() throws Exception {
+        int before = countOrders();
+
+        mvc.perform(post("/orders").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"customerId\": \"c-1\", \"items\": [{\"sku\": \"BOOK-001\", \"quantity\": 1},"
+                    + " {\"sku\": \"X-1\", \"quantity\": 1}]}"))
+            .andExpect(status().isBadRequest());
+
+        assertThat(countOrders()).isEqualTo(before);
+    }
+
+    private int countOrders() throws Exception {
+        String body = mvc.perform(get("/orders")).andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
+        List<String> ids = JsonPath.read(body, "$[*].id");
+        return ids.size();
     }
 
     @Test
