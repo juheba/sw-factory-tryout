@@ -168,7 +168,7 @@ jobs:
           kz=$(jq -r '([.. | objects | select(.type == "result")] | last) as $r
                  | ([.. | objects | select(.type == "tool_use" and .name == "Bash") | .input.command? // empty
                      | select(test("verify\\.sh"))] | length) as $g
-                 | "Turns \($r.num_turns // "?"), Kosten \($r.total_cost_usd // "?") USD, Dauer \(($r.duration_ms // 0) / 1000 | floor) s, Gate-Versuche \($g)"' "$f" 2>&1 | flat)
+                 | "Turns \($r.num_turns // "?"), Kosten \($r.total_cost_usd // "?") USD, Dauer \(($r.duration_ms // 0) / 1000 | floor) s, Gate-Versuche \($g), Tokens ein \($r.usage.input_tokens // "?") / aus \($r.usage.output_tokens // "?") / Cache gelesen \($r.usage.cache_read_input_tokens // "?") / Cache geschrieben \($r.usage.cache_creation_input_tokens // "?")"' "$f" 2>&1 | flat)
           echo "::notice title=Kennzahlen::${kz:-nicht ermittelt}"
           # Kontingent (Roadmap B2, Issue #102): Welche Limit-Angaben kommen im Runner an? Sucht Felder mit
           # "rate_limit" im Namen, Wiederholungsereignisse (system/api_retry) und den Text eines Fehlerergebnisses.
@@ -177,6 +177,13 @@ jobs:
                  + [([.. | objects | select(.type == "result")] | last) | select(.is_error == true) | "Fehler: \(.result // "" | tostring | .[0:200])"]
                  | unique | .[0:12] | join(" | ")' "$f" 2>&1 | flat)
           echo "::notice title=Kontingent::${kg:-keine Daten in der Ausgabe}"
+          # Auslastung (Issue #118): Sitzung und Woche in Prozent aus dem letzten rate_limit_info mit unifiedWindows.
+          au=$(jq -r '[.. | objects | select(has("unifiedWindows"))] | last
+                 | if . == null then empty else
+                   .unifiedWindows as $w
+                   | "Sitzung \(($w.five_hour.utilization // 0) * 100 | round) %, Woche \(($w.seven_day.utilization // 0) * 100 | round) % (Reset Sitzung \(($w.five_hour.resetsAt // 0) | strftime("%H:%M")) UTC, Woche \(($w.seven_day.resetsAt // 0) | strftime("%a %H:%M")) UTC)"
+                 end' "$f" 2>&1 | flat)
+          echo "::notice title=Auslastung::${au:-keine Daten}"
           # Welche versionierten Dateien sind im Arbeitsverzeichnis verändert? (Ursache für analysis_options.yaml suchen)
           changed=$(git status --short 2>&1 | flat)
           echo "::notice title=Arbeitsverzeichnis::${changed:-sauber}"
@@ -186,6 +193,7 @@ jobs:
             echo "### Agent-Lauf"
             echo
             echo "- **Kennzahlen:** $(echo "${kz:-nicht ermittelt}" | md)"
+            echo "- **Auslastung:** $(echo "${au:-keine Daten}" | md)"
             echo "- **Kontingent:** $(echo "${kg:-keine Daten in der Ausgabe}" | md)"
             echo "- **Abgelehnte Aktionen:** $(echo "${msg:-keine gefunden}" | md)"
             echo "- **Arbeitsverzeichnis:** $(echo "${changed:-sauber}" | md)"
