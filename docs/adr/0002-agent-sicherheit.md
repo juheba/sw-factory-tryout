@@ -193,11 +193,11 @@ bist zugleich Autor, brauchst du den Admin-Bypass. Ohne Bypass blockierst du dic
   kein Admin-Bypass, Rotation vor Ablauf (`.github/ablaufdaten.json`). Alternative bei Bedarf: API-Key oder
   OIDC-Federation (Roadmap S11).
 - **Automatisierte Nutzung des Abo-Tokens ist nicht ausdrücklich geklärt** (Entscheidung des Owners vom 27.10.2026,
-  Roadmap S10). Die Doku der GitHub Action erlaubt das Token für Pro, Max, Team und Enterprise; eine Aussage der
-  Nutzungsbedingungen zu unbeaufsichtigten Läufen wurde nicht gefunden. Der Owner bleibt beim Abo-Token (eigenes
+  Roadmap S10). Die Auth-Doku empfiehlt das einjährige Token ausdrücklich für CI-Pipelines und Skripte (Pro, Max, Team,
+  Enterprise); eine Aussage der Nutzungsbedingungen zu unbeaufsichtigten Läufen wurde nicht gefunden. Der Owner bleibt beim Abo-Token (eigenes
   Repository, jeder Lauf per Hand freigegeben). Folge: Der Anbieter könnte die Nutzung einschränken; eine schriftliche
   Anfrage ist offen (Issue #99). Läufe teilen sich das Kontingent mit der interaktiven Nutzung und brechen beim
-  Erreichen des Limits ab (Issue #100). „Extra usage“ bleibt aus, damit ein Limit keine Kosten verursacht.
+  Erreichen des Limits ab (Issue #100). „Usage credits“ (Zusatznutzung gegen Bezahlung) bleiben aus, damit ein Limit keine Kosten verursacht.
 
 ## Abnahmetest (vor dem ersten echten Auftrag)
 
