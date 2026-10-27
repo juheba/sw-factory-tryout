@@ -67,6 +67,20 @@ Paketregister. Dependabot sieht das nicht, es ist eine Handarbeit des Owners (`s
    ansehen (hell und dunkel).
 4. PR öffnen (Schutzbereich, Admin-Bypass nötig). Nach dem Merge läuft der Workflow „API-Doku“ und veröffentlicht die Seite.
 
+## Statische Badges im README pflegen
+
+Die Badges „OpenAPI“, „Java“ und „Spring Boot“ im README sind Handarbeit und müssen zu den Dateien passen. Beim Update
+der Versionen mitpflegen:
+
+| Badge | Quelle der Wahrheit |
+|---|---|
+| OpenAPI (3.0.3) | `openapi/openapi.yaml` (Zeile `openapi:`) |
+| Java (25) | `service/build.gradle.kts` (Toolchain) |
+| Spring Boot (4.x) | `gradle/libs.versions.toml` (`spring-boot`) |
+| Flutter (stable) | `frontend/` (Kanal stable) |
+
+CI und API-Doku sind Live-Badges (Workflows `ci.yml`, `pages.yml`) und brauchen keine Pflege.
+
 ## Zugänge erneuern
 
 Beim Erneuern das Datum in `.github/ablaufdaten.json` anpassen und das Housekeeping-Issue schließen.
