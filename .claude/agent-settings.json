@@ -56,6 +56,7 @@
       "Edit(CLAUDE.md)",
       "Edit(verify.sh)",
       "Edit(frontend/tool/**)",
+      "Edit(site/**)",
       "Edit(config/**)",
       "Edit(gradle/**)",
       "Edit(gradlew)",

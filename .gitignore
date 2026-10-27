@@ -22,5 +22,8 @@ out/
 # Arbeitsdateien des automatischen Agent-Laufs (PR-Text, Kommentar)
 .agent-tmp/
 
+# Erzeugte API-Doku (site/build.sh)
+site/dist/
+
 # OS
 .DS_Store

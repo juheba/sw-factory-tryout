@@ -10,7 +10,14 @@ openapi/    Vertrag (openapi.yaml), Quelle der Wahrheit
 service/    Spring Boot 4, Java 25, Gradle
 frontend/   Flutter (Dart), mit generiertem API-Client
 docs/       Architektur (Mermaid), Prozess, ADRs
+site/       Baut die API-Doku (Swagger UI) für GitHub Pages
 ```
+
+## API-Dokumentation
+
+Der Vertrag steht als Webseite (Swagger UI, nur lesend) unter https://juheba.github.io/sw-factory-tryout/ und wird bei jeder
+Änderung an `openapi/` auf `main` neu erzeugt. Lokal bauen: `./site/build.sh`, dann `site/dist/` mit einem beliebigen
+Webserver ausliefern (zum Beispiel `python3 -m http.server -d site/dist`).
 
 ## Voraussetzungen
 
