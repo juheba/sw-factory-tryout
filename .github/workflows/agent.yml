@@ -63,6 +63,8 @@ jobs:
       github.event.issue.user.login == 'juheba'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
+    # Wartet auf `anmelden`, damit die Kommentar-ID (needs.anmelden.outputs) hier verfügbar ist.
+    needs: anmelden
     # Die Secrets liegen im Environment "agent" (nur Branch main, Freigabe durch den Owner).
     environment: agent
     permissions:
