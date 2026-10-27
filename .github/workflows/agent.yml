@@ -168,6 +168,13 @@ jobs:
                      | select(test("verify\\.sh"))] | length) as $g
                  | "Turns \($r.num_turns // "?"), Kosten \($r.total_cost_usd // "?") USD, Dauer \(($r.duration_ms // 0) / 1000 | floor) s, Gate-Versuche \($g)"' "$f" 2>&1 | flat)
           echo "::notice title=Kennzahlen::${kz:-nicht ermittelt}"
+          # Kontingent (Roadmap B2, Issue #102): Welche Limit-Angaben kommen im Runner an? Sucht Felder mit
+          # "rate_limit" im Namen, Wiederholungsereignisse (system/api_retry) und den Text eines Fehlerergebnisses.
+          kg=$(jq -r '[.. | objects | to_entries[] | select(.key | test("rate_limit")) | "\(.key)=\(.value | tojson | .[0:200])"]
+                 + [.. | objects | select(.subtype? == "api_retry") | "api_retry \(.error_status // "-") \(.error // "-")"]
+                 + [([.. | objects | select(.type == "result")] | last) | select(.is_error == true) | "Fehler: \(.result // "" | tostring | .[0:200])"]
+                 | unique | .[0:12] | join(" | ")' "$f" 2>&1 | flat)
+          echo "::notice title=Kontingent::${kg:-keine Daten in der Ausgabe}"
           # Welche versionierten Dateien sind im Arbeitsverzeichnis verändert? (Ursache für analysis_options.yaml suchen)
           changed=$(git status --short 2>&1 | flat)
           echo "::notice title=Arbeitsverzeichnis::${changed:-sauber}"
@@ -177,6 +184,7 @@ jobs:
             echo "### Agent-Lauf"
             echo
             echo "- **Kennzahlen:** $(echo "${kz:-nicht ermittelt}" | md)"
+            echo "- **Kontingent:** $(echo "${kg:-keine Daten in der Ausgabe}" | md)"
             echo "- **Abgelehnte Aktionen:** $(echo "${msg:-keine gefunden}" | md)"
             echo "- **Arbeitsverzeichnis:** $(echo "${changed:-sauber}" | md)"
           } >> "$GITHUB_STEP_SUMMARY"

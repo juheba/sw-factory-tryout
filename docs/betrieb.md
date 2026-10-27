@@ -153,6 +153,16 @@ oder die Anmeldung per OIDC-Federation ohne statisches Secret.
 [GitHub Environments](https://docs.github.com/en/actions/reference/environments).
 Ein Suchtreffer deutete an, dass ein Widerruf inzwischen sofort wirkt. Bestätigt ist das nicht.
 
+## Kontingent der Läufe lesen
+
+Agent-Läufe und deine eigene Nutzung teilen sich das Abo-Kontingent (Pro: 5-Stunden-Fenster und Wochenlimit, Anzeige unter
+claude.ai → Settings → Usage). Die Job-Zusammenfassung jedes Laufs hat die Zeile **Kontingent**. Sie listet Felder mit
+`rate_limit` im Namen, Wiederholungsereignisse (`api_retry` mit Status und Kategorie) und den Text eines
+fehlgeschlagenen Ergebnisses. Steht dort „keine Daten in der Ausgabe“, liefert der Lauf keine Kontingentangaben
+(Stand 27.10.2026 nicht belegt, ob er sie liefert). Dann gilt die Nutzungsseite als einzige Quelle: vor und nach einem
+Block mit Läufen nachsehen. Die Kosten in „Kennzahlen“ sind Schätzungen zum Listenpreis und keine Prozentwerte des
+Kontingents. Hintergrund und Checkliste: Issue #102, übergeordnet #100.
+
 ## Zuständigkeit
 
 Alles läuft über den Owner: Freigabe der Läufe, Review, Merge, Zugänge. Wird die Factory von mehr Personen genutzt,
