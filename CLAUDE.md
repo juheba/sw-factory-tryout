@@ -44,8 +44,9 @@ statt Erfolg zu behaupten.
    und **nie** eingecheckt.
 3. Service: Controller implementieren die generierten `*Api`-Interfaces (Paket `com.example.orderservice.web`).
 4. Service: `OpenApiContractTest` muss grün bleiben; Vertrag und Endpunkte dürfen nicht auseinanderlaufen.
-5. Frontend: Der generierte Client wird nur in `lib/orders/orders_repository.dart` verwendet. Die UI arbeitet mit
-   den eigenen Modellen (`OrderSummary`). Ändert sich die Spec, wird nur das Repository angepasst.
+5. Frontend: Der generierte Client wird nur in den Repositories unter `lib/*/` verwendet (`orders_repository.dart`,
+   `products_repository.dart`). Die UI arbeitet mit den eigenen Modellen (`OrderSummary`, `Product`). Ändert sich die
+   Spec, werden nur die Repositories angepasst.
 6. Neue Endpunkte brauchen: Spec-Eintrag, Service-Implementierung mit Tests (Erfolgs- und mindestens ein Fehlerfall)
    und, falls das Frontend sie braucht, Repository und UI mit Widget-Test.
 
