@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:order_api/api.dart' as api;
 
 enum OrderStatus { created, cancelled }
@@ -21,6 +23,33 @@ class OrderNotFoundException implements Exception {
 
   @override
   String toString() => 'Bestellung $id nicht gefunden';
+}
+
+/// Wird von [OrdersRepository.create] geworfen, wenn der Service die
+/// Bestellung mit 400 ablehnt. [detail] ist der lesbare Text des Service.
+class OrderRejectedException implements Exception {
+  const OrderRejectedException(this.detail);
+
+  final String detail;
+
+  @override
+  String toString() => detail;
+}
+
+/// Liest das Feld `detail` aus einer Problem-JSON (RFC 9457).
+/// Liefert `null`, wenn [body] kein JSON-Objekt mit nichtleerem `detail` ist.
+String? parseProblemDetail(String? body) {
+  if (body == null) return null;
+  try {
+    final json = jsonDecode(body);
+    if (json is Map<String, dynamic>) {
+      final detail = json['detail'];
+      if (detail is String && detail.isNotEmpty) return detail;
+    }
+  } on FormatException {
+    return null;
+  }
+  return null;
 }
 
 /// Frontend-eigenes Modell. Entkoppelt die UI vom generierten Client:
@@ -89,7 +118,16 @@ class ApiOrdersRepository implements OrdersRepository {
       customerId: customerId,
       items: [api.OrderItem(sku: sku, quantity: quantity)],
     );
-    final created = await _api.createOrder(request);
+    final api.Order? created;
+    try {
+      created = await _api.createOrder(request);
+    } on api.ApiException catch (error) {
+      final detail = error.code == 400
+          ? parseProblemDetail(error.message)
+          : null;
+      if (detail != null) throw OrderRejectedException(detail);
+      rethrow;
+    }
     if (created == null) {
       throw StateError('Der Service hat keine Bestellung zurückgegeben.');
     }

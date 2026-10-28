@@ -5,10 +5,15 @@ import 'package:order_app/orders/orders_repository.dart';
 import 'package:order_app/products/products_repository.dart';
 
 class FakeOrdersRepository implements OrdersRepository {
-  FakeOrdersRepository({this.failCancel = false, this.failCreate = false});
+  FakeOrdersRepository({
+    this.failCancel = false,
+    this.failCreate = false,
+    this.createError,
+  });
 
   final bool failCancel;
   final bool failCreate;
+  final Exception? createError;
   final List<OrderSummary> orders = [];
 
   @override
@@ -31,6 +36,7 @@ class FakeOrdersRepository implements OrdersRepository {
     required String sku,
     required int quantity,
   }) async {
+    if (createError != null) throw createError!;
     if (failCreate) {
       throw StateError('Unbekannte Artikelnummer: $sku');
     }
@@ -147,6 +153,48 @@ void main() {
     );
     expect(find.byType(ListTile), findsNothing);
     expect(find.text('Noch keine Bestellungen.'), findsOneWidget);
+  });
+
+  testWidgets('zeigt den detail-Text, wenn der Service ablehnt', (
+    tester,
+  ) async {
+    final repository = FakeOrdersRepository(
+      createError: const OrderRejectedException(
+        'Unbekannte Artikelnummer: X-1',
+      ),
+    );
+    await tester.pumpWidget(OrderApp(repository: repository));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Demo-Bestellung anlegen'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        'Bestellung anlegen fehlgeschlagen: Unbekannte Artikelnummer: X-1',
+      ),
+      findsOneWidget,
+    );
+    expect(find.textContaining('{'), findsNothing);
+  });
+
+  group('parseProblemDetail', () {
+    test('liest detail aus einer Problem-JSON', () {
+      expect(
+        parseProblemDetail(
+          '{"status":400,"detail":"Unbekannte Artikelnummer: X-1"}',
+        ),
+        'Unbekannte Artikelnummer: X-1',
+      );
+    });
+
+    test('liefert null ohne JSON, ohne detail oder ohne Text', () {
+      expect(parseProblemDetail('kein json'), isNull);
+      expect(parseProblemDetail('{"status":400}'), isNull);
+      expect(parseProblemDetail('{"detail":42}'), isNull);
+      expect(parseProblemDetail('[1]'), isNull);
+      expect(parseProblemDetail(null), isNull);
+    });
   });
 
   group('Detailansicht', () {

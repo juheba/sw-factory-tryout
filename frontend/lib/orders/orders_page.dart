@@ -52,6 +52,13 @@ class _OrdersPageState extends State<OrdersPage> {
         sku: 'BOOK-001',
         quantity: 1,
       );
+    } on OrderRejectedException catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Bestellung anlegen fehlgeschlagen: ${error.detail}'),
+        ),
+      );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
