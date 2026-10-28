@@ -194,6 +194,15 @@ class OrdersApiTest {
     }
 
     @Test
+    void namesRepeatedUnknownSkuOnlyOnce() throws Exception {
+        mvc.perform(post("/orders").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"customerId\": \"c-1\", \"items\": [{\"sku\": \"X-1\", \"quantity\": 1},"
+                    + " {\"sku\": \"X-1\", \"quantity\": 2}]}"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.detail").value("Unbekannte Artikelnummer: X-1"));
+    }
+
+    @Test
     void storesNothingForMixedKnownAndUnknownSkus() throws Exception {
         int before = countOrders();
 
