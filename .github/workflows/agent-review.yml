@@ -151,7 +151,7 @@ jobs:
 
       # Interaktiv-Modus (kein prompt): Die Action reagiert auf den Befehl, legt einen Fortschrittskommentar an,
       # nimmt nur Kommentare des Owners als Kontext und pusht auf den Branch des PR.
-      - uses: anthropics/claude-code-action@16f9f71ab9c490faf367f94dd294897edc25be33 # v1.0.261
+      - uses: anthropics/claude-code-action@8041f1d17e0e7d2f2cfe35002962e9f26237c0bb # v1.0.263
         env:
           GH_TOKEN: ${{ secrets.AGENT_GITHUB_TOKEN }}
         with:
