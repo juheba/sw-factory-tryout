@@ -195,6 +195,38 @@ Kontingents. Die Zeile **Auslastung** fasst das lesbar zusammen: Sitzung und Woc
 Auslastung meist um weniger als einen Prozentpunkt, die Anzeige ändert sich erst über mehrere Läufe. Die Werte
 teilen sich Läufe und deine eigene Nutzung. Hintergrund und Checkliste: Issue #102 und #118, übergeordnet #100.
 
+## Reviewer einrichten und bedienen
+
+Der Reviewer (Workflow `agent-reviewer.yml`, Roadmap P4) prüft PRs und Issues gegen die
+[Definition of Done](../config/definition-of-done.md). Er ist schreibgeschützt und läuft **ohne Freigabe**.
+
+**Einmalig einrichten (nur du, Weboberfläche):**
+
+1. Settings > Environments > New environment: `factory-read`. **Keine** „Required reviewers“, aber Deployment branches
+   auf `main` beschränken.
+2. Im Environment ein Secret `CLAUDE_CODE_OAUTH_TOKEN` anlegen (Kopie des Tokens, das im Environment `agent` liegt;
+   `claude setup-token` liefert ein neues, falls du den Wert nicht mehr hast). Das PAT `AGENT_GITHUB_TOKEN` kommt
+   **nicht** hinein.
+3. Optional Settings > Secrets and variables > Actions > Variables: `REVIEWER_MODEL` (zum Beispiel `sonnet`).
+   Ohne Variable nimmt der Workflow `sonnet`. Das Modell des Laufs steht in der Job-Zusammenfassung („Modell“).
+4. Neues Token-Datum in `.github/ablaufdaten.json` eintragen, falls ein neues Token erzeugt wurde.
+
+**Bedienen:**
+
+- **Automatisch:** Ein neuer oder aktualisierter PR auf einem `agent/*`-Branch (Autor `juheba`, gleiches Repo, kein
+  Entwurf) löst ein Review aus. Pro Commit höchstens eines, höchstens 5 automatische Reviews pro PR. Der Kommentar
+  wird aktualisiert, nicht dupliziert.
+- **Auf Zuruf:** Ein Kommentar `/review` von dir auf jedem Issue oder PR, optional mit Hinweis
+  (`/review achte besonders auf Fehlerfälle`). Auf einem Issue prüft er den Auftrag, auf einem PR den Diff (auch bei
+  fremden Branches und Forks). Jeder Zuruf erzeugt einen eigenen Kommentar.
+- **Unterschied zu `/agent`:** `/agent` startet den Umsetzer (schreibt Code, mit Freigabe), `/review` den Reviewer
+  (schreibt nie, ohne Freigabe).
+
+**Wirkt erst nach dem Merge:** `pull_request_target` und `issue_comment` laufen mit dem Workflow aus `main`.
+
+**Notausschalter:** Environment `factory-read` löschen oder das Secret entfernen, dann scheitert der Job `review`
+(der Kommentar meldet den Fehler). Härter: Workflow in der Actions-Oberfläche deaktivieren.
+
 ## Zuständigkeit
 
 Alles läuft über den Owner: Freigabe der Läufe, Review, Merge, Zugänge. Wird die Factory von mehr Personen genutzt,

@@ -363,3 +363,36 @@ von `agent/*` bleiben gesperrt.
 **Zweiter Test (26.10.2026, PR #80, Lauf 40377790137):** Das Nachladen der Historie funktionierte, der Merge brach ab. Ursache: Die Action stellt `CLAUDE.md` und `.claude/` beim Start aus `main` wieder her. Liegt der PR-Branch hinter `main`, stehen diese Dateien deshalb als unversionierte Änderungen im Arbeitsverzeichnis, und ein Merge, der dieselben Dateien ändert, bricht ab („would be overwritten“). Der Agent verwarf sie bewusst nicht, denn das Wiederherstellen aus `main` ist eine Schutzmaßnahme. Lösung: `git merge --autostash origin/main`. Der Autostash wird nach dem Merge ohne Konflikt wieder angewandt, weil die Änderung dem Stand von `main` entspricht; die Schutzdateien bleiben auf dem Stand von `main`. Verworfen wurde `git restore` oder `git stash` per Hand, weil das zusätzliche Befehle auf Schutzdateien freigeben würde. Die Schutzbereichs-Prüfung von `pruefung` stellt sicher, dass der PR selbst diese Dateien nicht ändert.
 
 **Dritter Test (26.10.2026, PR #80, Lauf 40379976448): bestanden.** Mit `git fetch --unshallow origin main` und `git merge --autostash origin/main` entstand der Merge-Commit `822277d` (zwei Eltern) auf dem PR-Branch, ohne Rebase und ohne Force-Push. `docs/process.md` wurde ohne Konflikt zusammengeführt, `./verify.sh` lief mit Exit-Code 0, das Arbeitsverzeichnis blieb sauber und es gab keine abgelehnten Aktionen (9 Turns, 0,13 USD, 106 s). Ungetestet bleibt ein echter Konflikt; dafür gilt die Regel „nur eindeutige Lösungen, sonst `git merge --abort` und Bericht“. Der Merge-Commit trägt den Autor `claude[bot]` und ist nicht signiert; das Ruleset verlangt keine Signaturen.
+
+## Reviewer ohne Freigabe (Roadmap P4, Issue #124)
+
+Entscheidung des Owners (28.10.2026): Der Reviewer läuft ohne Freigabe im Environment, sonst wird der Owner zum
+Engpass. Das ist nur vertretbar, weil der Lauf nichts schreiben und nichts ausführen kann.
+
+**Maßnahmen**
+
+- **Zwei Environments.** Der Reviewer nutzt `factory-read` (kein Freigabe-Zwang, Branch `main`) mit einer **Kopie** des
+  Abo-Tokens. Das PAT `AGENT_GITHUB_TOKEN` liegt dort nicht. Ein Verstoß im Reviewer erreicht damit weder `main` noch die
+  Rechte des Coders.
+- **Drei Jobs mit getrennten Rechten.** `pruefung` und `kommentar` haben Schreibrechte, aber kein Token und kein Claude.
+  `review` hat das Abo-Token, aber ein nur lesendes `GITHUB_TOKEN`. Kein Job hat beides.
+- **Claude schreibt nur eine Datei.** `.claude/reviewer-settings.json` erlaubt Lesen, `git diff/log/show/status`,
+  `gh pr diff/view` und `gh issue view` sowie Schreiben nach `.agent-tmp/`. Die Veröffentlichung übernimmt der Job
+  `kommentar` (ohne Secrets), der den Text bereinigt (keine `@`-Erwähnungen, keine gefälschten Marker).
+- **Workflow immer aus `main`.** `pull_request_target` und `issue_comment` laufen mit dem Stand von `main`. Der PR-Code
+  liegt getrennt in `pr/` (ohne Zugangsdaten) und wird nie gebaut oder ausgeführt. Konfiguration (`CLAUDE.md`,
+  Definition of Done, Settings) kommt aus `main`, nicht aus dem PR.
+- **Enge Auslöser.** Automatisch nur für `agent/*`-PRs des Owners aus demselben Repo. Auf Zuruf nur Kommentare des Owners
+  (`/review`). Obergrenze 5 automatische Reviews pro PR, höchstens ein Review pro Commit.
+- **Prompt-Injection.** Diff, PR-Text, Issue-Text und Kommentare gelten als Daten. Der Schaden bleibt begrenzt, weil der
+  Reviewer nichts schreiben, nichts ausführen und das Netz nicht erreichen kann.
+
+**Restrisiken (bewusst akzeptiert, nicht belegt)**
+
+- Das Token liegt ein zweites Mal im Repository (in einem Environment ohne Freigabe). Wer `main` ändern kann, kann den
+  Workflow ändern und das Token auslesen. Das ist heute nur der Owner (Ruleset, Code-Owner-Pflicht).
+- Fehlerhafte Befunde oder ein „in Ordnung“ des Reviewers sind kein Beleg. Das Review des Owners bleibt Pflicht.
+- Ob `--model sonnet` mit dem Abo-Token funktioniert und welches Modell läuft, ist am ersten Lauf zu prüfen.
+- Die Settings-Regeln (`allow`/`deny`) wurden noch nicht in einem Lauf mit einem Berechtigungstest bestätigt
+  (Abnahmekriterium in Issue #124).
+

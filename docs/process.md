@@ -108,3 +108,12 @@ und QA lesen die Fassung aus `main`. Die Punkte sind nummeriert (`DoD-1` …) un
 (`./verify.sh` erzwingt es), **Sperre** (Berechtigungen, `.gitignore`, `CODEOWNERS` verhindern es) oder **Urteil**
 (jemand muss lesen und beurteilen). Der Coder bewertet jeden Punkt im PR-Text, der Reviewer (Roadmap P4) bewertet die
 Urteilspunkte und zitiert die Nummer. Wiederkehrende Befunde werden Teil der Liste (Roadmap P8).
+
+## Reviewer
+
+Der **Reviewer** (Roadmap P4, [Betrieb](betrieb.md#reviewer-einrichten-und-bedienen)) ist die zweite Rolle neben dem
+Umsetzer. Er prüft einen PR oder ein Issue gegen die [Definition of Done](../config/definition-of-done.md), ohne
+Freigabe und ohne Schreibrechte, und antwortet mit einem Kommentar (Urteil, Befunde mit Beleg, Bewertung je
+Urteilspunkt). Er läuft automatisch bei PRs auf `agent/*` und auf Zuruf mit `/review` an jedem Issue oder PR. Sein
+Urteil ersetzt das Review des Owners nicht.
+
