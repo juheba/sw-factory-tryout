@@ -13,9 +13,23 @@ class Product {
   final int priceCents;
 }
 
+/// Wird von [ProductsRepository.fetchProduct] geworfen, wenn es die
+/// Artikelnummer nicht gibt.
+class ProductNotFoundException implements Exception {
+  const ProductNotFoundException(this.sku);
+
+  final String sku;
+
+  @override
+  String toString() => 'Produkt $sku nicht gefunden';
+}
+
 abstract class ProductsRepository {
   /// Liefert alle Produkte des Katalogs.
   Future<List<Product>> listAll();
+
+  /// Liefert das Produkt [sku] oder wirft [ProductNotFoundException].
+  Future<Product> fetchProduct(String sku);
 
   /// Liefert die Produktnamen nach Artikelnummer. Ist der Katalog nicht
   /// ladbar, ist das Ergebnis leer, damit Aufrufer auf die Artikelnummer
@@ -32,8 +46,9 @@ abstract class ProductsRepository {
 
 /// Implementierung auf Basis des aus openapi.yaml generierten Clients.
 class ApiProductsRepository extends ProductsRepository {
-  ApiProductsRepository({required String baseUrl})
-    : _api = api.ProductsApi(api.ApiClient(basePath: baseUrl));
+  /// [productsApi] ersetzt den generierten Client, nur für Tests gedacht.
+  ApiProductsRepository({required String baseUrl, api.ProductsApi? productsApi})
+    : _api = productsApi ?? api.ProductsApi(api.ApiClient(basePath: baseUrl));
 
   final api.ProductsApi _api;
 
@@ -49,5 +64,24 @@ class ApiProductsRepository extends ProductsRepository {
           ),
         )
         .toList();
+  }
+
+  @override
+  Future<Product> fetchProduct(String sku) async {
+    final api.Product? product;
+    try {
+      product = await _api.getProduct(sku);
+    } on api.ApiException catch (error) {
+      if (error.code == 404) throw ProductNotFoundException(sku);
+      rethrow;
+    }
+    if (product == null) {
+      throw StateError('Der Service hat kein Produkt zurückgegeben.');
+    }
+    return Product(
+      sku: product.sku,
+      name: product.name,
+      priceCents: product.priceCents,
+    );
   }
 }
