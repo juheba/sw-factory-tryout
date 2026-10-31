@@ -12,7 +12,7 @@ name: Agent Reviewer
 #
 # Aufbau (drei Jobs, damit kein Job gleichzeitig das Abo-Token und Schreibrechte hat):
 #   pruefung  : Rechte zum Kommentieren, keine Secrets. Prüft den Auslöser, legt den "läuft"-Kommentar an.
-#   review    : Abo-Token im Environment "agent-read", GITHUB_TOKEN nur lesend. Claude darf nur lesen.
+#   review    : Abo-Token im Environment "factory-read", GITHUB_TOKEN nur lesend. Claude darf nur lesen.
 #   kommentar : Schreibrechte, keine Secrets. Schreibt das Ergebnis in den Kommentar.
 # Sicherheitskonzept: docs/adr/0002-agent-sicherheit.md, Abschnitt "Reviewer ohne Freigabe".
 
@@ -134,9 +134,9 @@ jobs:
     if: needs.pruefung.outputs.erlaubt == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
-    # Das Abo-Token liegt im Environment "agent-read": nur Branch main, keine Freigabe nötig (Entscheidung des Owners
+    # Das Abo-Token liegt im Environment "factory-read": nur Branch main, keine Freigabe nötig (Entscheidung des Owners
     # vom 28.10.2026). Das Environment enthält nur das Token, nicht den PAT des Coders.
-    environment: agent-read
+    environment: factory-read
     # Pro PR oder Issue ein Review; ein neuerer Lauf ersetzt den laufenden.
     concurrency:
       group: agent-reviewer-${{ needs.pruefung.outputs.nr }}

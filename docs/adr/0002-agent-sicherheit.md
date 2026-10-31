@@ -371,7 +371,7 @@ Engpass. Das ist nur vertretbar, weil der Lauf nichts schreiben und nichts ausf�
 
 **Maßnahmen**
 
-- **Zwei Environments.** Der Reviewer nutzt `agent-read` (kein Freigabe-Zwang, Branch `main`) mit einer **Kopie** des
+- **Zwei Environments.** Der Reviewer nutzt `factory-read` (kein Freigabe-Zwang, Branch `main`) mit einer **Kopie** des
   Abo-Tokens. Das PAT `AGENT_GITHUB_TOKEN` liegt dort nicht. Ein Verstoß im Reviewer erreicht damit weder `main` noch die
   Rechte des Coders.
 - **Drei Jobs mit getrennten Rechten.** `pruefung` und `kommentar` haben Schreibrechte, aber kein Token und kein Claude.
