@@ -150,6 +150,9 @@ jobs:
                als Kommentar ins Issue (je Frage mögliche Antworten und deine Empfehlung, Text nach
                `.agent-tmp/comment.md`, dann `gh issue comment`) und beende den Lauf. Kleine Lücken benennst du als
                Annahmen im PR-Text. Der Owner antwortet im Issue und setzt das Label `agent` erneut.
+            9. Lies `config/definition-of-done.md` und halte alle zutreffenden Punkte ein. Der PR-Text enthält den
+               Abschnitt `## Definition of Done`: Jeder Punkt (DoD-1 bis DoD-10 und die zutreffenden A/B/C/D-Punkte)
+               mit `✅`, `n/a` oder `Abweichung: <Grund>`. Bewerte ehrlich: Ein Punkt ohne Beleg ist keine Erfüllung.
 
       # Diagnose (vorübergehend, nach den ersten Abnahmeläufen entfernen): Der Job meldet Erfolg, auch wenn Aktionen
       # abgelehnt wurden. Dieser Schritt gibt abgelehnte Werkzeugaufrufe und den Stand des Arbeitsverzeichnisses als

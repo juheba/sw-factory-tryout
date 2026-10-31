@@ -99,3 +99,12 @@ verhindert und was der Owner selbst tun muss. Die Regeln und ihre Begründung st
 3. **Rollen:** Planer, Implementierer und Reviewer als Subagents/Skills in `.claude/`.
 4. **Orchestrator:** Eigener Graph mit dem Claude Agent SDK (Knoten = Rollen, Kanten = Übergaben, Schleife = Review → Fix).
 5. **Wiederverwendung:** Skills und Templates in einem eigenen Factory-Repo für weitere Stacks.
+
+## Definition of Done
+
+Die Datei [`config/definition-of-done.md`](../config/definition-of-done.md) ist der gemeinsame Maßstab für Coder,
+Reviewer, QA und Owner. Sie liegt im Schutzbereich `config/`, damit der Coder die Latte nicht selbst absenkt; Reviewer
+und QA lesen die Fassung aus `main`. Die Punkte sind nummeriert (`DoD-1` …) und nach Art der Prüfung markiert: **Gate**
+(`./verify.sh` erzwingt es), **Sperre** (Berechtigungen, `.gitignore`, `CODEOWNERS` verhindern es) oder **Urteil**
+(jemand muss lesen und beurteilen). Der Coder bewertet jeden Punkt im PR-Text, der Reviewer (Roadmap P4) bewertet die
+Urteilspunkte und zitiert die Nummer. Wiederkehrende Befunde werden Teil der Liste (Roadmap P8).
