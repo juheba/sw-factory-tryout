@@ -376,6 +376,11 @@ Engpass. Das ist nur vertretbar, weil der Lauf nichts schreiben und nichts ausf�
   Rechte des Coders.
 - **Drei Jobs mit getrennten Rechten.** `pruefung` und `kommentar` haben Schreibrechte, aber kein Token und kein Claude.
   `review` hat das Abo-Token, aber ein nur lesendes `GITHUB_TOKEN`. Kein Job hat beides.
+- **Lesende Rechte des Jobs `review`.** `contents`, `issues`, `pull-requests`, `checks` und `statuses`, alle `read`.
+  `checks` und `statuses` kamen am 31.10.2026 hinzu ([🔀 #150](https://github.com/juheba/sw-factory-tryout/pull/150)):
+  Der Reviewer liest mit `gh pr view --json statusCheckRollup` den Stand der Pflicht-Checks `service` und `frontend`, um
+  DoD-1 (Gate) zu beurteilen, statt „nicht beurteilbar“ zu melden. Beide Rechte erlauben nur Lesen. Sie geben dem Job
+  weder Schreibzugriff noch Zugriff auf Secrets. Im ersten Lauf nach dem Merge lieferte die Abfrage beide Ergebnisse.
 - **Claude schreibt nur eine Datei.** `.claude/reviewer-settings.json` erlaubt Lesen, `git diff/log/show/status`,
   `gh pr diff/view` und `gh issue view` sowie Schreiben nach `.agent-tmp/`. Die Veröffentlichung übernimmt der Job
   `kommentar` (ohne Secrets), der den Text bereinigt (keine `@`-Erwähnungen, keine gefälschten Marker).

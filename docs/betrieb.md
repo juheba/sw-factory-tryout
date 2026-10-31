@@ -224,6 +224,11 @@ Der Reviewer (Workflow `agent-reviewer.yml`, Roadmap P4) prüft PRs und Issues g
 
 **Wirkt erst nach dem Merge:** `pull_request_target` und `issue_comment` laufen mit dem Workflow aus `main`.
 
+**Rechte des Laufs:** Der Job `review` hat nur lesende Rechte (`contents`, `issues`, `pull-requests`, `checks`,
+`statuses`). `checks` und `statuses` braucht er, damit er den CI-Stand der Pflicht-Checks sieht und DoD-1 beurteilen kann.
+Steht im Kommentar bei DoD-1 trotzdem „nicht beurteilbar“, prüfe zuerst, ob diese beiden Rechte im Workflow noch stehen.
+Begründung: [ADR 0002](adr/0002-agent-sicherheit.md), Abschnitt „Reviewer ohne Freigabe“.
+
 **Notausschalter:** Environment `factory-read` löschen oder das Secret entfernen, dann scheitert der Job `review`
 (der Kommentar meldet den Fehler). Härter: Workflow in der Actions-Oberfläche deaktivieren.
 
