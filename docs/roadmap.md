@@ -58,6 +58,7 @@ flowchart LR
 | P8 | Lernschleife: wiederkehrende Review-Hinweise nach `CLAUDE.md` | ⬜ offen | Nach dem Merge kurz festhalten, was sich wiederholt. `CLAUDE.md` ist Schutzbereich, Änderung durch den Owner. |
 | P9 | Definition of Done für Coder, Reviewer und QA | ⚠️ in Arbeit | Gebaut (Issue #126, ungetestet): `config/definition-of-done.md` (nummerierte Punkte, je „Gate“, „Sperre“ oder „Urteil“), Coder-Prompt und PR-Vorlage nutzen sie. Offen: Verweis in `CLAUDE.md` (Owner), Nutzung durch den Reviewer (#124). |
 | P10 | Review-Schleife: Befunde von Reviewer und QA abarbeiten | ⬜ offen | Issue #127, nach #124. |
+| P11 | Schreibweise: Emoji und Links für Issues, PRs, Environments und Agents | ⚠️ in Arbeit | Gebaut (Issue #139, ungetestet): Abschnitt „Schreibweise“ in `docs/process.md`. Offen: Satz in `CLAUDE.md` (Owner). |
 
 ## Sicherheit
 
