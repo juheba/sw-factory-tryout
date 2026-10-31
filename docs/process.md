@@ -103,34 +103,38 @@ verhindert und was der Owner selbst tun muss. Die Regeln und ihre Begründung st
 ## Schreibweise
 
 Damit bloße Nummern und ähnlich klingende Namen nicht verwechselt werden, gilt für Chat, Kommentare und den Fließtext
-von Issues und PRs (nicht für Titel): **Emoji vor dem Wort, die Art immer dabei, Issues, PRs und Bugs immer verlinkt.**
-Das Emoji ergänzt den Text, es ersetzt ihn nie.
+von Issues und PRs (nicht für Titel): **Emoji und Nummer, Issues, PRs und Bugs immer verlinkt.** Das Emoji nennt die
+Art, deshalb steht das Wort „Issue“, „PR“ oder „Environment“ nicht dabei. Nie eine bloße Nummer (`#123`, `131`, `56`).
 
 | Was | Schreibweise | Hinweis |
 |---|---|---|
-| Issue | `[📌 Issue #123](https://github.com/juheba/sw-factory-tryout/issues/123)` | |
-| Pull Request | `[🔀 PR #123](https://github.com/juheba/sw-factory-tryout/pull/123)` | |
-| Bug | `[🐛 Bug #123](https://github.com/juheba/sw-factory-tryout/issues/123)` | Ein Bug ist ein Issue mit Label `bug`, der Link zeigt auf `/issues/`. |
-| Environment | 🌐 Environment `factory-read` | Name in Backticks. |
-| Coder | 💻 Agent `agent-coder` | |
-| Reviewer | 🔎 Agent `agent-reviewer` | |
-| QA | 🔬 Agent `agent-qa` | |
-| Planer | 🧭 Agent `agent-planer` | |
+| Issue | `[📌 #123](https://github.com/juheba/sw-factory-tryout/issues/123)` | |
+| Pull Request | `[🔀 #123](https://github.com/juheba/sw-factory-tryout/pull/123)` | Der Link zeigt auf `/pull/`, das unterscheidet ihn vom Issue. |
+| Bug | `[🐛 #123](https://github.com/juheba/sw-factory-tryout/issues/123)` | Ein Bug ist ein Issue mit Label `bug`, der Link zeigt auf `/issues/`. |
+| Environment | 🌐`factory-read` | Name in Backticks. |
+| Coder | 💻`agent-coder` | |
+| Reviewer | 🔎`agent-reviewer` | |
+| QA | 🔬`agent-qa` | |
+| Planer | 🧭`agent-planer` | |
 | Owner | 👩🏽‍💻 Owner | der Mensch |
 | Assistant | 💬 Assistant | arbeitet an der Factory selbst, nicht im Ablauf |
 
 Regeln:
 
-- **Art immer dazu:** „PR #137“, nie nur „#137“ oder „137“; „Environment `factory-read`“, nie nur „factory-read“; „Agent
-  `agent-reviewer`“, nie nur „der Reviewer“, wenn die Rolle gemeint ist und Verwechslung möglich ist.
-- **Sparsam:** Emojis in Überschriften, Zuständigkeitstabellen und beim ersten Nennen im Satz, nicht an jedem Wort.
+- **Immer Emoji, Nummer oder Name und, wo es einen gibt, den Link.** „🔀 #137“ mit Link, nie nur „#137“ oder „137“;
+  „🌐`factory-read`“, nie nur „factory-read“; „🔎`agent-reviewer`“, wenn die Rolle gemeint ist.
+- **Das Emoji ersetzt das Wort, nicht die Nummer.** Wer Emojis nicht darstellen kann, sieht im Link-Text nur die Nummer;
+  deshalb steht die Art zusätzlich im Link-Ziel (`/issues/`, `/pull/`).
+- **Sparsam bei allem anderen:** Zusätzliche Emojis nur in Überschriften und Zuständigkeitstabellen, nicht an jedem Wort.
 - **Nicht in Titeln** von Issues und PRs: Dort stehen IDs wie `[P4]`, Emojis würden Suche und Filter erschweren.
 - **Eine Bedeutung pro Emoji.** Die Zustandszeichen bleiben getrennt: ✅ erfüllt, ❌ verletzt oder Fehler,
   ⏳ wartet auf Freigabe, ▶️ läuft, ⛔ abgebrochen, ⚠️ in Arbeit, ⬜ offen, ❓ zu bewerten.
+- **Probephase:** Die Kurzform gilt seit dem 31.10.2026 und wird im Betrieb bewertet. Fällt etwas auf (zum Beispiel
+  Verwechslungen oder unleserliche Stellen), wird die Regel angepasst.
 
-Beispiel: „[🔀 PR #137](https://github.com/juheba/sw-factory-tryout/pull/137) führt 🌐 Environment `factory-read` für
-🔎 Agent `agent-reviewer` ein, die Umbenennung steht in
-[📌 Issue #138](https://github.com/juheba/sw-factory-tryout/issues/138).“
+Beispiel: „[🔀 #137](https://github.com/juheba/sw-factory-tryout/pull/137) führt 🌐`factory-read` für
+🔎`agent-reviewer` ein, die Umbenennung steht in
+[📌 #138](https://github.com/juheba/sw-factory-tryout/issues/138).“
 
 ## Definition of Done
 
