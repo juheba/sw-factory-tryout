@@ -146,7 +146,8 @@ jobs:
       group: agent-reviewer-${{ needs.pruefung.outputs.nr }}
       cancel-in-progress: true
     # Nur lesen: Claude bekommt über GITHUB_TOKEN keine Schreibrechte. "checks" und "statuses" (ebenfalls nur lesend)
-    # braucht `gh pr view --json statusCheckRollup`, damit der Reviewer den CI-Stand sieht (DoD-1).
+    # braucht `gh pr view --json statusCheckRollup`, damit der Reviewer den CI-Stand nennen kann (nur Information, DoD-1
+    # beurteilt er nicht).
     permissions:
       checks: read
       contents: read
@@ -213,9 +214,12 @@ jobs:
                beurteilen, weil es Ausführung braucht, schreibst du „nicht beurteilbar“, du rätst nicht.
             7. Prüfe bei einem PR, was sich ohne Ausführung prüfen lässt, statt „nicht beurteilbar“ zu schreiben:
                Branchname und Commit-Stil (DoD-10) mit `gh pr view <nr> --json headRefName,commits,body`, und ob der
-               PR-Text den Abschnitt `## Definition of Done` enthält. Das Gate (DoD-1) beurteilst du am CI-Stand: Lies mit
-               `gh pr view <nr> --json statusCheckRollup` die Ergebnisse der Pflicht-Checks `service` und `frontend`
-               und nenne sie im Beleg. Fehlt die Angabe oder ist sie leer, schreibst du „nicht beurteilbar“.
+               PR-Text den Abschnitt `## Definition of Done` enthält. Das Gate (DoD-1) beurteilst du nicht und führst es nicht in
+               der Tabelle: Das erzwingt das Ruleset mit den Pflicht-Checks `service` und `frontend`. Lies stattdessen
+               mit `gh pr view <nr> --json statusCheckRollup` den Stand dieser beiden Checks und nenne ihn in **einer**
+               Zeile unter der Tabelle („CI beim Review: `service` erfolgreich, `frontend` läuft“). Review und CI starten
+               gleichzeitig, `läuft` ist deshalb normal und kein Befund. Der Stand ändert weder Urteil noch Befunde. Fehlt
+               die Angabe oder ist sie leer, lässt du die Zeile weg.
             8. Prüfe PR-Text und Kommentare auf die Schreibweise (`docs/process.md`, Abschnitt „Schreibweise“, aus dem
                Arbeitsverzeichnis): Issues und PRs als Emoji, Nummer und Link, Environments und Agents mit Emoji und Namen
                in Backticks. Eine bloße Nummer (`#123`, `PR #123`) ist ein Hinweis, kein blockierender Befund.
