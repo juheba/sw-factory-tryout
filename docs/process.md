@@ -100,6 +100,38 @@ verhindert und was der Owner selbst tun muss. Die Regeln und ihre Begründung st
 4. **Orchestrator:** Eigener Graph mit dem Claude Agent SDK (Knoten = Rollen, Kanten = Übergaben, Schleife = Review → Fix).
 5. **Wiederverwendung:** Skills und Templates in einem eigenen Factory-Repo für weitere Stacks.
 
+## Schreibweise
+
+Damit bloße Nummern und ähnlich klingende Namen nicht verwechselt werden, gilt für Chat, Kommentare und den Fließtext
+von Issues und PRs (nicht für Titel): **Emoji vor dem Wort, die Art immer dabei, Issues, PRs und Bugs immer verlinkt.**
+Das Emoji ergänzt den Text, es ersetzt ihn nie.
+
+| Was | Schreibweise | Hinweis |
+|---|---|---|
+| Issue |  | |
+| Pull Request |  | |
+| Bug |  | Ein Bug ist ein Issue mit Label , der Link zeigt auf . |
+| Environment | 🌐 Environment `agent-read` | Name in Backticks. |
+| Coder | 💻 Agent `agent-coder` | |
+| Reviewer | 🔎 Agent `agent-reviewer` | |
+| QA | 🔬 Agent `agent-qa` | |
+| Planer | 🧭 Agent `agent-planer` | |
+| Owner | 👩🏽‍💻 Owner | der Mensch |
+| Assistant | 💬 Assistant | arbeitet an der Factory selbst, nicht im Ablauf |
+
+Regeln:
+
+- **Art immer dazu:** „PR #137“, nie nur „#137“ oder „137“; „Environment `agent-read`“, nie nur „agent-read“; „Agent
+  `agent-reviewer`“, nie nur „der Reviewer“, wenn die Rolle gemeint ist und Verwechslung möglich ist.
+- **Sparsam:** Emojis in Überschriften, Zuständigkeitstabellen und beim ersten Nennen im Satz, nicht an jedem Wort.
+- **Nicht in Titeln** von Issues und PRs: Dort stehen IDs wie , Emojis würden Suche und Filter erschweren.
+- **Eine Bedeutung pro Emoji.** Die Zustandszeichen bleiben getrennt: ✅ erfüllt, ❌ verletzt oder Fehler,
+  ⏳ wartet auf Freigabe, ▶️ läuft, ⛔ abgebrochen, ⚠️ in Arbeit, ⬜ offen, ❓ zu bewerten.
+
+Beispiel: „[🔀 PR #137](https://github.com/juheba/sw-factory-tryout/pull/137) führt 🌐 Environment `agent-read` für
+🔎 Agent `agent-reviewer` ein, die Umbenennung steht in
+[📌 Issue #138](https://github.com/juheba/sw-factory-tryout/issues/138).“
+
 ## Definition of Done
 
 Die Datei [`config/definition-of-done.md`](../config/definition-of-done.md) ist der gemeinsame Maßstab für Coder,
