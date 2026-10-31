@@ -202,7 +202,7 @@ Der Reviewer (Workflow `agent-reviewer.yml`, Roadmap P4) prüft PRs und Issues g
 
 **Einmalig einrichten (nur du, Weboberfläche):**
 
-1. Settings > Environments > New environment: `agent-review`. **Keine** „Required reviewers“, aber Deployment branches
+1. Settings > Environments > New environment: `agent-read`. **Keine** „Required reviewers“, aber Deployment branches
    auf `main` beschränken.
 2. Im Environment ein Secret `CLAUDE_CODE_OAUTH_TOKEN` anlegen (Kopie des Tokens, das im Environment `agent` liegt;
    `claude setup-token` liefert ein neues, falls du den Wert nicht mehr hast). Das PAT `AGENT_GITHUB_TOKEN` kommt
@@ -224,7 +224,7 @@ Der Reviewer (Workflow `agent-reviewer.yml`, Roadmap P4) prüft PRs und Issues g
 
 **Wirkt erst nach dem Merge:** `pull_request_target` und `issue_comment` laufen mit dem Workflow aus `main`.
 
-**Notausschalter:** Environment `agent-review` löschen oder das Secret entfernen, dann scheitert der Job `review`
+**Notausschalter:** Environment `agent-read` löschen oder das Secret entfernen, dann scheitert der Job `review`
 (der Kommentar meldet den Fehler). Härter: Workflow in der Actions-Oberfläche deaktivieren.
 
 ## Zuständigkeit
