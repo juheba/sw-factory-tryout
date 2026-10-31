@@ -11,6 +11,7 @@ service/                  Spring Boot Microservice (Gradle)
 frontend/                 Flutter-App (Dart), nutzt einen aus der Spec generierten Client
 docs/                     Architektur (Mermaid), ADRs, Prozess
 config/checkstyle/        Stilregeln für den Service
+config/definition-of-done.md  Definition of Done (Maßstab für Coder, Reviewer und QA)
 verify.sh                 Gesamtes Gate (Service und Frontend)
 ```
 
@@ -37,6 +38,9 @@ verify.sh                 Gesamtes Gate (Service und Frontend)
 ausgeführt zu haben. Wenn ein benötigtes Tool (z. B. Flutter) in deiner Umgebung fehlt, sag das ausdrücklich,
 statt Erfolg zu behaupten.
 
+Zusätzlich gilt die Definition of Done in `config/definition-of-done.md`: Du liest sie vor dem PR und bewertest im
+PR-Text unter `## Definition of Done` jeden zutreffenden Punkt mit `✅`, `n/a` oder `Abweichung: <Grund>`.
+
 ## Spec-first-Regeln
 
 1. Die Wahrheit ist `openapi/openapi.yaml`. API-Änderungen beginnen **dort**.
@@ -58,6 +62,9 @@ statt Erfolg zu behaupten.
 - Frontend: Lints aus `flutter_lints`, Formatierung mit `dart format`. Keine Geschäftslogik in Widgets.
 - Keine neuen Abhängigkeiten oder Versions-Updates ohne ausdrücklichen Auftrag im Issue.
 - Keine Secrets, Tokens oder `.env`-Dateien lesen oder committen.
+- Verweise im PR-Text und in Kommentaren schreibst du nach `docs/process.md`, Abschnitt „Schreibweise“: Emoji und
+  Nummer mit Link für Issues und PRs (`[📌 #123](…/issues/123)`, `[🔀 #123](…/pull/123)`), Environments und Agents mit
+  Emoji und Namen in Backticks. Nie eine bloße Nummer.
 
 ## Git-Workflow
 
