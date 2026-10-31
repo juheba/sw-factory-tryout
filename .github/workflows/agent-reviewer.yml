@@ -28,8 +28,11 @@ permissions: {}
 # Die Concurrency steht am Job "review", nicht am Workflow: Sonst würde jeder fremde Kommentar auf demselben PR einen
 # laufenden Review abbrechen (der Workflow startet bei jedem Kommentar, die Jobs werden danach übersprungen).
 
+# Die Namen der Jobs erscheinen als "Checks" am PR. Sie beschreiben, was der Job getan hat (Vergangenheitsform), und
+# sind keine Prüfung des Quellcodes: Das tun nur die Checks "service" und "frontend" (Workflow CI) und CodeQL.
 jobs:
   pruefung:
+    name: "🔎 agent-reviewer 1/3: Auslöser geprüft"
     # Automatisch: nur PRs des Coding-Agents. Auf Zuruf: nur Kommentare des Owners, die mit dem Befehl beginnen.
     if: >-
       (github.event_name == 'pull_request_target' &&
@@ -130,6 +133,7 @@ jobs:
           echo "Geprüft: $art $nr, automatisch=$auto, Runde $runde"
 
   review:
+    name: "🔎 agent-reviewer 2/3: Review durchgeführt (nur lesend)"
     needs: pruefung
     if: needs.pruefung.outputs.erlaubt == 'true'
     runs-on: ubuntu-24.04
@@ -201,17 +205,30 @@ jobs:
             5. Melde nur, was ein Mensch im Review ansprechen würde: Fehler, Sicherheit, fehlende oder wirkungslose
                Tests, Verstöße gegen `CLAUDE.md` oder die Definition of Done. Nichts zu Geschmack oder Formatierung.
             6. Belegpflicht: Jeder Befund nennt Datei und Zeile, ein kurzes Zitat aus dem Code und den Punkt (`DoD-n`).
-               Ohne Beleg gilt ein Befund nicht und du lässt ihn weg. Kannst du etwas nicht beurteilen, weil es
-               Ausführung braucht, schreibst du „nicht beurteilbar“, du rätst nicht.
-            7. Lobe nicht pauschal. Findest du nichts, schreibst du das.
+               Die Zeilennummer ist die Zeile **in der Datei** (lies die Stelle in `pr/` nach und zähle dort), nicht
+               die Zeile im Diff. Ohne Beleg gilt ein Befund nicht und du lässt ihn weg. Kannst du etwas nicht
+               beurteilen, weil es Ausführung braucht, schreibst du „nicht beurteilbar“, du rätst nicht.
+            7. Prüfe bei einem PR, was sich ohne Ausführung prüfen lässt, statt „nicht beurteilbar“ zu schreiben:
+               Branchname und Commit-Stil (DoD-10) mit `gh pr view <nr> --json headRefName,commits,body`, und ob der
+               PR-Text den Abschnitt `## Definition of Done` enthält.
+            8. Prüfe PR-Text und Kommentare auf die Schreibweise (`docs/process.md`, Abschnitt „Schreibweise“, aus dem
+               Arbeitsverzeichnis): Issues und PRs als Emoji, Nummer und Link, Environments und Agents mit Emoji und Namen
+               in Backticks. Eine bloße Nummer (`#123`, `PR #123`) ist ein Hinweis, kein blockierender Befund.
+            9. Lobe nicht pauschal. Findest du nichts, schreibst du das.
 
             Aufbau von `.agent-tmp/review.md` (kurz, ohne Einleitung):
             - Erste Zeile: `**Urteil:** in Ordnung` oder `**Urteil:** Nachbesserung nötig` oder `**Urteil:** nicht beurteilbar`
               (bei einem Issue: `bereit für den Coder` oder `Rückfragen nötig`).
             - `### Befunde`: nach Schwere gruppiert (blockierend, sollte, Hinweis), je Befund eine Zeile mit
-              `Datei:Zeile`, Zitat, Problem, Punkt. Gibt es keine, schreibe „Keine.“
+              `Datei:Zeile`, Zitat, Problem, Punkt. Gibt es keine, schreibe „Keine.“ Ein Hinweis kommt nur, wenn er etwas
+              sagt, das nicht schon im PR-Text steht.
             - Nur bei einem PR, `### Definition of Done`: eine Tabelle mit den Spalten Punkt, Bewertung
-              (`✅`, `❌` oder `nicht beurteilbar`), Beleg, für jeden zutreffenden Urteilspunkt.
+              (`✅`, `❌` oder `nicht beurteilbar`), Beleg, für die Urteilspunkte, die du tatsächlich beurteilt hast.
+              **Tabelle und Befunde müssen zusammenpassen:** Ein Punkt, zu dem du einen Befund schreibst, steht in der
+              Tabelle mit `❌`, nie mit `✅`; `✅` nur, wenn es zu diesem Punkt keinen Befund gibt.
+            - Ändert der PR nur Doku oder Konfigurationstext (nichts unter `service/`, `frontend/lib/`, `frontend/test/`,
+              `openapi/`), fasse nicht betroffene Punkte in **einer** Zeile zusammen („Nicht betroffen: DoD-2, DoD-3,
+              DoD-4, DoD-7“), statt sie einzeln aufzulisten.
             - Schreibe nur die Datei, kein weiterer Kommentar im Lauf nötig.
 
       - name: Ergebnis lesen
@@ -236,7 +253,7 @@ jobs:
                  | "\(.tool_name): \((.tool_input.command // .tool_input.file_path // "") | tostring | .[0:120])"]
                  | unique | join(" | ")' "$f" 2>&1 | flat)
           kz=$(jq -r '([.. | objects | select(.type == "result")] | last) as $r
-                 | "Turns \($r.num_turns // "?"), Kosten \($r.total_cost_usd // "?") USD, Dauer \(($r.duration_ms // 0) / 1000 | floor) s, Tokens ein \($r.usage.input_tokens // "?") / aus \($r.usage.output_tokens // "?") / Cache gelesen \($r.usage.cache_read_input_tokens // "?")"' "$f" 2>&1 | flat)
+                 | "Turns \($r.num_turns // "?"), Kosten \(if $r.total_cost_usd then (($r.total_cost_usd * 1000 | round) / 1000) else "?" end) USD, Dauer \(($r.duration_ms // 0) / 1000 | floor) s, Tokens ein \($r.usage.input_tokens // "?") / aus \($r.usage.output_tokens // "?") / Cache gelesen \($r.usage.cache_read_input_tokens // "?")"' "$f" 2>&1 | flat)
           au=$(jq -r '[.. | objects | select(has("unifiedWindows"))] | last
                  | if . == null then empty else
                    .unifiedWindows as $w
@@ -256,6 +273,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
   kommentar:
+    name: "🔎 agent-reviewer 3/3: Beurteilung kommentiert"
     needs: [pruefung, review]
     if: always() && needs.pruefung.outputs.erlaubt == 'true'
     runs-on: ubuntu-24.04
