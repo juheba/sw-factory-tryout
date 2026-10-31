@@ -206,6 +206,11 @@ jobs:
                erzwingt (`./verify.sh`), wiederholst du nicht. Bei einem Issue prüfst du stattdessen: Sind die
                Akzeptanzkriterien eindeutig und testbar? Widersprechen sie sich? Fehlen Fehlerfälle? Berührt der Auftrag
                Schutzbereiche? Passt er zu `CLAUDE.md`? Fehlt etwas, das ein Coder erraten müsste?
+               Nenne bei einem Issue zuerst seinen Zustand: offen oder geschlossen, und welche PRs darauf verweisen
+               (`gh issue view <nr> --json state,stateReason,closedByPullRequestsReferences`). Findest du keine
+               Verknüpfung, schreibst du das, du rätst nicht. Ist der Auftrag im Code von `main` schon umgesetzt, sagst
+               du das und nennst den PR, wenn du ihn kennst. Offene Fragen, die ein Blick in die genannten Dateien
+               beantwortet, beantwortest du selbst, statt sie dem Owner zu stellen.
             5. Melde nur, was ein Mensch im Review ansprechen würde: Fehler, Sicherheit, fehlende oder wirkungslose
                Tests, Verstöße gegen `CLAUDE.md` oder die Definition of Done. Nichts zu Geschmack oder Formatierung.
             6. Belegpflicht: Jeder Befund nennt Datei und Zeile, ein kurzes Zitat aus dem Code und den Punkt (`DoD-n`).
