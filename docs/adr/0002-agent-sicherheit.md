@@ -378,9 +378,13 @@ Engpass. Das ist nur vertretbar, weil der Lauf nichts schreiben und nichts ausf�
   `review` hat das Abo-Token, aber ein nur lesendes `GITHUB_TOKEN`. Kein Job hat beides.
 - **Lesende Rechte des Jobs `review`.** `contents`, `issues`, `pull-requests`, `checks` und `statuses`, alle `read`.
   `checks` und `statuses` kamen am 31.10.2026 hinzu ([🔀 #150](https://github.com/juheba/sw-factory-tryout/pull/150)):
-  Der Reviewer liest mit `gh pr view --json statusCheckRollup` den Stand der Pflicht-Checks `service` und `frontend`, um
-  DoD-1 (Gate) zu beurteilen, statt „nicht beurteilbar“ zu melden. Beide Rechte erlauben nur Lesen. Sie geben dem Job
-  weder Schreibzugriff noch Zugriff auf Secrets. Im ersten Lauf nach dem Merge lieferte die Abfrage beide Ergebnisse.
+  Der Reviewer liest mit `gh pr view --json statusCheckRollup` den Stand der Pflicht-Checks `service` und `frontend` und
+  nennt ihn in einer Zeile. Er beurteilt damit **nicht** DoD-1: Das Gate erzwingt das Ruleset auf `main` (Pflicht-Checks),
+  und Review und CI starten gleichzeitig, der Stand ist beim Review oft noch `IN_PROGRESS` und im Kommentar später
+  veraltet. Beide Rechte erlauben nur Lesen. Sie geben dem Job weder Schreibzugriff noch Zugriff auf Secrets.
+  Belegt ist, dass die Abfrage mit diesen Rechten Ergebnisse liefert: im manuellen Review auf
+  [🔀 #150](https://github.com/juheba/sw-factory-tryout/pull/150) nach dessen Merge (31.10.2026) standen `service` und
+  `frontend` mit `SUCCESS` im Kommentar. Ein automatischer Lauf mit dem neuen Prompt steht noch aus.
 - **Claude schreibt nur eine Datei.** `.claude/reviewer-settings.json` erlaubt Lesen, `git diff/log/show/status`,
   `gh pr diff/view` und `gh issue view` sowie Schreiben nach `.agent-tmp/`. Die Veröffentlichung übernimmt der Job
   `kommentar` (ohne Secrets), der den Text bereinigt (keine `@`-Erwähnungen, keine gefälschten Marker).
