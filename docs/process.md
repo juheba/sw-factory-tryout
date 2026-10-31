@@ -108,9 +108,9 @@ Das Emoji ergänzt den Text, es ersetzt ihn nie.
 
 | Was | Schreibweise | Hinweis |
 |---|---|---|
-| Issue |  | |
-| Pull Request |  | |
-| Bug |  | Ein Bug ist ein Issue mit Label , der Link zeigt auf . |
+| Issue | `[📌 Issue #123](https://github.com/juheba/sw-factory-tryout/issues/123)` | |
+| Pull Request | `[🔀 PR #123](https://github.com/juheba/sw-factory-tryout/pull/123)` | |
+| Bug | `[🐛 Bug #123](https://github.com/juheba/sw-factory-tryout/issues/123)` | Ein Bug ist ein Issue mit Label `bug`, der Link zeigt auf `/issues/`. |
 | Environment | 🌐 Environment `agent-read` | Name in Backticks. |
 | Coder | 💻 Agent `agent-coder` | |
 | Reviewer | 🔎 Agent `agent-reviewer` | |
@@ -124,7 +124,7 @@ Regeln:
 - **Art immer dazu:** „PR #137“, nie nur „#137“ oder „137“; „Environment `agent-read`“, nie nur „agent-read“; „Agent
   `agent-reviewer`“, nie nur „der Reviewer“, wenn die Rolle gemeint ist und Verwechslung möglich ist.
 - **Sparsam:** Emojis in Überschriften, Zuständigkeitstabellen und beim ersten Nennen im Satz, nicht an jedem Wort.
-- **Nicht in Titeln** von Issues und PRs: Dort stehen IDs wie , Emojis würden Suche und Filter erschweren.
+- **Nicht in Titeln** von Issues und PRs: Dort stehen IDs wie `[P4]`, Emojis würden Suche und Filter erschweren.
 - **Eine Bedeutung pro Emoji.** Die Zustandszeichen bleiben getrennt: ✅ erfüllt, ❌ verletzt oder Fehler,
   ⏳ wartet auf Freigabe, ▶️ läuft, ⛔ abgebrochen, ⚠️ in Arbeit, ⬜ offen, ❓ zu bewerten.
 
