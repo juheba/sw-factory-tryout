@@ -46,8 +46,9 @@ abstract class ProductsRepository {
 
 /// Implementierung auf Basis des aus openapi.yaml generierten Clients.
 class ApiProductsRepository extends ProductsRepository {
-  ApiProductsRepository({required String baseUrl})
-    : _api = api.ProductsApi(api.ApiClient(basePath: baseUrl));
+  /// [productsApi] ersetzt den generierten Client, nur für Tests gedacht.
+  ApiProductsRepository({required String baseUrl, api.ProductsApi? productsApi})
+    : _api = productsApi ?? api.ProductsApi(api.ApiClient(basePath: baseUrl));
 
   final api.ProductsApi _api;
 
