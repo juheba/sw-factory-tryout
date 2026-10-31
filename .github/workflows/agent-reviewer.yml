@@ -1,4 +1,4 @@
-name: Agent Reviewer
+name: "🔎 agent-reviewer"
 
 # Rolle "Reviewer" (Roadmap P4, Issue #124): ein schreibgeschützter Lauf prüft einen PR oder ein Issue gegen die
 # Definition of Done (config/definition-of-done.md) und antwortet mit einem Kommentar. Kein Code, kein Build, kein Push.
@@ -32,7 +32,7 @@ permissions: {}
 # sind keine Prüfung des Quellcodes: Das tun nur die Checks "service" und "frontend" (Workflow CI) und CodeQL.
 jobs:
   pruefung:
-    name: "🔎 agent-reviewer 1/3: Auslöser geprüft"
+    name: "1/3: Auslöser geprüft"
     # Automatisch: nur PRs des Coding-Agents. Auf Zuruf: nur Kommentare des Owners, die mit dem Befehl beginnen.
     if: >-
       (github.event_name == 'pull_request_target' &&
@@ -133,7 +133,7 @@ jobs:
           echo "Geprüft: $art $nr, automatisch=$auto, Runde $runde"
 
   review:
-    name: "🔎 agent-reviewer 2/3: Review durchgeführt (nur lesend)"
+    name: "2/3: Review durchgeführt (nur lesend)"
     needs: pruefung
     if: needs.pruefung.outputs.erlaubt == 'true'
     runs-on: ubuntu-24.04
@@ -273,7 +273,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
   kommentar:
-    name: "🔎 agent-reviewer 3/3: Beurteilung kommentiert"
+    name: "3/3: Beurteilung kommentiert"
     needs: [pruefung, review]
     if: always() && needs.pruefung.outputs.erlaubt == 'true'
     runs-on: ubuntu-24.04
