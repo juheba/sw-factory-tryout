@@ -145,11 +145,14 @@ jobs:
     concurrency:
       group: agent-reviewer-${{ needs.pruefung.outputs.nr }}
       cancel-in-progress: true
-    # Nur lesen: Claude bekommt über GITHUB_TOKEN keine Schreibrechte.
+    # Nur lesen: Claude bekommt über GITHUB_TOKEN keine Schreibrechte. "checks" und "statuses" (ebenfalls nur lesend)
+    # braucht `gh pr view --json statusCheckRollup`, damit der Reviewer den CI-Stand sieht (DoD-1).
     permissions:
+      checks: read
       contents: read
       issues: read
       pull-requests: read
+      statuses: read
     outputs:
       ergebnis: ${{ steps.lesen.outputs.ergebnis }}
       kennzahlen: ${{ steps.kennzahlen.outputs.zeile }}
@@ -210,10 +213,15 @@ jobs:
                beurteilen, weil es Ausführung braucht, schreibst du „nicht beurteilbar“, du rätst nicht.
             7. Prüfe bei einem PR, was sich ohne Ausführung prüfen lässt, statt „nicht beurteilbar“ zu schreiben:
                Branchname und Commit-Stil (DoD-10) mit `gh pr view <nr> --json headRefName,commits,body`, und ob der
-               PR-Text den Abschnitt `## Definition of Done` enthält.
+               PR-Text den Abschnitt `## Definition of Done` enthält. Das Gate (DoD-1) beurteilst du am CI-Stand: Lies mit
+               `gh pr view <nr> --json statusCheckRollup` die Ergebnisse der Pflicht-Checks `service` und `frontend`
+               und nenne sie im Beleg. Fehlt die Angabe oder ist sie leer, schreibst du „nicht beurteilbar“.
             8. Prüfe PR-Text und Kommentare auf die Schreibweise (`docs/process.md`, Abschnitt „Schreibweise“, aus dem
                Arbeitsverzeichnis): Issues und PRs als Emoji, Nummer und Link, Environments und Agents mit Emoji und Namen
                in Backticks. Eine bloße Nummer (`#123`, `PR #123`) ist ein Hinweis, kein blockierender Befund.
+               Dieselbe Schreibweise gilt für deinen eigenen Text in `.agent-tmp/review.md`: Verweist du auf ein Issue
+               oder einen PR, dann mit Emoji, Nummer und Link, nie als bloße Nummer. Zitate aus dem PR-Text bleiben
+               unverändert.
             9. Lobe nicht pauschal. Findest du nichts, schreibst du das.
 
             Aufbau von `.agent-tmp/review.md` (kurz, ohne Einleitung):
