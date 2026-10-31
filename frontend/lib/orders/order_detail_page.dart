@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../products/product_detail_page.dart';
 import '../products/products_repository.dart';
 import 'orders_repository.dart';
 
@@ -33,6 +34,15 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
       ? 'Die Bestellung wurde nicht gefunden. '
             'Möglicherweise existiert sie nicht mehr.'
       : 'Die Bestellung konnte nicht geladen werden: $error';
+
+  void _openProduct(String sku) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) =>
+            ProductDetailPage(repository: widget.productsRepository!, sku: sku),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +93,12 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           ListTile(
             title: const Text('Artikelnummer'),
             subtitle: Text(line.sku),
+            trailing: widget.productsRepository == null
+                ? null
+                : const Icon(Icons.chevron_right),
+            onTap: widget.productsRepository == null
+                ? null
+                : () => _openProduct(line.sku),
           ),
           ListTile(
             title: const Text('Menge'),

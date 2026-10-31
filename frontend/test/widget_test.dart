@@ -89,6 +89,15 @@ class FakeProductsRepository extends ProductsRepository {
     if (fail) throw StateError('Katalog nicht erreichbar');
     return products;
   }
+
+  @override
+  Future<Product> fetchProduct(String sku) async {
+    if (fail) throw StateError('Katalog nicht erreichbar');
+    return products.firstWhere(
+      (product) => product.sku == sku,
+      orElse: () => throw ProductNotFoundException(sku),
+    );
+  }
 }
 
 void main() {
@@ -280,6 +289,67 @@ void main() {
 
       expect(find.text('BOOK-001'), findsOneWidget);
       expect(find.text('Aktiv'), findsOneWidget);
+    });
+  });
+
+  group('Produktdetail', () {
+    Future<void> openProduct(
+      WidgetTester tester,
+      ProductsRepository products,
+    ) async {
+      await tester.pumpWidget(
+        OrderApp(
+          repository: FakeOrdersRepository(),
+          productsRepository: products,
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Demo-Bestellung anlegen'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ListTile));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('BOOK-001'));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('zeigt Artikelnummer, Name und Preis', (tester) async {
+      await openProduct(
+        tester,
+        FakeProductsRepository([
+          const Product(sku: 'BOOK-001', name: 'Roman', priceCents: 1299),
+        ]),
+      );
+
+      expect(find.text('Produkt'), findsOneWidget);
+      expect(find.text('BOOK-001'), findsOneWidget);
+      expect(find.text('Roman'), findsOneWidget);
+      expect(find.text('12,99 €'), findsOneWidget);
+    });
+
+    testWidgets('zeigt Fehlermeldung bei unbekannter sku', (tester) async {
+      await openProduct(
+        tester,
+        FakeProductsRepository([
+          const Product(sku: 'MUG-001', name: 'Kaffeebecher', priceCents: 899),
+        ]),
+      );
+
+      expect(
+        find.text('Das Produkt BOOK-001 wurde nicht gefunden.'),
+        findsOneWidget,
+      );
+      expect(find.text('Kaffeebecher'), findsNothing);
+    });
+
+    testWidgets('zeigt Fehlermeldung, wenn der Katalog nicht ladbar ist', (
+      tester,
+    ) async {
+      await openProduct(tester, FakeProductsRepository.failing());
+
+      expect(
+        find.textContaining('Das Produkt konnte nicht geladen werden'),
+        findsOneWidget,
+      );
     });
   });
 
