@@ -6,13 +6,13 @@ muss über das Gate unten verifiziert sein, bevor du es als fertig meldest.
 ## Struktur
 
 ```
-openapi/openapi.yaml      Vertrag, einzige Quelle der Wahrheit
-service/                  Spring Boot Microservice (Gradle)
-frontend/                 Flutter-App (Dart), nutzt einen aus der Spec generierten Client
-docs/                     Architektur (Mermaid), ADRs, Prozess
-config/checkstyle/        Stilregeln für den Service
+openapi/openapi.yaml          Vertrag, einzige Quelle der Wahrheit
+service/                      Spring Boot Microservice (Gradle)
+frontend/                     Flutter-App (Dart), nutzt einen aus der Spec generierten Client
+docs/                         Architektur (Mermaid), ADRs, Prozess
+config/checkstyle/            Stilregeln für den Service
 config/definition-of-done.md  Definition of Done (Maßstab für Coder, Reviewer und QA)
-verify.sh                 Gesamtes Gate (Service und Frontend)
+verify.sh                     Gesamtes Gate (Service und Frontend)
 ```
 
 ## Stack
