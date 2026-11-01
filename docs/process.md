@@ -42,7 +42,7 @@ Schutzbereiche (Workflows, Gate, Build-Skripte) darf der Agent nicht ändern, da
 Ruleset. Die Begründungen stehen in [ADR 0002](adr/0002-agent-sicherheit.md).
 
 **Review-Schleife (Spike, Roadmap P2):** Bei Änderungswünschen schreibt der Owner auf dem `agent/*`-PR einen
-Kommentar, der mit `/code` beginnt (übergangsweise gilt auch der frühere Befehl `/agent`). Der Workflow
+Kommentar, der mit `/code` beginnt (der frühere Befehl `/agent` entfiel mit [📌 #164](https://github.com/juheba/sw-factory-tryout/issues/164)). Der Workflow
 `agent-coder-revise.yml` („💻 agent-coder: /code Revise“) prüft zuerst ohne Secrets (offener PR, Branch
 `agent/*`, keine Schutzbereiche im Diff, höchstens 5 Runden) und fragt dann die Freigabe im Environment an. Der Agent
 arbeitet auf demselben Branch, führt `./verify.sh` aus und antwortet mit einem Kommentar. Ändert der PR Schutzbereiche,

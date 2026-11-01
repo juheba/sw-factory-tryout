@@ -12,8 +12,8 @@ Die Namen nach der Umstellung ([📌 #138](https://github.com/juheba/sw-factory-
 
 | Agent | Workflow-Datei | Angezeigter Name | Auslöser | Environment |
 |---|---|---|---|---|
-| `agent-coder` | `agent-coder-issue.yml` | „💻 agent-coder: Issue“ | Label `agent-coder` auf einem Issue | `factory-write` (mit Freigabe) |
-| `agent-coder` | `agent-coder-revise.yml` | „💻 agent-coder: /code Revise“ | Kommentar `/code <Wunsch>` auf einem `agent/*`-PR; `/agent` als Übergangsbefehl, der noch funktioniert und entfällt | `factory-write` (mit Freigabe) |
+| `agent-coder` | `agent-coder-issue.yml` | „💻 agent-coder: Issue“ | Label `agent-coder` auf einem Issue (nur wenn Label-Setzer und Issue-Autor `juheba` sind) | `factory-write` (mit Freigabe) |
+| `agent-coder` | `agent-coder-revise.yml` | „💻 agent-coder: /code Revise“ | Kommentar `/code <Wunsch>` auf einem `agent/*`-PR (der frühere Befehl `/agent` entfiel mit [📌 #164](https://github.com/juheba/sw-factory-tryout/issues/164)) | `factory-write` (mit Freigabe) |
 | `agent-reviewer` | `agent-reviewer.yml` | „🔎 agent-reviewer“ | Neuer oder aktualisierter `agent/*`-PR (automatisch, prüft nur Nicht-Draft-PRs von `juheba`); Kommentar `/review [Hinweis]` auf einem Issue oder PR (wird nur von `juheba` angenommen) | `factory-read` (ohne Freigabe) |
 
 Die Hintergründe zu Environments, Freigaben und Schutzbereichen stehen in [ADR 0002](adr/0002-agent-sicherheit.md).
@@ -47,7 +47,7 @@ Danach: Ursache klären (Annotationen und Ergebnis-JSON des Laufs, siehe unten),
 
 | Symptom | Wahrscheinliche Ursache | Maßnahme |
 |---|---|---|
-| `/code`-Kommentar bleibt ohne Reaktion | Kommentar beginnt nicht mit `/code` (oder dem früheren `/agent`), stammt nicht vom Owner oder steht nicht auf einem PR. Oder der Job `pruefung` hat abgelehnt. | Actions → „💻 agent-coder: /code Revise“ öffnen. Der Prüfjob nennt den Grund (Annotation „agent-coder (Kommentar) abgelehnt“, meist auch als PR-Kommentar): PR nicht offen, Branch nicht `agent/*`, Schutzbereiche im Diff, mehr als 5 Runden. |
+| `/code`-Kommentar bleibt ohne Reaktion | Kommentar beginnt nicht mit `/code` (der frühere `/agent` startet nichts mehr), stammt nicht vom Owner oder steht nicht auf einem PR. Oder der Job `pruefung` hat abgelehnt. | Actions → „💻 agent-coder: /code Revise“ öffnen. Der Prüfjob nennt den Grund (Annotation „agent-coder (Kommentar) abgelehnt“, meist auch als PR-Kommentar): PR nicht offen, Branch nicht `agent/*`, Schutzbereiche im Diff, mehr als 5 Runden. |
 | Review-Lauf „waiting“, obwohl `pruefung` grün ist | Jeder `/code`-Kommentar braucht eine eigene Freigabe im Environment `factory-write`. | Lauf „💻 agent-coder: /code Revise“ öffnen, **Review deployments**, freigeben. |
 | Lauf bleibt „waiting“ | Freigabe im Environment `factory-write` fehlt. | Lauf öffnen, **Review deployments**, freigeben. |
 | Lauf bricht ab, Meldung zu Limit oder Kontingent (vermutet) | Das Abo-Kontingent (5-Stunden-Fenster oder Wochenlimit) ist ausgeschöpft; Agent-Läufe teilen es mit deiner interaktiven Nutzung. Die genaue Meldung ist noch nicht bekannt (Issue #100). | In claude.ai → Settings → Usage den Stand ansehen, bis zum Reset warten, Lauf neu starten (Label entfernen und setzen). „Usage credits“ nicht einschalten, wenn keine Zusatzkosten gewünscht sind. Meldung im Issue #100 festhalten. |
@@ -231,7 +231,7 @@ Der Reviewer (Workflow `agent-reviewer.yml`, Roadmap P4) prüft PRs und Issues g
 - **Auf Zuruf:** Ein Kommentar `/review` von dir auf jedem Issue oder PR, optional mit Hinweis
   (`/review achte besonders auf Fehlerfälle`). Auf einem Issue prüft er den Auftrag, auf einem PR den Diff (auch bei
   fremden Branches und Forks). Jeder Zuruf erzeugt einen eigenen Kommentar.
-- **Unterschied zu `/code`:** `/code` (früher `/agent`) startet den Umsetzer (schreibt Code, mit Freigabe), `/review` den Reviewer
+- **Unterschied zu `/code`:** `/code` startet den Umsetzer (schreibt Code, mit Freigabe), `/review` den Reviewer
   (schreibt nie, ohne Freigabe).
 
 **Wirkt erst nach dem Merge:** `pull_request_target` und `issue_comment` laufen mit dem Workflow aus `main`.
