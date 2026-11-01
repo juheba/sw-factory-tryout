@@ -287,8 +287,14 @@ parallele Läufe zu verschiedenen Issues ohne verdrängten Lauf (#33 bis #35).
 
 ## Kommentar-Trigger (Review-Schleife, Spike)
 
-Stand: gebaut, noch nicht im Echtbetrieb getestet (Roadmap P2). Ein Kommentar des Owners, der mit `/agent` beginnt,
-startet auf einem `agent/*`-PR eine Überarbeitung (`.github/workflows/agent-review.yml`).
+Stand: gebaut, noch nicht im Echtbetrieb getestet (Roadmap P2). Ein Kommentar des Owners, der mit `/coder` beginnt
+(bis zum Ende der Übergangszeit auch `/agent`), startet auf einem `agent/*`-PR eine Überarbeitung (`.github/workflows/agent-review.yml`).
+
+**Umbenennung (01.11.2026, [📌 #159](https://github.com/juheba/sw-factory-tryout/issues/159), [📌 #138](https://github.com/juheba/sw-factory-tryout/issues/138)):**
+Der Workflow heißt „💻 agent-coder: /coder Kommentar“ (vorher „Agent Review“, das klang nach einem Review). Der Befehl
+heißt `/coder`; `/agent` gilt in einer Übergangszeit weiter, beide zählen für die Obergrenze von 5 Runden. Die Action
+bekommt als Auslöser-Phrase die, mit der der Kommentar beginnt. Die Sicherheitslogik ist unverändert. Die Ergebnisse
+der Abnahme unten nennen noch `/agent`, weil sie damit entstanden sind.
 
 **Entscheidungen und Gründe**
 
@@ -297,7 +303,7 @@ startet auf einem `agent/*`-PR eine Überarbeitung (`.github/workflows/agent-rev
   liefe dagegen vom PR-Stand und würde vom Environment blockiert.
 - **Zwei Jobs.** Der Job `pruefung` hat keine Secrets und keine Freigabe, nur lesende Rechte plus `pull-requests: write` für
   die Ablehnungsmeldung am PR. Er lässt nur durch: offener PR im selben Repo, Autor Owner, Branch `agent/*`, Absender und
-  Kommentarautor Owner, höchstens 5 `/agent`-Kommentare, und keine Datei des PR in einem Schutzbereich. Erst danach
+  Kommentarautor Owner, höchstens 5 `/coder`- oder `/agent`-Kommentare, und keine Datei des PR in einem Schutzbereich. Erst danach
   fragt der Job `agent` die Freigabe im Environment an. So muss der Owner keine Läufe freigeben, die ohnehin
   abgelehnt würden.
 - **Schutzbereichs-Prüfung im Diff.** Die Action stellt beim Lauf auf einem PR nur die Claude-Konfiguration (`.claude/`,

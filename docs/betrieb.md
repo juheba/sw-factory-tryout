@@ -35,8 +35,8 @@ Danach: Ursache klären (Annotationen und Ergebnis-JSON des Laufs, siehe unten),
 
 | Symptom | Wahrscheinliche Ursache | Maßnahme |
 |---|---|---|
-| `/agent`-Kommentar bleibt ohne Reaktion | Kommentar beginnt nicht mit `/agent`, stammt nicht vom Owner oder steht nicht auf einem PR. Oder der Job `pruefung` hat abgelehnt. | Actions → „Agent Review“ öffnen. Der Prüfjob nennt den Grund (Annotation „Agent Review abgelehnt“, meist auch als PR-Kommentar): PR nicht offen, Branch nicht `agent/*`, Schutzbereiche im Diff, mehr als 5 Runden. |
-| Review-Lauf „waiting“, obwohl `pruefung` grün ist | Jeder `/agent`-Kommentar braucht eine eigene Freigabe im Environment `agent`. | Lauf „Agent Review“ öffnen, **Review deployments**, freigeben. |
+| `/coder`-Kommentar bleibt ohne Reaktion | Kommentar beginnt nicht mit `/coder` (oder dem früheren `/agent`), stammt nicht vom Owner oder steht nicht auf einem PR. Oder der Job `pruefung` hat abgelehnt. | Actions → „💻 agent-coder: /coder Kommentar“ öffnen. Der Prüfjob nennt den Grund (Annotation „agent-coder (Kommentar) abgelehnt“, meist auch als PR-Kommentar): PR nicht offen, Branch nicht `agent/*`, Schutzbereiche im Diff, mehr als 5 Runden. |
+| Review-Lauf „waiting“, obwohl `pruefung` grün ist | Jeder `/coder`-Kommentar braucht eine eigene Freigabe im Environment `agent`. | Lauf „💻 agent-coder: /coder Kommentar“ öffnen, **Review deployments**, freigeben. |
 | Lauf bleibt „waiting“ | Freigabe im Environment `agent` fehlt. | Lauf öffnen, **Review deployments**, freigeben. |
 | Lauf bricht ab, Meldung zu Limit oder Kontingent (vermutet) | Das Abo-Kontingent (5-Stunden-Fenster oder Wochenlimit) ist ausgeschöpft; Agent-Läufe teilen es mit deiner interaktiven Nutzung. Die genaue Meldung ist noch nicht bekannt (Issue #100). | In claude.ai → Settings → Usage den Stand ansehen, bis zum Reset warten, Lauf neu starten (Label entfernen und setzen). „Usage credits“ nicht einschalten, wenn keine Zusatzkosten gewünscht sind. Meldung im Issue #100 festhalten. |
 | Issue oder PR trägt das Label `wartet-auf-freigabe` | Ein Lauf wartet auf deine Freigabe. Das Label setzt der Job `anmelden` (Issue) bzw. `pruefung` (PR) und entfernt es nach der Freigabe oder Ablehnung. | Filter in der Liste: `label:wartet-auf-freigabe`. Dann den Lauf öffnen und freigeben oder ablehnen. |
@@ -128,7 +128,7 @@ dürfen warten, bis ohnehin ein Lauf ansteht. Bei Sicherheitshinweisen sofort.
    Fehlerfall, eine Spec-Änderung und ein Schutzbereich-Auftrag aus den Issues #18 bis #35) wird mit der neuen
    Version bearbeitet, auf einem Testbranch oder in einer Kopie des Issues. Vergleichen mit der alten Version:
    Gate grün, Exit-Code im PR-Text, `num_turns` und `total_cost_usd` im Log, keine neuen Einträge unter
-   „Agent-Ablehnungen“, Schutzbereiche unangetastet, Review-Lauf (`/agent`) funktioniert.
+   „Agent-Ablehnungen“, Schutzbereiche unangetastet, Überarbeitung per Kommentar (`/coder`) funktioniert.
 5. **Entscheiden und pinnen.** Passt alles, wird der PR gemerged, der SHA bleibt damit gepinnt. Passt etwas nicht,
    bleibt es bei der alten Version, und die Abweichung kommt als Issue oder in die Roadmap.
 6. **Festhalten.** Die neue Version (Action-Tag und die im Log sichtbare Claude-Code-Version) in `docs/roadmap.md`
@@ -219,7 +219,7 @@ Der Reviewer (Workflow `agent-reviewer.yml`, Roadmap P4) prüft PRs und Issues g
 - **Auf Zuruf:** Ein Kommentar `/review` von dir auf jedem Issue oder PR, optional mit Hinweis
   (`/review achte besonders auf Fehlerfälle`). Auf einem Issue prüft er den Auftrag, auf einem PR den Diff (auch bei
   fremden Branches und Forks). Jeder Zuruf erzeugt einen eigenen Kommentar.
-- **Unterschied zu `/agent`:** `/agent` startet den Umsetzer (schreibt Code, mit Freigabe), `/review` den Reviewer
+- **Unterschied zu `/coder`:** `/coder` (früher `/agent`) startet den Umsetzer (schreibt Code, mit Freigabe), `/review` den Reviewer
   (schreibt nie, ohne Freigabe).
 
 **Wirkt erst nach dem Merge:** `pull_request_target` und `issue_comment` laufen mit dem Workflow aus `main`.

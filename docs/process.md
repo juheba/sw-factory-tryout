@@ -31,7 +31,7 @@ flowchart LR
     L -->|grün| PR[Pull Request mit Closes nr]
     PR --> CI[CI: Jobs service und frontend]
     CI --> R[Review durch Mensch]
-    R -->|Änderungswunsch: Kommentar /agent ...| RK[Überarbeitung auf dem PR-Branch]
+    R -->|Änderungswunsch: Kommentar /coder ...| RK[Überarbeitung auf dem PR-Branch]
     RK --> CI
     R -->|ok| M[Merge in main]
 ```
@@ -42,7 +42,8 @@ Schutzbereiche (Workflows, Gate, Build-Skripte) darf der Agent nicht ändern, da
 Ruleset. Die Begründungen stehen in [ADR 0002](adr/0002-agent-sicherheit.md).
 
 **Review-Schleife (Spike, Roadmap P2):** Bei Änderungswünschen schreibt der Owner auf dem `agent/*`-PR einen
-Kommentar, der mit `/agent` beginnt. Der Workflow `agent-review.yml` prüft zuerst ohne Secrets (offener PR, Branch
+Kommentar, der mit `/coder` beginnt (übergangsweise gilt auch der frühere Befehl `/agent`). Der Workflow
+`agent-review.yml` („💻 agent-coder: /coder Kommentar“) prüft zuerst ohne Secrets (offener PR, Branch
 `agent/*`, keine Schutzbereiche im Diff, höchstens 5 Runden) und fragt dann die Freigabe im Environment an. Der Agent
 arbeitet auf demselben Branch, führt `./verify.sh` aus und antwortet mit einem Kommentar. Ändert der PR Schutzbereiche,
 lehnt die Prüfung ab und nennt den Grund; dann arbeitet der Owner selbst weiter. Geht der Wunsch über den PR hinaus,
@@ -69,7 +70,7 @@ Meilenstein setzt du also einmal am Issue.
 twei Links an: **Vorher** (Seite von `main`) und **Nachher** (dieselbe Seite mit dem Vertrag des PR-Stands). Der Kommentar
 wird bei jedem neuen Push aktualisiert. Ohne Änderung an `openapi/` gibt es ihn nicht.
 
-Kommentare von `GITHUB_TOKEN` lösen keinen weiteren Workflow aus und zählen nicht als `/agent`-Runde (gezählt werden
+Kommentare von `GITHUB_TOKEN` lösen keinen weiteren Workflow aus und zählen nicht als `/coder`-Runde (gezählt werden
 nur Kommentare des Owners). Schlägt das Kommentieren fehl, bleibt es bei einer Warnung und der Lauf läuft weiter.
 Soll der Ablauf um einen weiteren Schritt oder Zustand wachsen, wird der Kommentar im selben Job aktualisiert und nicht
 durch zusätzliche Kommentare ergänzt.
