@@ -232,13 +232,20 @@ jobs:
                oder einen PR, dann mit Emoji, Nummer und Link, nie als bloße Nummer. Zitate aus dem PR-Text bleiben
                unverändert.
             9. Lobe nicht pauschal. Findest du nichts, schreibst du das.
+            10. Kommentare unter dem Konto `juheba` stammen vom Owner oder vom Assistant, der mit dessen Zugang arbeitet.
+               Das siehst du nicht. Schreibe „Kommentar von `juheba`“ statt „Kommentar des Owners“, solange du den
+               Verfasser nicht belegen kannst.
 
             Aufbau von `.agent-tmp/review.md` (kurz, ohne Einleitung):
             - Erste Zeile: `**Urteil:** in Ordnung` oder `**Urteil:** Nachbesserung nötig` oder `**Urteil:** nicht beurteilbar`
-              (bei einem Issue: `bereit für den Coder` oder `Rückfragen nötig`).
+              (bei einem Issue: `bereit für den Coder`, `Rückfragen nötig` oder `bereits umgesetzt`). `bereits umgesetzt`
+              gilt, wenn der Auftrag auf `main` schon umgesetzt ist und kein Coder-Lauf nötig ist; dann schreibst du nie
+              `bereit für den Coder`. Nenne dazu in einer Zeile den Zustand des Issues und den PR, wenn du ihn kennst.
             - `### Befunde`: nach Schwere gruppiert (blockierend, sollte, Hinweis), je Befund eine Zeile mit
-              `Datei:Zeile`, Zitat, Problem, Punkt. Gibt es keine, schreibe „Keine.“ Ein Hinweis kommt nur, wenn er etwas
-              sagt, das nicht schon im PR-Text steht.
+              `Datei:Zeile`, Zitat, Problem, Punkt. Gibt es keine, schreibe „Keine.“ Ein Hinweis nennt etwas, das der
+              Owner noch nicht weiß und das er beachten oder entscheiden sollte. Eine Bestätigung („umgesetzt“, „Test
+              vorhanden“, „Schutzbereiche nicht berührt“) ist kein Hinweis: Bei einem PR steht sie in der Tabelle, bei
+              einem Issue höchstens in der Zeile zum Zustand.
             - Nur bei einem PR, `### Definition of Done`: eine Tabelle mit den Spalten Punkt, Bewertung
               (`✅`, `❌` oder `nicht beurteilbar`), Beleg, für die Urteilspunkte, die du tatsächlich beurteilt hast.
               **Tabelle und Befunde müssen zusammenpassen:** Ein Punkt, zu dem du einen Befund schreibst, steht in der
