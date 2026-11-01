@@ -1,7 +1,9 @@
-name: Agent Review
+name: "💻 agent-coder: /coder Kommentar"
 
-# Review-Schleife: Ein Kommentar "/agent <Wunsch>" des Owners auf einem agent/*-PR startet eine Überarbeitung
-# auf demselben Branch. Sicherheitskonzept und Begründungen: docs/adr/0002-agent-sicherheit.md
+# Überarbeitungsschleife: Ein Kommentar "/coder <Wunsch>" des Owners auf einem agent/*-PR startet 💻 agent-coder auf
+# demselben Branch. Der frühere Befehl "/agent" gilt in einer Übergangszeit weiter. Hintergrund:
+# https://github.com/juheba/sw-factory-tryout/issues/159 und https://github.com/juheba/sw-factory-tryout/issues/138
+# Sicherheitskonzept und Begründungen: docs/adr/0002-agent-sicherheit.md
 #
 # issue_comment läuft immer mit dem Workflow-Stand von main. Ein PR kann diese Datei also nicht ändern.
 
@@ -20,12 +22,12 @@ concurrency:
 jobs:
   # Prüft den Befehl, ohne Secrets und ohne Freigabe. Nur wenn alles passt, wird der Agent-Job überhaupt angefragt.
   pruefung:
-    # Nur Kommentare auf PRs, vom Owner, die mit dem Befehl beginnen.
+    # Nur Kommentare auf PRs, vom Owner, die mit dem Befehl beginnen (/coder, übergangsweise auch /agent).
     if: >-
       github.event.issue.pull_request &&
       github.event.comment.user.login == 'juheba' &&
       github.event.sender.login == 'juheba' &&
-      startsWith(github.event.comment.body, '/agent')
+      (startsWith(github.event.comment.body, '/coder') || startsWith(github.event.comment.body, '/agent'))
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
@@ -50,9 +52,9 @@ jobs:
 
           ablehnen() {
             echo "erlaubt=false" >> "$GITHUB_OUTPUT"
-            echo "::notice title=Agent Review abgelehnt::$1"
+            echo "::notice title=agent-coder (Kommentar) abgelehnt::$1"
             # Ein fehlgeschlagener Kommentar darf die Ablehnung nicht in einen Fehler verwandeln.
-            if ! gh api "repos/$REPO/issues/$PR/comments" -f body="Der Befehl \`/agent\` wurde nicht ausgeführt: $1" \
+            if ! gh api "repos/$REPO/issues/$PR/comments" -f body="Der Befehl \`/coder\` (früher \`/agent\`) wurde nicht ausgeführt: $1" \
                 > /dev/null 2> "$RUNNER_TEMP/kommentar.err"; then
               echo "::warning title=Ablehnungskommentar::$(head -c 300 "$RUNNER_TEMP/kommentar.err" | tr '\r\n' '  ')"
             fi
@@ -79,7 +81,7 @@ jobs:
 
           # Rundenzahl: Kommentare des Owners, die mit dem Befehl beginnen (der aktuelle eingeschlossen).
           runden=$(gh api --paginate "repos/$REPO/issues/$PR/comments" \
-            --jq '[.[] | select(.user.login == "juheba" and (.body | startswith("/agent")))] | length' \
+            --jq '[.[] | select(.user.login == "juheba" and (.body | (startswith("/coder") or startswith("/agent"))))] | length' \
             | awk '{ s += $1 } END { print s + 0 }')
           if [ "$runden" -gt "$MAX_RUNDEN" ]; then
             ablehnen "Die Obergrenze von $MAX_RUNDEN Runden pro Pull Request ist erreicht. Bitte selbst weiterarbeiten oder ein neues Issue anlegen."
@@ -158,7 +160,8 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.AGENT_GITHUB_TOKEN }}
           settings: .claude/agent-settings.json
-          trigger_phrase: /agent
+          # Die Action kennt genau eine Auslöser-Phrase: die, mit der dieser Kommentar beginnt.
+          trigger_phrase: ${{ startsWith(github.event.comment.body, '/coder') && '/coder' || '/agent' }}
           include_comments_by_actor: juheba
           claude_args: |
             --max-turns 40

@@ -1,4 +1,4 @@
-name: Agent
+name: "💻 agent-coder: Issue"
 
 # Stufe 2: Das Label "agent" auf einem Issue startet einen Coding-Agent-Lauf.
 # Sicherheitskonzept und Begründungen: docs/adr/0002-agent-sicherheit.md

@@ -109,7 +109,7 @@ sequenceDiagram
     participant Env as Environment agent
     participant A as Agent (claude-code-action, Interaktiv-Modus)
     participant CI as CI (ci.yml)
-    O->>GH: Kommentar "/agent Wunsch" auf einem agent/*-PR
+    O->>GH: Kommentar "/coder Wunsch" auf einem agent/*-PR
     GH->>P: Ereignis issue_comment (Workflow-Stand von main)
     P->>P: PR offen, Branch agent/*, gleiches Repo, Autor Owner, keine Schutzbereiche im Diff, höchstens 5 Runden
     P-->>GH: bei Ablehnung: Kommentar mit Grund, kein Agent-Lauf
