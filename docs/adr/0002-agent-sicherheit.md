@@ -287,16 +287,15 @@ parallele Läufe zu verschiedenen Issues ohne verdrängten Lauf (#33 bis #35).
 
 ## Kommentar-Trigger (Review-Schleife, Spike)
 
-Stand: gebaut, noch nicht im Echtbetrieb getestet (Roadmap P2). Ein Kommentar des Owners, der mit `/code` beginnt
-(bis zum Ende der Übergangszeit auch `/agent`), startet auf einem `agent/*`-PR eine Überarbeitung (`.github/workflows/agent-coder-revise.yml`).
+Stand: gebaut, noch nicht im Echtbetrieb getestet (Roadmap P2). Ein Kommentar des Owners, der mit `/code` beginnt, startet auf einem `agent/*`-PR eine Überarbeitung (`.github/workflows/agent-coder-revise.yml`).
 
 **Umbenennung (01.11.2026, [📌 #159](https://github.com/juheba/sw-factory-tryout/issues/159), [📌 #138](https://github.com/juheba/sw-factory-tryout/issues/138)):**
 Namen nach Rolle und Rechte-Profil. Das Environment des Coders heißt `factory-write` (vorher `agent`), das Label
 `agent-coder` (vorher `agent`). Die Workflows heißen „💻 agent-coder: Issue“ (`agent-coder-issue.yml`, vorher
 `agent.yml`) und „💻 agent-coder: /code Revise“ (`agent-coder-revise.yml`, vorher `agent-review.yml` mit dem Namen
-„Agent Review“, der nach einem Review klang). Der Befehl heißt `/code`; `/agent` gilt in einer Übergangszeit weiter,
-beide zählen für die Obergrenze von 5 Runden. Er muss das erste Wort des Kommentars sein, `/coder` oder `/codex` werden
-abgelehnt. Die Action bekommt als Auslöser-Phrase die, mit der der Kommentar beginnt. Der Branch-Präfix `agent/` bleibt.
+„Agent Review“, der nach einem Review klang). Der Befehl heißt `/code`. `/agent` galt in einer Übergangszeit weiter und entfiel am 01.11.2026 nach der Abnahme
+([📌 #164](https://github.com/juheba/sw-factory-tryout/issues/164)). Der Befehl muss das erste Wort des Kommentars sein, `/coder` oder `/codex` werden
+abgelehnt. Die Action bekommt `/code` als Auslöser-Phrase. Der Branch-Präfix `agent/` bleibt.
 Die Sicherheitslogik ist unverändert. Die Ergebnisse der Abnahme unten nennen noch die alten Namen und `/agent`, weil sie
 damit entstanden sind.
 
@@ -307,7 +306,7 @@ damit entstanden sind.
   liefe dagegen vom PR-Stand und würde vom Environment blockiert.
 - **Zwei Jobs.** Der Job `pruefung` hat keine Secrets und keine Freigabe, nur lesende Rechte plus `pull-requests: write` für
   die Ablehnungsmeldung am PR. Er lässt nur durch: offener PR im selben Repo, Autor Owner, Branch `agent/*`, Absender und
-  Kommentarautor Owner, höchstens 5 `/code`- oder `/agent`-Kommentare, und keine Datei des PR in einem Schutzbereich. Erst danach
+  Kommentarautor Owner, höchstens 5 `/code`-Kommentare, und keine Datei des PR in einem Schutzbereich. Erst danach
   fragt der Job `agent` die Freigabe im Environment an. So muss der Owner keine Läufe freigeben, die ohnehin
   abgelehnt würden.
 - **Schutzbereichs-Prüfung im Diff.** Die Action stellt beim Lauf auf einem PR nur die Claude-Konfiguration (`.claude/`,
