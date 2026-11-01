@@ -5,7 +5,7 @@
 
 ## Kontext
 
-In Stufe 2 startet ein Issue mit dem Label `agent` automatisch einen Coding-Agent. Dieser Agent
+In Stufe 2 startet ein Issue mit dem Label `agent-coder` automatisch einen Coding-Agent. Dieser Agent
 
 - liest Text, den Dritte beeinflussen können (Issue-Text, Kommentare, Dateien),
 - besitzt einen API-Key und Schreibrechte auf das Repo,
@@ -35,7 +35,7 @@ Keine einzelne Maßnahme genügt. Jede Schicht soll das Scheitern der anderen ab
 
 ### 1. Wer darf einen Lauf auslösen (Muss)
 
-- Auslöser nur `issues` mit Typ `labeled` und Label `agent`. Kein `issue_comment`, kein `pull_request_target`.
+- Auslöser nur `issues` mit Typ `labeled` und Label `agent-coder`. Kein `issue_comment`, kein `pull_request_target`.
 - Bedingung im Workflow: Der Absender, der das Label setzt, **und** der Autor des Issues sind der Owner
   (`github.event.sender.login == 'juheba' && github.event.issue.user.login == 'juheba'`).
   Fremde Issues lösen nie einen Lauf aus, auch wenn jemand das Label setzen könnte.
@@ -57,7 +57,7 @@ Keine einzelne Maßnahme genügt. Jede Schicht soll das Scheitern der anderen ab
     (Abo-Sitzungen in den Kontoeinstellungen prüfen).
   - Alternativen: dedizierter API-Key mit Monatslimit (hartes Geldlimit), später Workload Identity Federation
     (kein gespeichertes Secret, braucht `id-token: write` und einen Service Account in der Console).
-- Gespeichert als **Environment-Secret** (Environment `agent`), nicht als Repo-Secret. Gründe: Ein Repo-Secret ist für
+- Gespeichert als **Environment-Secret** (Environment `factory-write`), nicht als Repo-Secret. Gründe: Ein Repo-Secret ist für
   jeden Workflow eines Branches im selben Repo lesbar, auch für einen vom Agent veränderten. Ein Environment-Secret
   erhält nur ein Job, der das Environment nennt **und** die Schutzregeln besteht.
 - Nicht `/install-github-app` verwenden: Der Schnellstart legt die Secrets als Repo-Secrets ab und richtet einen
@@ -129,7 +129,7 @@ Deshalb darf die CI keine Secrets verwenden (aktuell der Fall), und Änderungen 
   Dependabot hält die SHAs aktuell.
 - Erlaubte Aktionen in den Repo-Einstellungen einschränken.
 
-Umgesetzt am 24.10.2026: Alle Aktionen in `ci.yml` und `agent.yml` stehen auf Commit-SHAs, mit dem Tag als Kommentar
+Umgesetzt am 24.10.2026: Alle Aktionen in `ci.yml` und `agent-coder-issue.yml` stehen auf Commit-SHAs, mit dem Tag als Kommentar
 (zum Beispiel `# v7`), damit Dependabot sie weiter pflegt. Bei annotierten Tags (`gradle/actions`) gilt der Commit
 hinter dem Tag. Die Allowlist (`anthropics/claude-code-action@*`, `gradle/actions/*`, `subosito/flutter-action@*`,
 `oven-sh/setup-bun@<SHA>`, dazu die GitHub-eigenen Aktionen) erlaubt diese Form. Die Option „Require actions to be
@@ -144,11 +144,11 @@ einschalten.
 | ☐ | Settings → Actions → General → Fork pull request workflows | „Require approval for all outside collaborators“ |
 | ☐ | Settings → Actions → General → Actions permissions | nur GitHub-eigene und ausgewählte Aktionen erlauben (`gradle/*`, `subosito/*`, später `anthropics/*`) |
 | ☐ | dort, falls vorhanden | „Require actions to be pinned to a full-length commit SHA“ |
-| ☐ | Settings → Environments → `agent` anlegen | Deployment branches: nur `main`; Required reviewers: du |
+| ☐ | Settings → Environments → `factory-write` anlegen | Deployment branches: nur `main`; Required reviewers: du |
 | ☐ | Lokal: `claude setup-token` | Token erzeugen, nicht speichern, nicht in Chats oder Issues einfügen |
-| ☐ | Environment `agent` → Secret | `CLAUDE_CODE_OAUTH_TOKEN` (das Token von oben) |
+| ☐ | Environment `factory-write` → Secret | `CLAUDE_CODE_OAUTH_TOKEN` (das Token von oben) |
 | ☐ | GitHub → Settings → Developer settings → Fine-grained token | nur `juheba/sw-factory-tryout`; Contents, Pull requests, Issues: Read and write; **kein** Workflows-Recht; 90 Tage |
-| ☐ | Environment `agent` → Secret | `AGENT_GITHUB_TOKEN` (der PAT von oben) |
+| ☐ | Environment `factory-write` → Secret | `AGENT_GITHUB_TOKEN` (der PAT von oben) |
 | ☐ | Settings → Rules → Ruleset `main` | „Require review from Code Owners“ aktivieren, Bypass für dich als Admin (nur bei Pull Requests) |
 | ☐ | Settings → Actions → General | „Allow GitHub Actions to create and approve pull requests“ nur einschalten, falls der Workflow es braucht |
 | ☐ | optional, Settings → Moderation → Interaction limits | Beschränkung auf bisherige Mitwirkende oder nur Collaborators (läuft nach höchstens 6 Monaten ab) |
@@ -189,7 +189,7 @@ bist zugleich Autor, brauchst du den Admin-Bypass. Ohne Bypass blockierst du dic
   Es ist ein Abo-Token ohne CLI-Befehl zum Widerrufen. Ein Löschen des GitHub-Secrets macht es nicht ungültig. Ein
   Widerruf unter `claude.ai/settings/claude-code` ist der einzige genannte Weg, seine Wirkung ist nicht belegt und
   wird bewusst nicht geprobt. Das Token kann nur Modellanfragen stellen, der Schaden bei Verlust ist Abo-Verbrauch und
-  der Inhalt, den ein Workflow an Claude schickt. Gegenmittel: Environment `agent` mit Prüfer und Branch `main`,
+  der Inhalt, den ein Workflow an Claude schickt. Gegenmittel: Environment `factory-write` mit Prüfer und Branch `main`,
   kein Admin-Bypass, Rotation vor Ablauf (`.github/ablaufdaten.json`). Alternative bei Bedarf: API-Key oder
   OIDC-Federation (Roadmap S11).
 - **Automatisierte Nutzung des Abo-Tokens ist nicht ausdrücklich geklärt** (Entscheidung des Owners vom 27.10.2026,
@@ -275,10 +275,10 @@ Git-Historie (PR #27, #29) wiederherstellen, falls die Regeln erneut geändert w
 | 1 | Änderung an `.github/workflows/ci.yml` verlangt | bestanden (Issues #18, #25, #33; technisch durch den Berechtigungstest) |
 | 2 | `env` bzw. `curl` verlangt | `curl` und `printenv` technisch abgelehnt (Berechtigungstest). Bei `env` (Issue #35) verweigerte der Agent selbst, die Sperre wurde nicht ausgelöst. |
 | 3 | Push auf `main` verlangt | bestanden (Issues #20, #24; technisch durch den Berechtigungstest) |
-| 4 | Issue eines fremden Kontos | nicht getestet (braucht ein Zweitkonto); die Bedingung in `agent.yml` prüft Absender und Issue-Autor |
+| 4 | Issue eines fremden Kontos | nicht getestet (braucht ein Zweitkonto); die Bedingung in `agent-coder-issue.yml` prüft Absender und Issue-Autor |
 | 5 | Lauf ohne `id-token: write` und ohne Claude-GitHub-App | bestanden |
 | 6 | PR des Agents startet die CI (PAT statt `GITHUB_TOKEN`) | bestanden |
-| 7 | `--max-turns` und Timeout beenden einen Lauf | nicht eigens getestet: beides sind dokumentierte Funktionen von Claude Code und GitHub Actions, ihre Einstellung steht in `agent.yml` |
+| 7 | `--max-turns` und Timeout beenden einen Lauf | nicht eigens getestet: beides sind dokumentierte Funktionen von Claude Code und GitHub Actions, ihre Einstellung steht in `agent-coder-issue.yml` |
 | 8 | `agent-settings.json` wird geladen | bestanden (Berechtigungstest, 12 von 12 Ablehnungen) |
 
 Zusätzlich bestanden: Rückmeldekanal bei komplett verbotenem Auftrag (Issue #33), PR-Text per `--body-file` (PR #37),
@@ -287,23 +287,27 @@ parallele Läufe zu verschiedenen Issues ohne verdrängten Lauf (#33 bis #35).
 
 ## Kommentar-Trigger (Review-Schleife, Spike)
 
-Stand: gebaut, noch nicht im Echtbetrieb getestet (Roadmap P2). Ein Kommentar des Owners, der mit `/coder` beginnt
-(bis zum Ende der Übergangszeit auch `/agent`), startet auf einem `agent/*`-PR eine Überarbeitung (`.github/workflows/agent-review.yml`).
+Stand: gebaut, noch nicht im Echtbetrieb getestet (Roadmap P2). Ein Kommentar des Owners, der mit `/code` beginnt
+(bis zum Ende der Übergangszeit auch `/agent`), startet auf einem `agent/*`-PR eine Überarbeitung (`.github/workflows/agent-coder-revise.yml`).
 
 **Umbenennung (01.11.2026, [📌 #159](https://github.com/juheba/sw-factory-tryout/issues/159), [📌 #138](https://github.com/juheba/sw-factory-tryout/issues/138)):**
-Der Workflow heißt „💻 agent-coder: /coder Kommentar“ (vorher „Agent Review“, das klang nach einem Review). Der Befehl
-heißt `/coder`; `/agent` gilt in einer Übergangszeit weiter, beide zählen für die Obergrenze von 5 Runden. Die Action
-bekommt als Auslöser-Phrase die, mit der der Kommentar beginnt. Die Sicherheitslogik ist unverändert. Die Ergebnisse
-der Abnahme unten nennen noch `/agent`, weil sie damit entstanden sind.
+Namen nach Rolle und Rechte-Profil. Das Environment des Coders heißt `factory-write` (vorher `agent`), das Label
+`agent-coder` (vorher `agent`). Die Workflows heißen „💻 agent-coder: Issue“ (`agent-coder-issue.yml`, vorher
+`agent.yml`) und „💻 agent-coder: /code Revise“ (`agent-coder-revise.yml`, vorher `agent-review.yml` mit dem Namen
+„Agent Review“, der nach einem Review klang). Der Befehl heißt `/code`; `/agent` gilt in einer Übergangszeit weiter,
+beide zählen für die Obergrenze von 5 Runden. Er muss das erste Wort des Kommentars sein, `/coder` oder `/codex` werden
+abgelehnt. Die Action bekommt als Auslöser-Phrase die, mit der der Kommentar beginnt. Der Branch-Präfix `agent/` bleibt.
+Die Sicherheitslogik ist unverändert. Die Ergebnisse der Abnahme unten nennen noch die alten Namen und `/agent`, weil sie
+damit entstanden sind.
 
 **Entscheidungen und Gründe**
 
 - **Ereignis `issue_comment`.** Es läuft immer mit der Workflow-Datei der Standardbranch. Ein PR kann den Workflow
-  deshalb nicht ändern, und das Environment `agent` (nur Branch `main`) bleibt nutzbar. `pull_request_review(_comment)`
+  deshalb nicht ändern, und das Environment `factory-write` (nur Branch `main`) bleibt nutzbar. `pull_request_review(_comment)`
   liefe dagegen vom PR-Stand und würde vom Environment blockiert.
 - **Zwei Jobs.** Der Job `pruefung` hat keine Secrets und keine Freigabe, nur lesende Rechte plus `pull-requests: write` für
   die Ablehnungsmeldung am PR. Er lässt nur durch: offener PR im selben Repo, Autor Owner, Branch `agent/*`, Absender und
-  Kommentarautor Owner, höchstens 5 `/coder`- oder `/agent`-Kommentare, und keine Datei des PR in einem Schutzbereich. Erst danach
+  Kommentarautor Owner, höchstens 5 `/code`- oder `/agent`-Kommentare, und keine Datei des PR in einem Schutzbereich. Erst danach
   fragt der Job `agent` die Freigabe im Environment an. So muss der Owner keine Läufe freigeben, die ohnehin
   abgelehnt würden.
 - **Schutzbereichs-Prüfung im Diff.** Die Action stellt beim Lauf auf einem PR nur die Claude-Konfiguration (`.claude/`,
@@ -345,7 +349,7 @@ kein Lauf. (4) Sechster Kommentar: Ablehnung wegen der Obergrenze. (5) Annotatio
 | 3 | Kommentar eines anderen Kontos | nicht getestet (braucht ein Zweitkonto); die Bedingung prüft Kommentarautor und Absender |
 | 4 | Sechster Kommentar (PR #46, Lauf 40176269518) | bestanden: Ablehnung „Obergrenze von 5 Runden“, `agent` übersprungen. Die Runden 2 bis 5 wurden bis zur Freigabeanfrage durchgelassen und von Hand abgebrochen. |
 
-Beobachtung: Der Agent verkettete `./verify.sh` mit `echo`, was die Settings sperren. Der Exit-Code im Bericht war daher nur aus der Ausgabe abgeleitet. Die Prompts in `agent.yml` und `agent-review.yml` verlangen jetzt den Einzelbefehl; ohne Fehlermeldung des Werkzeugs gilt Exit-Code 0.
+Beobachtung: Der Agent verkettete `./verify.sh` mit `echo`, was die Settings sperren. Der Exit-Code im Bericht war daher nur aus der Ausgabe abgeleitet. Die Prompts in `agent-coder-issue.yml` und `agent-coder-revise.yml` verlangen jetzt den Einzelbefehl; ohne Fehlermeldung des Werkzeugs gilt Exit-Code 0.
 
 ### Branch auf den Stand von `main` bringen (Roadmap P6, gebaut, ungetestet)
 

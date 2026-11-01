@@ -1,6 +1,6 @@
 name: "💻 agent-coder: Issue"
 
-# Stufe 2: Das Label "agent" auf einem Issue startet einen Coding-Agent-Lauf.
+# Stufe 2: Das Label "agent-coder" auf einem Issue startet einen Coding-Agent-Lauf.
 # Sicherheitskonzept und Begründungen: docs/adr/0002-agent-sicherheit.md
 
 on:
@@ -14,7 +14,7 @@ permissions: {}
 # Verschiedene Issues laufen parallel, so wird kein wartender Lauf von einem neueren verdrängt (GitHub hält pro Gruppe
 # nur einen wartenden Lauf). Jeder Lauf braucht ohnehin die Freigabe im Environment.
 concurrency:
-  group: agent-${{ github.event.issue.number }}
+  group: agent-coder-issue-${{ github.event.issue.number }}
   cancel-in-progress: false
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
   # Secrets. Mit GITHUB_TOKEN gesetzte Labels lösen keinen weiteren Workflow aus.
   anmelden:
     if: >-
-      github.event.label.name == 'agent' &&
+      github.event.label.name == 'agent-coder' &&
       github.event.sender.login == 'juheba' &&
       github.event.issue.user.login == 'juheba'
     runs-on: ubuntu-24.04
@@ -58,15 +58,15 @@ jobs:
     # Nur der Owner löst Läufe aus, und nur auf eigenen Issues.
     # Kein issue_comment, kein pull_request_target, keine Wildcard-Nutzer.
     if: >-
-      github.event.label.name == 'agent' &&
+      github.event.label.name == 'agent-coder' &&
       github.event.sender.login == 'juheba' &&
       github.event.issue.user.login == 'juheba'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     # Wartet auf `anmelden`, damit die Kommentar-ID (needs.anmelden.outputs) hier verfügbar ist.
     needs: anmelden
-    # Die Secrets liegen im Environment "agent" (nur Branch main, Freigabe durch den Owner).
-    environment: agent
+    # Die Secrets liegen im Environment "factory-write" (nur Branch main, Freigabe durch den Owner).
+    environment: factory-write
     permissions:
       contents: write
       pull-requests: write
@@ -149,7 +149,7 @@ jobs:
                Ergebnissen führen, änderst du keinen Code und eröffnest keinen PR. Stelle die konkreten Fragen
                als Kommentar ins Issue (je Frage mögliche Antworten und deine Empfehlung, Text nach
                `.agent-tmp/comment.md`, dann `gh issue comment`) und beende den Lauf. Kleine Lücken benennst du als
-               Annahmen im PR-Text. Der Owner antwortet im Issue und setzt das Label `agent` erneut.
+               Annahmen im PR-Text. Der Owner antwortet im Issue und setzt das Label `agent-coder` erneut.
             9. Lies `config/definition-of-done.md` und halte alle zutreffenden Punkte ein. Der PR-Text enthält den
                Abschnitt `## Definition of Done`: Jeder Punkt (DoD-1 bis DoD-10 und die zutreffenden A/B/C/D-Punkte)
                mit `✅`, `n/a` oder `Abweichung: <Grund>`. Bewerte ehrlich: Ein Punkt ohne Beleg ist keine Erfüllung.
