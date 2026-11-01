@@ -1,6 +1,6 @@
 name: Agent-Auftrag
 description: Strukturierter Auftrag für einen Coding-Agent
-labels: ["agent"]
+labels: ["agent-coder"]
 body:
   - type: markdown
     attributes:

@@ -22,28 +22,28 @@ bis das Gate grün ist. Ohne dieses Feedback gibt es kein belastbares „geprüf
 
 ```mermaid
 flowchart LR
-    O[Owner legt Issue an und setzt Label agent] --> T{Auslöser geprüft: Label agent, Absender und Autor = Owner}
+    O[Owner legt Issue an und setzt Label agent-coder] --> T{Auslöser geprüft: Label agent-coder, Absender und Autor = Owner}
     T -->|nein| X[Kein Lauf]
-    T -->|ja| E[Freigabe im Environment agent]
+    T -->|ja| E[Freigabe im Environment factory-write]
     E --> A[Agent liest CLAUDE.md und Issue, arbeitet auf agent/nr-slug]
     A --> L{Loop: ./verify.sh}
     L -->|rot| A
     L -->|grün| PR[Pull Request mit Closes nr]
     PR --> CI[CI: Jobs service und frontend]
     CI --> R[Review durch Mensch]
-    R -->|Änderungswunsch: Kommentar /coder ...| RK[Überarbeitung auf dem PR-Branch]
+    R -->|Änderungswunsch: Kommentar /code ...| RK[Überarbeitung auf dem PR-Branch]
     RK --> CI
     R -->|ok| M[Merge in main]
 ```
 
-Gegenüber Stufe 1 startet der Lauf automatisch, sobald der Owner das Label `agent` setzt, und nur dann, wenn
-Absender und Issue-Autor der Owner sind. Jeder Lauf wartet auf eine Freigabe im GitHub-Environment `agent`.
+Gegenüber Stufe 1 startet der Lauf automatisch, sobald der Owner das Label `agent-coder` setzt, und nur dann, wenn
+Absender und Issue-Autor der Owner sind. Jeder Lauf wartet auf eine Freigabe im GitHub-Environment `factory-write`.
 Schutzbereiche (Workflows, Gate, Build-Skripte) darf der Agent nicht ändern, dafür sorgen Code-Owner-Review und
 Ruleset. Die Begründungen stehen in [ADR 0002](adr/0002-agent-sicherheit.md).
 
 **Review-Schleife (Spike, Roadmap P2):** Bei Änderungswünschen schreibt der Owner auf dem `agent/*`-PR einen
-Kommentar, der mit `/coder` beginnt (übergangsweise gilt auch der frühere Befehl `/agent`). Der Workflow
-`agent-review.yml` („💻 agent-coder: /coder Kommentar“) prüft zuerst ohne Secrets (offener PR, Branch
+Kommentar, der mit `/code` beginnt (übergangsweise gilt auch der frühere Befehl `/agent`). Der Workflow
+`agent-coder-revise.yml` („💻 agent-coder: /code Revise“) prüft zuerst ohne Secrets (offener PR, Branch
 `agent/*`, keine Schutzbereiche im Diff, höchstens 5 Runden) und fragt dann die Freigabe im Environment an. Der Agent
 arbeitet auf demselben Branch, führt `./verify.sh` aus und antwortet mit einem Kommentar. Ändert der PR Schutzbereiche,
 lehnt die Prüfung ab und nennt den Grund; dann arbeitet der Owner selbst weiter. Geht der Wunsch über den PR hinaus,
@@ -51,9 +51,9 @@ wird das Issue angepasst und das Label neu gesetzt.
 
 **Rückfrage statt Raten (Roadmap P5):** Ist ein Akzeptanzkriterium deutlich mehrdeutig, baut der Agent nichts auf
 Verdacht. Er stellt seine Fragen als Kommentar ins Issue und beendet den Lauf. Der Owner antwortet im Issue und
-setzt das Label `agent` erneut (Label entfernen, wieder setzen).
+setzt das Label `agent-coder` erneut (Label entfernen, wieder setzen).
 
-**Freigabe und Lauf sichtbar machen (Roadmap B7):** Jeder Lauf braucht eine Freigabe im Environment `agent`. Damit du
+**Freigabe und Lauf sichtbar machen (Roadmap B7):** Jeder Lauf braucht eine Freigabe im Environment `factory-write`. Damit du
 nicht unter Actions suchen musst, zeigt die Factory den Zustand dort, wo du arbeitest:
 - **Label `wartet-auf-freigabe`** am Issue bzw. PR, solange der Lauf wartet. In der Liste filterst du mit
   `label:wartet-auf-freigabe`.
@@ -70,7 +70,7 @@ Meilenstein setzt du also einmal am Issue.
 twei Links an: **Vorher** (Seite von `main`) und **Nachher** (dieselbe Seite mit dem Vertrag des PR-Stands). Der Kommentar
 wird bei jedem neuen Push aktualisiert. Ohne Änderung an `openapi/` gibt es ihn nicht.
 
-Kommentare von `GITHUB_TOKEN` lösen keinen weiteren Workflow aus und zählen nicht als `/coder`-Runde (gezählt werden
+Kommentare von `GITHUB_TOKEN` lösen keinen weiteren Workflow aus und zählen nicht als `/code`-Runde (gezählt werden
 nur Kommentare des Owners). Schlägt das Kommentieren fehl, bleibt es bei einer Warnung und der Lauf läuft weiter.
 Soll der Ablauf um einen weiteren Schritt oder Zustand wachsen, wird der Kommentar im selben Job aktualisiert und nicht
 durch zusätzliche Kommentare ergänzt.
@@ -96,7 +96,7 @@ verhindert und was der Owner selbst tun muss. Die Regeln und ihre Begründung st
 ## Ausbaustufen
 
 1. **Template-Repo** (dieses Repo): Agent arbeitet an einem Issue, du prüfst den PR.
-2. **Automatisierung (aktiv):** Label `agent` am Issue startet den Agent per GitHub Action (`anthropics/claude-code-action`).
+2. **Automatisierung (aktiv):** Label `agent-coder` am Issue startet den Agent per GitHub Action (`anthropics/claude-code-action`).
 3. **Rollen:** Planer, Implementierer und Reviewer als Subagents/Skills in `.claude/`.
 4. **Orchestrator:** Eigener Graph mit dem Claude Agent SDK (Knoten = Rollen, Kanten = Übergaben, Schleife = Review → Fix).
 5. **Wiederverwendung:** Skills und Templates in einem eigenen Factory-Repo für weitere Stacks.

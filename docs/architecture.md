@@ -76,11 +76,11 @@ eine bereits stornierte Bestellung liefert 409; beide Fehler als RFC-9457-Proble
 sequenceDiagram
     actor O as Owner
     participant GH as GitHub
-    participant WF as Workflow agent.yml
-    participant Env as Environment agent
+    participant WF as Workflow agent-coder-issue.yml
+    participant Env as Environment factory-write
     participant A as Agent (claude-code-action)
     participant CI as CI (ci.yml)
-    O->>GH: Issue anlegen, Label "agent" setzen
+    O->>GH: Issue anlegen, Label "agent-coder" setzen
     GH->>WF: Ereignis issues/labeled
     WF->>WF: Prüfung: Label, Sender und Issue-Autor = Owner
     WF->>GH: Label wartet-auf-freigabe und Kommentar mit Link zum Lauf (Job anmelden)
@@ -106,10 +106,10 @@ sequenceDiagram
     actor O as Owner
     participant GH as GitHub
     participant P as Job pruefung (ohne Secrets)
-    participant Env as Environment agent
+    participant Env as Environment factory-write
     participant A as Agent (claude-code-action, Interaktiv-Modus)
     participant CI as CI (ci.yml)
-    O->>GH: Kommentar "/coder Wunsch" auf einem agent/*-PR
+    O->>GH: Kommentar "/code Wunsch" auf einem agent/*-PR
     GH->>P: Ereignis issue_comment (Workflow-Stand von main)
     P->>P: PR offen, Branch agent/*, gleiches Repo, Autor Owner, keine Schutzbereiche im Diff, höchstens 5 Runden
     P-->>GH: bei Ablehnung: Kommentar mit Grund, kein Agent-Lauf
