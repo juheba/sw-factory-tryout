@@ -14,7 +14,7 @@ Die Namen nach der Umstellung ([📌 #138](https://github.com/juheba/sw-factory-
 |---|---|---|---|---|
 | `agent-coder` | `agent-coder-issue.yml` | „💻 agent-coder: Issue“ | Label `agent-coder` auf einem Issue | `factory-write` (mit Freigabe) |
 | `agent-coder` | `agent-coder-revise.yml` | „💻 agent-coder: /code Revise“ | Kommentar `/code <Wunsch>` auf einem `agent/*`-PR; `/agent` als Übergangsbefehl, der noch funktioniert und entfällt | `factory-write` (mit Freigabe) |
-| `agent-reviewer` | `agent-reviewer.yml` | „🔎 agent-reviewer“ | Neuer oder aktualisierter `agent/*`-PR (automatisch); Kommentar `/review [Hinweis]` auf einem Issue oder PR | `factory-read` (ohne Freigabe) |
+| `agent-reviewer` | `agent-reviewer.yml` | „🔎 agent-reviewer“ | Neuer oder aktualisierter `agent/*`-PR (automatisch, prüft nur Nicht-Draft-PRs von `juheba`); Kommentar `/review [Hinweis]` auf einem Issue oder PR (wird nur von `juheba` angenommen) | `factory-read` (ohne Freigabe) |
 
 ## Notausschalter
 
