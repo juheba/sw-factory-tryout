@@ -6,6 +6,18 @@ tun ist. Hintergründe stehen in [ADR 0002](adr/0002-agent-sicherheit.md), der G
 **Nicht geprobt:** Der Notausschalter ist beschrieben, aber noch nie durchgespielt worden (Roadmap S9). Einmal ruhig
 ausprobieren, bevor er gebraucht wird.
 
+## Namen im Überblick
+
+Die Namen nach der Umstellung ([📌 #138](https://github.com/juheba/sw-factory-tryout/issues/138), [📌 #159](https://github.com/juheba/sw-factory-tryout/issues/159)) an einer Stelle, übernommen aus den Workflow-Dateien unter `.github/workflows/`.
+
+| Agent | Workflow-Datei | Angezeigter Name | Auslöser | Environment |
+|---|---|---|---|---|
+| `agent-coder` | `agent-coder-issue.yml` | „💻 agent-coder: Issue“ | Label `agent-coder` auf einem Issue | `factory-write` (mit Freigabe) |
+| `agent-coder` | `agent-coder-revise.yml` | „💻 agent-coder: /code Revise“ | Kommentar `/code <Wunsch>` auf einem `agent/*`-PR; `/agent` als Übergangsbefehl, der noch funktioniert und entfällt | `factory-write` (mit Freigabe) |
+| `agent-reviewer` | `agent-reviewer.yml` | „🔎 agent-reviewer“ | Neuer oder aktualisierter `agent/*`-PR (automatisch, prüft nur Nicht-Draft-PRs von `juheba`); Kommentar `/review [Hinweis]` auf einem Issue oder PR (wird nur von `juheba` angenommen) | `factory-read` (ohne Freigabe) |
+
+Die Hintergründe zu Environments, Freigaben und Schutzbereichen stehen in [ADR 0002](adr/0002-agent-sicherheit.md).
+
 ## Notausschalter
 
 Von sanft nach hart. Jede Stufe schließt die vorherigen nicht aus.
