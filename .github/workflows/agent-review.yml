@@ -1,7 +1,9 @@
 name: "💻 agent-coder: /coder Kommentar"
 
 # Überarbeitungsschleife: Ein Kommentar "/coder <Wunsch>" des Owners auf einem agent/*-PR startet 💻 agent-coder auf
-# demselben Branch. Der frühere Befehl "/agent" gilt in einer Übergangszeit weiter (Issue 138, Issue 159). Sicherheitskonzept und Begründungen: docs/adr/0002-agent-sicherheit.md
+# demselben Branch. Der frühere Befehl "/agent" gilt in einer Übergangszeit weiter. Hintergrund:
+# https://github.com/juheba/sw-factory-tryout/issues/159 und https://github.com/juheba/sw-factory-tryout/issues/138
+# Sicherheitskonzept und Begründungen: docs/adr/0002-agent-sicherheit.md
 #
 # issue_comment läuft immer mit dem Workflow-Stand von main. Ein PR kann diese Datei also nicht ändern.
 
