@@ -264,6 +264,15 @@ Git-Historie (PR #27, #29) wiederherstellen, falls die Regeln erneut geändert w
   und übergibt ihn mit `--body-file`. Grund: `gh pr create --body …` und `Write` nach `/tmp` wurden in jedem Lauf
   abgelehnt. Annahme, nicht geprüft: Mehrzeilige Texte in der Befehlszeile passen nicht zu den Bash-Regeln. Der
   nächste Lauf zeigt, ob der Weg über die Datei funktioniert.
+- **PR-Text bei Überarbeitungen (01.11.2026 / [📌 #166](https://github.com/juheba/sw-factory-tryout/issues/166)):** Der Agent kann den PR-Text nicht ändern, weil `gh api -X/-f/-F/--input`
+  gesperrt sind und `gh pr edit` GraphQL braucht. Die Deny-Liste bleibt unverändert. Stattdessen schreibt der Agent
+  den neuen Text nach `.agent-tmp/pr-body.md`, und der Workflow-Schritt „PR-Text übernehmen“ in `agent-coder-revise.yml`
+  (ohne Claude, im Job `agent` nach dem Lauf) schreibt ihn per REST (`PATCH /pulls/{nr}`) in den PR. Der Schritt liest die
+  Datei nur als Daten und übernimmt sie nur, wenn sie höchstens 60000 Bytes hat, den Abschnitt „Definition of Done“
+  enthält und die Zeile `Closes #<nr>` des bisherigen Textes unverändert vorkommt. Sonst bleibt der alte Text und eine
+  Annotation nennt den Grund. Neu ist damit ein Schreibzugriff auf den PR-Text, den der Workflow (`pull-requests: write`,
+  hatte der Job schon) und nicht der Agent ausübt. Nicht geprüft: ob ein Agent trotz Prüfung irreführenden Text
+  einträgt; der Owner liest den PR-Text weiter vor dem Merge.
 - **Gate:** Der Agent soll `./verify.sh` ohne Abschneiden der Ausgabe ausführen und den Exit-Code nennen.
 - **Diagnoseschritt:** Gibt jetzt auch bei null Ablehnungen eine Annotation aus und zeigt `git status --short` des
   Arbeitsverzeichnisses. Damit lässt sich klären, welcher Schritt `frontend/analysis_options.yaml` im Runner ändert.
