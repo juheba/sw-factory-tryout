@@ -15,6 +15,7 @@ Die Namen nach der Umstellung ([📌 #138](https://github.com/juheba/sw-factory-
 | `agent-coder` | `agent-coder-issue.yml` | „💻 agent-coder: Issue“ | Label `agent-coder` auf einem Issue (nur wenn Label-Setzer und Issue-Autor `juheba` sind) | `factory-write` (mit Freigabe) |
 | `agent-coder` | `agent-coder-revise.yml` | „💻 agent-coder: /code Revise“ | Kommentar `/code <Wunsch>` auf einem `agent/*`-PR (der frühere Befehl `/agent` entfiel mit [📌 #164](https://github.com/juheba/sw-factory-tryout/issues/164)) | `factory-write` (mit Freigabe) |
 | `agent-reviewer` | `agent-reviewer.yml` | „🔎 agent-reviewer“ | Neuer oder aktualisierter `agent/*`-PR (automatisch, prüft nur Nicht-Draft-PRs von `juheba`); Kommentar `/review [Hinweis]` auf einem Issue oder PR (wird nur von `juheba` angenommen) | `factory-read` (ohne Freigabe) |
+| `agent/` (Branch-Präfix, kein Agent) | – | – | Bezeichnet von der Factory erzeugte Branches | – |
 
 Der Branch-Präfix `agent/` bleibt und bezeichnet von der Factory erzeugte Branches, nicht einen einzelnen Agenten ([📌 #138](https://github.com/juheba/sw-factory-tryout/issues/138)).
 
