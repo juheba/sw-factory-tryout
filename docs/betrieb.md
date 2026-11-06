@@ -16,6 +16,8 @@ Die Namen nach der Umstellung ([📌 #138](https://github.com/juheba/sw-factory-
 | `agent-coder` | `agent-coder-revise.yml` | „💻 agent-coder: /code Revise“ | Kommentar `/code <Wunsch>` auf einem `agent/*`-PR (der frühere Befehl `/agent` entfiel mit [📌 #164](https://github.com/juheba/sw-factory-tryout/issues/164)) | `factory-write` (mit Freigabe) |
 | `agent-reviewer` | `agent-reviewer.yml` | „🔎 agent-reviewer“ | Neuer oder aktualisierter `agent/*`-PR (automatisch, prüft nur Nicht-Draft-PRs von `juheba`); Kommentar `/review [Hinweis]` auf einem Issue oder PR (wird nur von `juheba` angenommen) | `factory-read` (ohne Freigabe) |
 
+Die Namen sind am 01.11.2026 abgenommen (Issue-Lauf, `/code`, Kommentar ohne Befehl), der Befehl `/agent` ist entfernt ([📌 #162](https://github.com/juheba/sw-factory-tryout/issues/162), [📌 #164](https://github.com/juheba/sw-factory-tryout/issues/164)).
+
 Die Hintergründe zu Environments, Freigaben und Schutzbereichen stehen in [ADR 0002](adr/0002-agent-sicherheit.md).
 
 ## Notausschalter
