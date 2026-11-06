@@ -49,6 +49,7 @@ Danach: Ursache klären (Annotationen und Ergebnis-JSON des Laufs, siehe unten),
 
 | Symptom | Wahrscheinliche Ursache | Maßnahme |
 |---|---|---|
+| PR-Text nach `/code` nicht aktualisiert | Der Agent hat keine Datei `.agent-tmp/pr-body.md` geschrieben, oder der Schritt „PR-Text übernehmen“ hat sie verworfen (zu groß, Abschnitt „Definition of Done“ oder Zeile `Closes #<nr>` fehlt). | Annotation „PR-Text nicht übernommen“ im Lauf „💻 agent-coder: /code Revise“ lesen. Mit `/code Aktualisiere den PR-Text` erneut anstoßen oder den Text selbst ändern ([📌 #166](https://github.com/juheba/sw-factory-tryout/issues/166)). |
 | `/code`-Kommentar bleibt ohne Reaktion | Kommentar beginnt nicht mit `/code` (der frühere `/agent` startet nichts mehr), stammt nicht vom Owner oder steht nicht auf einem PR. Oder der Job `pruefung` hat abgelehnt. | Actions → „💻 agent-coder: /code Revise“ öffnen. Der Prüfjob nennt den Grund (Annotation „agent-coder (Kommentar) abgelehnt“, meist auch als PR-Kommentar): PR nicht offen, Branch nicht `agent/*`, Schutzbereiche im Diff, mehr als 5 Runden. |
 | Review-Lauf „waiting“, obwohl `pruefung` grün ist | Jeder `/code`-Kommentar braucht eine eigene Freigabe im Environment `factory-write`. | Lauf „💻 agent-coder: /code Revise“ öffnen, **Review deployments**, freigeben. |
 | Lauf bleibt „waiting“ | Freigabe im Environment `factory-write` fehlt. | Lauf öffnen, **Review deployments**, freigeben. |
