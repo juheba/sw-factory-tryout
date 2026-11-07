@@ -152,5 +152,6 @@ Der **Reviewer** (Roadmap P4, [Betrieb](betrieb.md#reviewer-einrichten-und-bedie
 Umsetzer. Er prüft einen PR oder ein Issue gegen die [Definition of Done](../config/definition-of-done.md), ohne
 Freigabe und ohne Schreibrechte, und antwortet mit einem Kommentar (Urteil, Befunde mit Beleg, Bewertung je
 Urteilspunkt). Er läuft automatisch bei PRs auf `agent/*` und auf Zuruf mit `/review` an jedem Issue oder PR. Sein
-Urteil ersetzt das Review des Owners nicht.
+Urteil ersetzt das Review des Owners nicht. Update-PRs von Dependabot prüft er auf Zuruf nach einem eigenen Maßstab
+(Definition of Done, Abschnitt „Update-PRs (Dependabot)“).
 

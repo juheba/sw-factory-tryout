@@ -42,6 +42,23 @@ Der Reviewer antwortet pro Urteilspunkt mit `✅`, `❌` oder `nicht beurteilbar
 | DoD-C1 | Service | Constructor Injection, keine Wildcard-Imports, Zeilen höchstens 120 Zeichen. | Gate (Checkstyle), Urteil (Constructor Injection) |
 | DoD-D1 | Workflow, Betrieb | Änderungen an Automatisierung, Sicherheit oder Ablauf sind im ADR oder in `docs/betrieb.md` begründet. Nur der Owner ändert Schutzbereiche. | Urteil |
 
+## Update-PRs (Dependabot)
+
+Gilt für PRs mit Autor `dependabot[bot]` und Branch `dependabot/…` (Entscheidung in Issue #136, 07.11.2026). Sie
+entstehen ohne Issue und ohne Coder, deshalb ersetzen die Punkte hier einen Teil der Liste „Immer“:
+
+- **Unverändert:** DoD-1 (Gate), DoD-3 und DoD-8 (falls betroffen, zum Beispiel Badges im README).
+- **`n/a`:** DoD-2, DoD-4, DoD-5 und DoD-6 (kein Auftrag, kein eigener Code), DoD-7 (der Versionssprung ist der Zweck
+  des PRs; neue Abhängigkeiten prüft DoD-U2), DoD-10 (Branch, Commit und Text erzeugt Dependabot).
+- **Ersetzt:** DoD-9 durch DoD-U2. Die Änderung im Schutzbereich ist bei Update-PRs gewollt, der Owner gibt sie per
+  Code-Owner-Review frei. Ein Befund ist nur ein Umweg: alles, was über die Versionszeilen hinausgeht.
+
+| Nr. | Punkt | Prüft |
+|---|---|---|
+| DoD-U1 | Release Notes und Changelog sind auf Breaking Changes, geänderte Standardwerte und entfernte Optionen gelesen und gegen unseren Code abgeglichen. Betroffene Stellen stehen mit Datei und Zeile im Review. Quelle ist der Text, den Dependabot in den PR setzt; fehlt er oder ist er gekürzt, lautet die Bewertung `nicht beurteilbar`. | Urteil |
+| DoD-U2 | Der Diff ändert nur Versions- oder SHA-Zeilen (mit Tag-Kommentar) in den erwarteten Dateien (`gradle/libs.versions.toml`, Build-Dateien, `.github/workflows/`). Neue Abhängigkeiten, neue Repositories, Plugins oder sonstige Zeilen sind ein blockierender Befund. | Urteil |
+| DoD-U3 | Bei Updates mit Wirkung über den Diff hinaus ist das nötige Vorgehen genannt: `org.openapi.generator` (generierter Code kann sich ändern, Gate bestätigt Service und Client), `anthropics/claude-code-action` (Vorgehen B1 in `docs/betrieb.md`, Smoke-Test nach Issue #133), Gradle-Wrapper und Major-Updates (Release Notes vollständig lesen). | Urteil |
+
 ## Je Issue
 
 Die Akzeptanzkriterien des Issues sind der letzte Teil der Definition. Sie ergänzen diese Liste und werden in DoD-5

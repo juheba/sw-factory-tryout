@@ -237,6 +237,12 @@ Der Reviewer (Workflow `agent-reviewer.yml`, Roadmap P4) prüft PRs und Issues g
 - **Auf Zuruf:** Ein Kommentar `/review` von dir auf jedem Issue oder PR, optional mit Hinweis
   (`/review achte besonders auf Fehlerfälle`). Auf einem Issue prüft er den Auftrag, auf einem PR den Diff (auch bei
   fremden Branches und Forks). Jeder Zuruf erzeugt einen eigenen Kommentar.
+- **Update-PRs (Dependabot):** Nur auf Zuruf mit `/review`. Der Reviewer erkennt Autor `dependabot[bot]` und Branch
+  `dependabot/` und prüft nach dem Abschnitt „Update-PRs (Dependabot)“ der Definition of Done (DoD-U1 bis DoD-U3:
+  Release Notes gegen unseren Code, nur Versionszeilen im Diff, nötiges Vorgehen genannt) statt nach DoD-6, 7, 9 und 10,
+  die bei Update-PRs systembedingt nicht erfüllbar sind ([📌 #136](https://github.com/juheba/sw-factory-tryout/issues/136)).
+  Er hat kein Netz und liest die Release Notes nur aus dem PR-Text. Ein automatischer Start für Dependabot-PRs folgt
+  erst nach zwei brauchbaren manuellen Läufen.
 - **Unterschied zu `/code`:** `/code` startet den Umsetzer (schreibt Code, mit Freigabe), `/review` den Reviewer
   (schreibt nie, ohne Freigabe).
 
