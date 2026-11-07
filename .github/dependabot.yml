@@ -1,10 +1,49 @@
+# Dependabot-Konfiguration (Roadmap B9, Issue #136). Entscheidungen: Kommentar im Issue vom 07.11.2026.
+# Optionen laut Doku: https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+#
+# - milestone: Nummer, nicht Titel. 3 = "Betrieb und Absicherung". Gilt auch für Security-PRs.
+# - labels: ersetzt die Standardlabels, deshalb vollständig (dependencies und Ökosystem-Label bleiben).
+# - groups: Patch und Minor je Ökosystem in einem PR. Einzeln bleiben Major-Updates und Pakete, deren Update
+#   gesondert geprüft wird (openapi-generator ändert generierten Code, claude-code-action folgt dem Vorgehen B1
+#   in docs/betrieb.md). Gruppen gelten ohne applies-to nur für Version-Updates, Security-Updates bleiben einzeln.
+# - cooldown: neue Versionen erst nach einer Woche vorschlagen (Major bei Gradle nach zwei Wochen). Gilt nur für
+#   Version-Updates, nie für Security-Updates. GitHub Actions kennt nur default-days.
 version: 2
 updates:
   - package-ecosystem: gradle
     directory: "/"
     schedule:
       interval: weekly
+    milestone: 3
+    labels:
+      - dependencies
+      - java
+      - betrieb
+    groups:
+      gradle-minor-patch:
+        update-types:
+          - minor
+          - patch
+        exclude-patterns:
+          - "org.openapi.generator*"
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
+    milestone: 3
+    labels:
+      - dependencies
+      - github_actions
+      - betrieb
+    groups:
+      actions-minor-patch:
+        update-types:
+          - minor
+          - patch
+        exclude-patterns:
+          - "anthropics/claude-code-action"
+    cooldown:
+      default-days: 7

@@ -72,6 +72,27 @@ Danach: Ursache klären (Annotationen und Ergebnis-JSON des Laufs, siehe unten),
 | Rote CI auf `main` | Ein gemergter PR hat etwas gebrochen. | Per Revert-PR zurücknehmen, nicht per Force-Push. Den Agenten damit nicht beauftragen, solange die Ursache offen ist. |
 | PR lässt sich nicht mergen | Code-Owner-Review fehlt (der Agent ist du, du kannst dich nicht selbst freigeben). | Mit Admin-Bypass mergen, wenn der PR Schutzbereiche berührt. Sonst Checks abwarten. |
 
+## Dependabot-PRs
+
+Roadmap B9, Entscheidungen in [📌 #136](https://github.com/juheba/sw-factory-tryout/issues/136) (Kommentar vom 07.11.2026).
+Konfiguration: `.github/dependabot.yml` (Schutzbereich, Änderungen nur durch den Owner).
+
+| Was | Einstellung | Wirkung |
+|---|---|---|
+| Meilenstein | `milestone: 3` | Jeder Dependabot-PR landet im Meilenstein „Betrieb und Absicherung“. Die Option erwartet die Nummer aus der URL, nicht den Titel. |
+| Labels | `dependencies`, Ökosystem (`java` bzw. `github_actions`), `betrieb` | `labels` ersetzt die Standardlabels, deshalb steht die Liste vollständig da. Fehlt ein Label im Repo, wird es still ignoriert. |
+| Gruppen | `gradle-minor-patch`, `actions-minor-patch` | Patch- und Minor-Updates eines Ökosystems kommen in einem PR. Einzeln bleiben Major-Updates, `org.openapi.generator` (ändert den generierten Code) und `anthropics/claude-code-action` (Vorgehen siehe „Updates der Action und von Claude Code“). Security-Updates bleiben ungruppiert. |
+| Wartezeit | `cooldown: default-days: 7`, Gradle-Major 14 | Neue Versionen werden erst nach einer Woche vorgeschlagen (ohne Angabe gilt bei GitHub inzwischen ein Standard von 3 Tagen). Nie für Security-Updates. |
+
+**Ein gruppierter PR ist rot:** Die Fehlerzuordnung ist schwerer, weil mehrere Pakete zugleich springen. Im PR-Text die
+Liste der Pakete lesen und das verdächtige Paket eingrenzen. Kommentar `@dependabot ignore <paket> patch version` (bzw.
+`minor version`) schließt den PR und sperrt dieses Update für das Paket dauerhaft, bis `@dependabot unignore <paket>`
+die Sperre aufhebt. Dass die übrigen Updates beim nächsten Lauf als neue Gruppe kommen, ist zu erwarten, in der Doku
+aber nicht ausdrücklich beschrieben (beim ersten Fall beobachten). Die Sperre nach der Klärung wieder aufheben. Bleibt der Fall häufig, die Gruppe enger schneiden.
+
+**Nicht gewollt:** Auto-Merge (die Freigabe bleibt beim Owner) und ein eigenes Branch-Präfix (`dependabot/` bleibt,
+ein Präfix `agent/` würde die Factory-Workflows auslösen).
+
 ## Swagger UI aktualisieren
 
 Die API-Doku (`site/build.sh`) holt Swagger UI per Commit-SHA aus dem Repository `swagger-api/swagger-ui`, nicht aus einem
