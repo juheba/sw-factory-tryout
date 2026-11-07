@@ -70,7 +70,8 @@ PR-Text unter `## Definition of Done` jeden zutreffenden Punkt mit `✅`, `n/a` 
 
 - Nie direkt auf `main` pushen. Branch pro Issue: `agent/<issue-nr>-<kurzer-slug>`.
 - Commits klein und im Stil Conventional Commits (`feat:`, `fix:`, `test:`, `docs:`, `refactor:`, `chore:`).
-- Pull Request mit `Closes #<issue-nr>`, kurzer Zusammenfassung und dem Ergebnis von `./verify.sh`.
+- Pull Request mit `Closes #<issue-nr>` (oder `Refs #<issue-nr>`, wenn der PR das Issue nur teilweise erledigt, zum
+  Beispiel weil Schutzbereiche beim Owner bleiben), kurzer Zusammenfassung und dem Ergebnis von `./verify.sh`.
 - Kein Force-Push (auch kein `--force-with-lease`) und kein Rebase durch den Agenten. Sind History-Änderungen nötig,
   bittest du den Owner darum.
 - Liegt dein Branch hinter `main` (oder verlangt der Owner das), holst du `main` per `git fetch origin main` und

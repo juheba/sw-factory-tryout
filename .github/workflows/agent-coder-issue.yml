@@ -136,7 +136,8 @@ jobs:
             5. Führe `./verify.sh` genau so (relativer Pfad) als einzelnen Befehl aus, ohne die Ausgabe abzuschneiden (kein `| tail`, kein `| head`,
                kein `;`, `&&` oder `echo $?`). Meldet das Werkzeug keinen Fehler, ist der Exit-Code 0, sonst notierst du
                den gemeldeten Code. Fehlt ein Werkzeug oder scheitert das Gate, sag das im PR-Text.
-            6. Eröffne den PR mit `Closes #${{ github.event.issue.number }}` und dem tatsächlichen Ergebnis des Gates.
+            6. Eröffne den PR mit `Closes #${{ github.event.issue.number }}` (erledigt der PR das Issue nur teilweise:
+               `Refs #${{ github.event.issue.number }}`, siehe CLAUDE.md) und dem tatsächlichen Ergebnis des Gates.
                Der PR-Text enthält eine eigene Zeile `Exit-Code: <Zahl>` für `./verify.sh` (oder `Exit-Code: nicht
                ausgeführt` mit Grund).
                Schreibe den PR-Text mit dem Write-Werkzeug nach `.agent-tmp/pr-body.md` (nicht nach `/tmp`) und übergib ihn

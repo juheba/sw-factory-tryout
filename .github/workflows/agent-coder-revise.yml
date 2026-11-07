@@ -200,9 +200,10 @@ jobs:
           [ "$(wc -c < "$datei")" -le 60000 ] || warnung "Die Datei ist größer als 60000 Bytes."
           grep -qx '## Definition of Done' "$datei" || warnung "Der Abschnitt Definition of Done fehlt."
           alt=$(gh api "repos/$REPO/pulls/$PR" --jq '.body // ""')
-          ref=$(printf '%s\n' "$alt" | grep -m1 -E '^Closes #[0-9]+$' || true)
+          # Closes oder Refs (Teil-PR, Issue 181): die vorhandene Zeile muss unverändert bleiben.
+          ref=$(printf '%s\n' "$alt" | grep -m1 -E '^(Closes|Refs) #[0-9]+$' || true)
           if [ -n "$ref" ]; then
-            grep -qxF "$ref" "$datei" || warnung "Die Zeile mit Closes fehlt oder wurde geändert."
+            grep -qxF "$ref" "$datei" || warnung "Die Zeile mit Closes bzw. Refs fehlt oder wurde geändert."
           fi
           if gh api -X PATCH "repos/$REPO/pulls/$PR" -F body=@"$datei" --jq .number > /dev/null; then
             echo "::notice title=PR-Text::Der PR-Text wurde aus $datei übernommen."

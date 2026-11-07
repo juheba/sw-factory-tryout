@@ -29,7 +29,7 @@ Der Reviewer antwortet pro Urteilspunkt mit `✅`, `❌` oder `nicht beurteilbar
 | DoD-7 | Keine neuen Abhängigkeiten oder Versionssprünge ohne Auftrag im Issue. Keine Secrets, Tokens oder `.env`-Dateien. | Sperre (Build-Dateien, `.env`), Urteil (Code, der eine Bibliothek nachbaut oder Daten ausliest) |
 | DoD-8 | Doku ist aktuell: `docs/architecture.md` bei Änderung der Architektur oder des Ablaufs, Roadmap-Status des betroffenen Punkts, ADR bei Grundsatzentscheidung. | Urteil |
 | DoD-9 | Keine Änderung in Schutzbereichen (`.github/`, `.claude/`, `CLAUDE.md`, `config/`, `site/`, `verify.sh`, `frontend/tool/`, Build-Dateien). Ein Verstoß ist immer ein blockierender Befund. | Sperre (Berechtigungen, `CODEOWNERS`), Urteil (Umwege) |
-| DoD-10 | Commits sind klein und im Stil Conventional Commits, der Branch heißt `agent/<issue-nr>-<slug>`, der PR enthält `Closes #<issue-nr>`. | Urteil |
+| DoD-10 | Commits sind klein und im Stil Conventional Commits, der Branch heißt `agent/<issue-nr>-<slug>`, der PR-Text enthält `Closes #<issue-nr>` oder, wenn der PR das Issue nur teilweise erledigt, `Refs #<issue-nr>`, jeweils als eigene Zeile. `Refs` ist kein GitHub-Schlüsselwort: Der PR erscheint nur in der Timeline des Issues und wird nicht verknüpft. | Urteil |
 
 ## Je nach Änderung
 
