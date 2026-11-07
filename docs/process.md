@@ -28,7 +28,7 @@ flowchart LR
     E --> A[Agent liest CLAUDE.md und Issue, arbeitet auf agent/nr-slug]
     A --> L{Loop: ./verify.sh}
     L -->|rot| A
-    L -->|grün| PR[Pull Request mit Closes nr]
+    L -->|grün| PR[Pull Request mit Closes nr oder Refs nr]
     PR --> CI[CI: Jobs service und frontend]
     CI --> R[Review durch Mensch]
     R -->|Änderungswunsch: Kommentar /code ...| RK[Überarbeitung auf dem PR-Branch]

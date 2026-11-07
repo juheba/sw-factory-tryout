@@ -1,5 +1,7 @@
 Closes #
 
+<!-- Erledigt der PR das Issue nur teilweise: „Refs #<nr>“ statt „Closes #<nr>“ (DoD-10). -->
+
 ## Zusammenfassung
 
 <!-- Was wurde geändert und warum? -->
