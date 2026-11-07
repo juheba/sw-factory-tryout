@@ -419,7 +419,10 @@ Engpass. Das ist nur vertretbar, weil der Lauf nichts schreiben und nichts ausf�
 - Das Token liegt ein zweites Mal im Repository (in einem Environment ohne Freigabe). Wer `main` ändern kann, kann den
   Workflow ändern und das Token auslesen. Das ist heute nur der Owner (Ruleset, Code-Owner-Pflicht).
 - Fehlerhafte Befunde oder ein „in Ordnung“ des Reviewers sind kein Beleg. Das Review des Owners bleibt Pflicht.
-- Ob `--model sonnet` mit dem Abo-Token funktioniert und welches Modell läuft, ist am ersten Lauf zu prüfen.
-- Die Settings-Regeln (`allow`/`deny`) wurden noch nicht in einem Lauf mit einem Berechtigungstest bestätigt
-  (Abnahmekriterium in Issue #124).
+- Dass `--model sonnet` mit dem Abo-Token funktioniert und `claude-sonnet-5-5` läuft, ist im Lauf belegt
+  ([🔀 #142](https://github.com/juheba/sw-factory-tryout/pull/142), 31.10.2026).
+- Die Settings-Regeln (`allow`/`deny`) wurden nicht durch eine anspringende Werkzeugsperre bestätigt. Der Test vom
+  07.11.2026 (Schreibversuch per `/review`-Hinweis auf [🔀 #174](https://github.com/juheba/sw-factory-tryout/pull/174))
+  war nicht aussagekräftig, weil der Reviewer ihn selbst verweigert hat. Entscheidung des Owners (07.11.2026): Der Aufbau
+  gilt als Beleg (nur Lesen und `Edit(.agent-tmp/**)`, nur lesende Job-Rechte, `factory-read` ohne das PAT).
 
