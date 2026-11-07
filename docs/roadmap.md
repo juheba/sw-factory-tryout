@@ -40,7 +40,7 @@ flowchart LR
 |---|---|---|---|
 | E1 | Stufe 1: manueller Lauf mit CI-Gate | ✅ erledigt | – |
 | E2 | Stufe 2: Label `agent-coder` startet den Lauf | ✅ erledigt | Abnahme bestanden (ADR 0002, „Stand der Abnahme“). ADR 0002 ist seit 24.10.2026 „akzeptiert“. |
-| E3 | Stufe 3: Rollen (Konzept, Planer, Umsetzer, Reviewer, QA) | ⚠️ in Arbeit | Rollenmodell entschieden (07.11.2026, [📌 #184](https://github.com/juheba/sw-factory-tryout/issues/184), [ADR 0003](adr/0003-rollenmodell.md), [rollen.md](rollen.md)): Rollen nach Phasen, Fachgebiete als Linsen. Erledigt: P9 (#126), P4 (#124). Neue Reihenfolge: Standards (P13) und Konzept-Vorlage (P12), dann Pilot (W2), danach QA (#125), P10 (#127) und Planer (#128). |
+| E3 | Stufe 3: Rollen (Konzept, Planer, Umsetzer, Reviewer, QA) | ⚠️ in Arbeit | Rollenmodell entschieden (07.11.2026, [📌 #184](https://github.com/juheba/sw-factory-tryout/issues/184), [ADR 0003](adr/0003-rollenmodell.md), [rollen.md](rollen.md)): Rollen nach Phasen, Fachgebiete als Linsen. Erledigt: P4 ([📌 #124](https://github.com/juheba/sw-factory-tryout/issues/124)). P9 ([📌 #126](https://github.com/juheba/sw-factory-tryout/issues/126)) siehe eigene Zeile. Neue Reihenfolge: Standards (P13, [📌 #186](https://github.com/juheba/sw-factory-tryout/issues/186)) und Konzept-Vorlage (P12, [📌 #187](https://github.com/juheba/sw-factory-tryout/issues/187)), dann Pilot (W2, [📌 #189](https://github.com/juheba/sw-factory-tryout/issues/189)), danach QA ([📌 #125](https://github.com/juheba/sw-factory-tryout/issues/125)), P10 ([📌 #127](https://github.com/juheba/sw-factory-tryout/issues/127)) und Planer ([📌 #128](https://github.com/juheba/sw-factory-tryout/issues/128)). |
 | E4 | Stufe 4: eigener Orchestrator mit Agent SDK | ❓ zu bewerten | Setzt E3 und Messwerte (M1) voraus. |
 | E5 | Stufe 5: eigenes Repo `sw-factory` | ❓ zu bewerten | Vorher klären, was projektspezifisch und was generisch ist (W1). |
 
@@ -59,8 +59,8 @@ flowchart LR
 | P9 | Definition of Done für Coder, Reviewer und QA | ⚠️ in Arbeit | Gebaut (Issue #126, ungetestet): `config/definition-of-done.md` (nummerierte Punkte, je „Gate“, „Sperre“ oder „Urteil“), Coder-Prompt und PR-Vorlage nutzen sie. Offen: Nutzung durch den Reviewer (#124), Verweis in `CLAUDE.md` (Issue #141, PR liegt beim Owner). |
 | P10 | Review-Schleife: Befunde von Reviewer und QA abarbeiten | ⬜ offen | Issue #127, nach #124. |
 | P11 | Schreibweise: Emoji und Links für Issues, PRs, Environments und Agents | ⚠️ in Arbeit | Gebaut (Issue #139, ungetestet): Abschnitt „Schreibweise“ in `docs/process.md`. Offen: Satz in `CLAUDE.md` (Issue #141, PR liegt beim Owner). |
-| P12 | Konzeptphase: Idee → Konzept (🎯 Konzept) | ⬜ offen | Entschieden: interaktiv mit fester Vorlage, kein Workflow (ADR 0003, Entscheidung 1). Offen: Vorlage `docs/konzept/_vorlage.md` und Checkliste „Konzept ist reif“. |
-| P13 | Standards als Maßstab der Linsen | ⬜ offen | Entschieden: unter `config/` (ADR 0003, Entscheidung 2). Architekturprinzipien, sauberer Code je Stack, Sicherheits-Checkliste, UX-Leitlinie; DoD und Prompts verweisen darauf. |
+| P12 | Konzeptphase: Idee → Konzept (🎯 Konzept) | ⬜ offen | [📌 #187](https://github.com/juheba/sw-factory-tryout/issues/187). Entschieden: interaktiv mit fester Vorlage, kein Workflow (ADR 0003, Entscheidung 1). Offen: Vorlage `docs/konzept/_vorlage.md` und Checkliste „Konzept ist reif“. |
+| P13 | Standards als Maßstab der Linsen | ⬜ offen | [📌 #186](https://github.com/juheba/sw-factory-tryout/issues/186). Entschieden: unter `config/` (ADR 0003, Entscheidung 2). Architekturprinzipien, sauberer Code je Stack, Sicherheits-Checkliste, UX-Leitlinie; DoD und Prompts verweisen darauf. |
 
 ## Sicherheit
 
@@ -111,14 +111,14 @@ flowchart LR
 | X1 | Flutter-Plattformordner anlegen | ⬜ offen | `flutter create --platforms=android,ios,web --project-name order_app .` in `frontend/`, danach `analysis_options.yaml` prüfen. |
 | X2 | Weitere Features als reale Aufträge | ⚠️ in Arbeit | Nach P2, damit die Schleife an echten Änderungen getestet wird. Erstes Feature: Bestellliste nach Status filtern (Issue #52). Zweites Feature: Bestellliste nach Anlegedatum sortieren (Issue #55). Drittes Feature: Anzahl der Bestellungen im Titel anzeigen (Issue #61). Viertes Feature: Detailansicht einer Bestellung (Issue #87). |
 | X3 | OpenAPI-Vertrag als Webseite veröffentlichen | ✅ erledigt | Gebaut (Issue #96): `site/build.sh` und Workflow `pages.yml` erzeugen aus `openapi/openapi.yaml` eine Swagger-UI-Seite (nur lesend, hell und dunkel, Links auf Architektur, Prozess, Betrieb, ADRs) und veröffentlichen sie auf GitHub Pages. Swagger UI wird per Commit-SHA gepinnt, `site/` ist Schutzbereich. Lokal geprüft: Build und Darstellung in Chromium (hell, dunkel, 4 Operationen, keine Fehler). Abnahme (27.10.2026, Owner): Allowlist ergänzt, Workflow „API-Doku“ grün (Lauf 40463190590), Environment `github-pages` auf `main` beschränkt, Seite erreichbar unter https://juheba.github.io/sw-factory-tryout/. Ausbau später möglich (zum Beispiel weitere Seiten aus `docs/`). Gebaut und abgenommen (Issue #113, 27.10.2026, PR #110: Kommentar mit Vorher-/Nachher-Link, beide Stände in der Seite sichtbar, Banner beim PR-Stand): Vorschau des geänderten Vertrags pro PR (Kommentar mit Vorher-/Nachher-Link, `?spec=` auf der Seite). |
-| X4 | App-Vorschau am PR | ❓ zu bewerten | Abnahme gegen das Konzept braucht die laufende App (ADR 0003): zum Beispiel Flutter-Web-Build des PR-Stands ohne Secrets, ähnlich der Vertrag-Vorschau. |
+| X4 | App-Vorschau am PR | ❓ zu bewerten | [📌 #188](https://github.com/juheba/sw-factory-tryout/issues/188). Abnahme gegen das Konzept braucht die laufende App (ADR 0003): zum Beispiel Flutter-Web-Build des PR-Stands ohne Secrets, ähnlich der Vertrag-Vorschau. |
 
 ## Wiederverwendung
 
 | ID | Punkt | Status | Nächster Schritt / Verweis |
 |---|---|---|---|
 | W1 | Trennung generisch und projektspezifisch | ❓ zu bewerten | Workflow, Einstellungen, Vorlage, Prompt, ADR 0002 sind generisch. Spec, Gate und Stack sind es nicht. Vor Stufe 5 auflisten. |
-| W2 | Pilot: eine echte Idee des Owners durch die ganze Kette | ⬜ offen | Nach P12 und P13 (ADR 0003, Entscheidung 7). Konzept, Plan, Umsetzung, Prüfung, Abnahme; danach festhalten, was fehlte, und die Reihenfolge von QA und Planer daran messen. |
+| W2 | Pilot: eine echte Idee des Owners durch die ganze Kette | ⬜ offen | [📌 #189](https://github.com/juheba/sw-factory-tryout/issues/189). Nach P12 und P13 (ADR 0003, Entscheidung 7). Konzept, Plan, Umsetzung, Prüfung, Abnahme; danach festhalten, was fehlte, und die Reihenfolge von QA und Planer daran messen. |
 
 ## Blinde Flecken (ehrlich: noch nicht bewertet)
 
