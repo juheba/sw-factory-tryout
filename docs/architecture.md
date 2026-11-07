@@ -141,3 +141,4 @@ hell. Verwendet werden helle Füllungen mit `color:#1f2328`: erledigt `fill:#d4e
 
 - [ADR 0001: Spec-first mit OpenAPI](adr/0001-spec-first-openapi.md)
 - [ADR 0002: Absicherung automatischer Agent-Läufe](adr/0002-agent-sicherheit.md)
+- [ADR 0003: Rollenmodell nach Phasen, Expertise als Linsen](adr/0003-rollenmodell.md)
