@@ -97,7 +97,9 @@ verhindert und was der Owner selbst tun muss. Die Regeln und ihre Begründung st
 
 1. **Template-Repo** (dieses Repo): Agent arbeitet an einem Issue, du prüfst den PR.
 2. **Automatisierung (aktiv):** Label `agent-coder` am Issue startet den Agent per GitHub Action (`anthropics/claude-code-action`).
-3. **Rollen:** Planer, Implementierer und Reviewer als Subagents/Skills in `.claude/`.
+3. **Rollen (in Arbeit):** Rollen nach Phasen (Konzept, Plan, Umsetzung, Prüfung, Abnahme), Fachgebiete als Linsen mit
+   Maßstab unter `config/`. Wer was tut und warum: [rollen.md](rollen.md), Entscheidung in
+   [ADR 0003](adr/0003-rollenmodell.md).
 4. **Orchestrator:** Eigener Graph mit dem Claude Agent SDK (Knoten = Rollen, Kanten = Übergaben, Schleife = Review → Fix).
 5. **Wiederverwendung:** Skills und Templates in einem eigenen Factory-Repo für weitere Stacks.
 
@@ -113,6 +115,7 @@ Art, deshalb steht das Wort „Issue“, „PR“ oder „Environment“ nicht d
 | Pull Request | `[🔀 #123](https://github.com/juheba/sw-factory-tryout/pull/123)` | Der Link zeigt auf `/pull/`, das unterscheidet ihn vom Issue. |
 | Bug | `[🐛 #123](https://github.com/juheba/sw-factory-tryout/issues/123)` | Ein Bug ist ein Issue mit Label `bug`, der Link zeigt auf `/issues/`. |
 | Environment | 🌐`factory-read` | Name in Backticks. |
+| Konzept | 🎯 Konzept | interaktive Arbeitsweise, kein Agent ([rollen.md](rollen.md)) |
 | Coder | 💻`agent-coder` | |
 | Reviewer | 🔎`agent-reviewer` | |
 | QA | 🔬`agent-qa` | |
