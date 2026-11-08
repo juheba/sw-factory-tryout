@@ -76,6 +76,23 @@ Soll der Ablauf um einen weiteren Schritt oder Zustand wachsen, wird der Komment
 durch zusätzliche Kommentare ergänzt.
 Liegt der Branch hinter `main`, holt der Agent `main` per Merge-Commit nach (kein Rebase, kein Force-Push, Roadmap P6).
 
+## Neue Ideen und Änderungen: drei Wege
+
+Ein Projekt wird nicht bei jeder neuen Idee komplett neu geplant. Das Konzept unter `docs/konzept/` lebt und wächst in
+Ausbaustufen ([Vorlage](konzept/_vorlage.md)). Neu geplant wird nur der **Unterschied**. Der bestehende Stand (Konzept,
+ADRs, Code, Standards) ist dabei Faktenlage, die der Agent selbst nachliest, statt den Owner danach zu fragen.
+
+| Weg | Beispiel | Ablauf | Planer |
+|---|---|---|---|
+| **Kleine Optimierung** | Fehlermeldung, Text, ein Feld mehr, eine Sortierung | Der Owner legt direkt ein Issue an; `/review` auf dem Issue prüft es; dann Label `agent-coder` | nein |
+| **Erweiterung** | neuer Ablauf, neuer Bildschirm, neue Funktion im bestehenden Rahmen | Konzeptsitzung **nur zum Unterschied** (neue Stufe im Konzept, neue Kennungen `A-n`, `S-n`, `F-n`), dann Schnitt in Issues | ja, nur für den Unterschied |
+| **Richtungswechsel** | neue Zielgruppe, neue Plattform, neuer Baustein wie Anmeldung oder Datenbank | Ziel und Grenzen im Konzept überarbeiten, ADR (`ARCH-10: Bausteine per ADR`), Plan einschließlich Umstellung | ja, mit Architektur |
+
+Welcher Weg gilt, entscheidet der Owner. Die Prüfung von Issues (heute 🔎`agent-reviewer` per `/review`, später
+🧭`agent-planer`) meldet einen Hinweis, wenn ein Issue eigentlich eine Erweiterung oder ein Richtungswechsel ist. Nach
+jeder umgesetzten Stufe wird das Konzept nachgeführt (`KON-8: Stand nachgeführt`,
+[Maßstab](../config/standards/konzept.md)).
+
 ## Wenn der Agent nicht liefern kann
 
 Betrifft ein Auftrag nur Schutzbereiche oder verlangt er etwas Verbotenes, eröffnet der Agent keinen Pull Request.

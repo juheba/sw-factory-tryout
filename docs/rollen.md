@@ -73,6 +73,7 @@ Fachgebiete sind Linsen, durch die eine Rolle prüft. Jede Linse braucht einen M
 | Sauberer Code | Leitlinien je Stack (Java/Spring, Dart/Flutter), geplant | Coder (Umsetzung), Reviewer (Prüfung) |
 | Sicherheit | Sicherheits-Checkliste für den Produktcode, geplant | Coder, Reviewer; dazu Werkzeuge (CodeQL, Kandidaten in [📌 #154](https://github.com/juheba/sw-factory-tryout/issues/154) bis [📌 #157](https://github.com/juheba/sw-factory-tryout/issues/157)) |
 | UX | UX-Leitlinie (Bedienbarkeit, Zustände leer/lädt/Fehler, Barrierefreiheit), geplant | Konzept (Entwurf), QA (Prüfung) |
+| Konzept ist reif | [Konzept-Maßstab](../config/standards/konzept.md) (`KON-1` bis `KON-8`) | Owner (Konzeptphase), Planer (vor dem Schnitt) |
 | Kriterien und Randfälle | Akzeptanzkriterien des Issues, `DoD-4: Tests mit Fehlerfall` und `DoD-5: Kriterien erfüllt` | QA |
 
 ## Die Rollen im Einzelnen
@@ -116,6 +117,19 @@ braucht viele kurze Rückfragen; dafür sind GitHub-Kommentare mit Freigabe pro 
 - **Macht nicht:** Architektur festlegen (Planer), Issues anlegen (Owner), Code schreiben.
 - **Typisches Risiko:** zu früh „reif“ erklären oder Funktionen anhäufen. Gegenmittel: Checkliste „Konzept ist reif“,
   Muss und Kann getrennt.
+- **Vorlage und Maßstab:** [`docs/konzept/_vorlage.md`](konzept/_vorlage.md) (ein Dokument je Idee, Ausbaustufen darin,
+  Bausteine mit Kennung und Kurzname: `A-n`, `S-n`, `F-n`, `H-n`, `Q-n`) und
+  [`config/standards/konzept.md`](../config/standards/konzept.md) (`KON-1` bis `KON-8`). Reif heißt reif für die nächste
+  Stufe, nicht vollständig.
+- **Ablauf einer Sitzung:** Der Owner startet mit „Konzept: <Idee>“ (Erstsitzung) oder „Konzept: <Idee>, Stufe n“
+  (Folgesitzung). Gefragt wird nach der Methode des Skills `grilling` von Matt Pocock
+  ([mattpocock/skills](https://github.com/mattpocock/skills), MIT): in Runden entlang der „Front“ (alle Fragen, die sich
+  jetzt beantworten lassen), nummeriert und je mit Empfehlung; Fakten aus Repo und Konzept liest der Agent selbst nach,
+  Entscheidungen trifft der Owner. Die Sitzung endet, wenn die Front leer ist und `KON-1` bis `KON-8` für die nächste
+  Stufe erfüllt sind. Das Ergebnis kommt als PR auf `agent/<nr>-konzept-<slug>` ins Repo.
+- **Folgesitzungen:** Nur der Unterschied wird besprochen (neue Stufe, neue oder geänderte Kennungen), der bestehende
+  Stand ist Faktenlage. Welcher Weg gilt (kleine Optimierung, Erweiterung, Richtungswechsel), steht in
+  [process.md](process.md#neue-ideen-und-änderungen-drei-wege).
 
 ### 🧭`agent-planer`
 
