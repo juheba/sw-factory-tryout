@@ -73,7 +73,7 @@ Fachgebiete sind Linsen, durch die eine Rolle prüft. Jede Linse braucht einen M
 | Sauberer Code | Leitlinien je Stack (Java/Spring, Dart/Flutter), geplant | Coder (Umsetzung), Reviewer (Prüfung) |
 | Sicherheit | Sicherheits-Checkliste für den Produktcode, geplant | Coder, Reviewer; dazu Werkzeuge (CodeQL, Kandidaten in [📌 #154](https://github.com/juheba/sw-factory-tryout/issues/154) bis [📌 #157](https://github.com/juheba/sw-factory-tryout/issues/157)) |
 | UX | UX-Leitlinie (Bedienbarkeit, Zustände leer/lädt/Fehler, Barrierefreiheit), geplant | Konzept (Entwurf), QA (Prüfung) |
-| Kriterien und Randfälle | Akzeptanzkriterien des Issues, DoD-4 und DoD-5 | QA |
+| Kriterien und Randfälle | Akzeptanzkriterien des Issues, `DoD-4: Tests mit Fehlerfall` und `DoD-5: Kriterien erfüllt` | QA |
 
 ## Die Rollen im Einzelnen
 
@@ -148,25 +148,27 @@ braucht viele kurze Rückfragen; dafür sind GitHub-Kommentare mit Freigabe pro 
 ### 🔎`agent-reviewer`
 
 - **Zuständig für:** den Diff gegen `CLAUDE.md` und die Urteilspunkte der DoD prüfen: Fehler, Sicherheit, Verstöße,
-  Umwege um Schutzbereiche, Schreibweise. Jeden Befund mit Datei, Zeile und Zitat belegen. Bei DoD-4 nur noch
+  Umwege um Schutzbereiche, Schreibweise. Jeden Befund mit Datei, Zeile und Zitat belegen. Bei `DoD-4: Tests mit Fehlerfall` nur noch
   prüfen, ob Tests vorhanden und nicht trivial sind (Entscheidung 4).
 - **Expertise:** Code lesen, Regeln kennen, Sicherheit (Prompt-Injection, Umwege). Linsen Architektur, sauberer Code
   und Sicherheit.
 - **Motivation:** nichts in `main`, was ein aufmerksamer Mensch im Review beanstanden würde.
 - **Ziel und Erfolg:** echte Befunde, wenig Rauschen; der Owner kann sich auf das Urteil verlassen.
 - **Macht nicht:** schreiben, ausführen, das Gate wiederholen, beurteilen, ob Kriterien fachlich erfüllt sind (QA).
-- **Typisches Risiko:** formale Blockade statt Urteil, zum Beispiel DoD-9 an jedem PR des Owners. Gegenmittel:
+- **Typisches Risiko:** formale Blockade statt Urteil, zum Beispiel `DoD-9: Schutzbereiche unberührt` an jedem PR des
+  Owners. Gegenmittel:
   eigener Maßstab für Sonderfälle (DoD-U1 bis U3 für Dependabot) und der Status „Owner-Freigabe nötig“ statt
   „blockierend“ bei Schutzbereichen im Auftrag des Owners (Entscheidung 6, Umsetzung offen).
 - **Übergang:** Der Abschnitt beschreibt den Zuschnitt nach ADR 0003. Bis QA läuft
-  ([📌 #125](https://github.com/juheba/sw-factory-tryout/issues/125)), bewertet der Reviewer DoD-4 und DoD-5 noch
+  ([📌 #125](https://github.com/juheba/sw-factory-tryout/issues/125)), bewertet der Reviewer `DoD-4: Tests mit Fehlerfall` und `DoD-5: Kriterien erfüllt` noch
   vollständig, so wie es der Reviewer-Prompt und die DoD heute vorsehen.
 
 ### 🔬`agent-qa`
 
 - **Zuständig für:** jedes Akzeptanzkriterium einem Test zuordnen (belegt, teilweise, Lücke), fehlende Randfälle
   benennen (Grenzwerte, leere Eingaben, Fehlerfälle, UX-Zustände); später das Verhalten tatsächlich ausprobieren
-  (Stufe 2). Zuständig für DoD-4 (Zuordnung) und DoD-5 (Entscheidung 4).
+  (Stufe 2). Zuständig für `DoD-4: Tests mit Fehlerfall` (Zuordnung) und
+  `DoD-5: Kriterien erfüllt` (Entscheidung 4).
 - **Expertise:** Testdesign, Randfälle, Sicht des Nutzers. Maßstab ist das Issue, nicht der Code. Linsen Kriterien
   und UX.
 - **Motivation:** belegen, dass das Gebaute tut, was verlangt war, nicht nur, dass es kompiliert und Tests hat.

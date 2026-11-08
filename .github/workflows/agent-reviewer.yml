@@ -223,7 +223,9 @@ jobs:
                `nicht beurteilbar` und nennst den Grund.
             5. Melde nur, was ein Mensch im Review ansprechen würde: Fehler, Sicherheit, fehlende oder wirkungslose
                Tests, Verstöße gegen `CLAUDE.md` oder die Definition of Done. Nichts zu Geschmack oder Formatierung.
-            6. Belegpflicht: Jeder Befund nennt Datei und Zeile, ein kurzes Zitat aus dem Code und den Punkt (`DoD-n`).
+            6. Belegpflicht: Jeder Befund nennt Datei und Zeile, ein kurzes Zitat aus dem Code und den Punkt mit Kennung
+               und Kurzname, so wie er in der Definition of Done oder dem Standard steht (`DoD-9: Schutzbereiche unberührt`,
+               `ARCH-2: Abhängigkeiten nach innen`), nie die Kennung allein.
                Die Zeilennummer ist die Zeile **in der Datei** (lies die Stelle in `pr/` nach und zähle dort), nicht
                die Zeile im Diff. Ohne Beleg gilt ein Befund nicht und du lässt ihn weg. Kannst du etwas nicht
                beurteilen, weil es Ausführung braucht, schreibst du „nicht beurteilbar“, du rätst nicht.
@@ -256,13 +258,13 @@ jobs:
               Owner noch nicht weiß und das er beachten oder entscheiden sollte. Eine Bestätigung („umgesetzt“, „Test
               vorhanden“, „Schutzbereiche nicht berührt“) ist kein Hinweis: Bei einem PR steht sie in der Tabelle, bei
               einem Issue höchstens in der Zeile zum Zustand.
-            - Nur bei einem PR, `### Definition of Done`: eine Tabelle mit den Spalten Punkt, Bewertung
-              (`✅`, `❌` oder `nicht beurteilbar`), Beleg, für die Urteilspunkte, die du tatsächlich beurteilt hast.
+            - Nur bei einem PR, `### Definition of Done`: eine Tabelle mit den Spalten Punkt (im Format
+              `DoD-n: Kurzname`), Bewertung (`✅`, `❌` oder `nicht beurteilbar`), Beleg, für die Urteilspunkte, die du tatsächlich beurteilt hast.
               **Tabelle und Befunde müssen zusammenpassen:** Ein Punkt, zu dem du einen Befund schreibst, steht in der
               Tabelle mit `❌`, nie mit `✅`; `✅` nur, wenn es zu diesem Punkt keinen Befund gibt.
             - Ändert der PR nur Doku oder Konfigurationstext (nichts unter `service/`, `frontend/lib/`, `frontend/test/`,
               `openapi/`), fasse nicht betroffene Punkte in **einer** Zeile zusammen („Nicht betroffen: DoD-2, DoD-3,
-              DoD-4, DoD-7“), statt sie einzeln aufzulisten.
+              DoD-4, DoD-7“), statt sie einzeln aufzulisten. Nur in dieser Sammelzeile reicht die Kennung allein.
             - Schreibe nur die Datei, kein weiterer Kommentar im Lauf nötig.
 
       - name: Ergebnis lesen
