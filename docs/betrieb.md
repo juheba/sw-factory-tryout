@@ -69,6 +69,7 @@ Danach: Ursache klären (Annotationen und Ergebnis-JSON des Laufs, siehe unten),
 | `gh pr create` oder ein Befehl wird abgelehnt | Eine Deny-Regel oder fehlende Erlaubnis in `.claude/agent-settings.json`. | Annotation „Agent-Ablehnungen“ lesen. Regel nur mit Bedacht ändern (Schutzbereich, Admin-Bypass). |
 | Lauf endet mit Turn-Limit | `--max-turns 60` erreicht, der Auftrag ist zu groß oder zu unscharf. | Issue verkleinern oder präzisieren (Akzeptanzkriterien, „Nicht Teil des Auftrags“). |
 | Gate verändert Dateien | Flutter oder ein Generator schreibt in versionierte Dateien. | Annotation „Arbeitsverzeichnis“ lesen und die Datei einmal passend einchecken. |
+| Architektur-Test rot (`ArchitectureTest` im Job `service`, oder „ARCH-5 verletzt“ im Job `frontend`) | Der Code verletzt eine Architekturregel. Die Meldung nennt die Kennung (`because ARCH-n …`) und die betroffenen Klassen oder Dateien. | Den Punkt in `config/standards/architektur.md` lesen und den Code anpassen, per `/code` oder selbst. Die Regel nur per Owner-PR ändern: Der Ordner `architecture/` und `archunit*` sind Schutzbereich ([ADR 0004](adr/0004-architekturregeln-archunit.md)). |
 | Rote CI auf `main` | Ein gemergter PR hat etwas gebrochen. | Per Revert-PR zurücknehmen, nicht per Force-Push. Den Agenten damit nicht beauftragen, solange die Ursache offen ist. |
 | PR lässt sich nicht mergen | Code-Owner-Review fehlt (der Agent ist du, du kannst dich nicht selbst freigeben). | Mit Admin-Bypass mergen, wenn der PR Schutzbereiche berührt. Sonst Checks abwarten. |
 
