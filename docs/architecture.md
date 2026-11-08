@@ -34,6 +34,7 @@ flowchart TB
     Detail -->|HTTP/JSON| PCtl
     Test[OpenApiContractTest] -.prüft.-> Spec
     Test -.prüft.-> Ctl
+    Arch[ArchitectureTest: ArchUnit] -.prüft Pakete.-> service
 ```
 
 Die API-Doku wird nicht von Hand gepflegt: Bei jeder Änderung an `openapi/` auf `main` baut `site/build.sh` die Seite
@@ -126,7 +127,32 @@ sequenceDiagram
 
 `issue_comment` läuft immer mit der Workflow-Datei von `main`; ein PR kann den Workflow also nicht verändern. Der Job
 `pruefung` entscheidet vor der Freigabe, ob der Befehl zulässig ist. Pro PR läuft höchstens ein Lauf. Die Schleife ist
-ein Spike und noch nicht im Echtbetrieb bewertet (Roadmap P2).
+abgenommen und im Betrieb (Roadmap P2, ADR 0002, „Ergebnisse der Review-Schleife“).
+
+## Ablauf: automatisches Review
+
+Der Reviewer (`agent-reviewer.yml`, [Rollen](rollen.md)) prüft PRs und Issues gegen die Definition of Done und die
+Standards. Drei Jobs mit getrennten Rechten, damit kein Job zugleich das Abo-Token und Schreibrechte hat
+([ADR 0002](adr/0002-agent-sicherheit.md), Abschnitt „Reviewer ohne Freigabe“).
+
+```mermaid
+sequenceDiagram
+    participant GH as GitHub
+    participant P as Job pruefung (Schreibrechte, keine Secrets)
+    participant R as Job review (Environment factory-read, nur lesend)
+    participant K as Job kommentar (Schreibrechte, keine Secrets)
+    GH->>P: PR auf agent/* geöffnet oder aktualisiert, oder Kommentar /review vom Owner
+    P->>P: Auslöser, Commit und Obergrenze prüfen
+    P->>GH: Kommentar „Reviewer läuft“ anlegen oder aktualisieren
+    P->>R: Ziel (PR oder Issue), Hinweis, Kommentar-ID
+    R->>R: Checkout von main (vertraut) und des PR-Stands nach pr/ (unvertraut)
+    R->>R: Claude liest CLAUDE.md, DoD und Standards aus main, Diff und Dateien aus pr/
+    R->>K: Ergebnis aus .agent-tmp/review.md
+    K->>GH: Kommentar mit Urteil, Befunden und DoD-Tabelle
+```
+
+Beide Auslöser (`pull_request_target`, `issue_comment`) laufen mit dem Workflow aus `main`. Der PR-Code wird nur gelesen,
+nie gebaut oder ausgeführt.
 
 ## Gestaltung von Mermaid-Diagrammen
 

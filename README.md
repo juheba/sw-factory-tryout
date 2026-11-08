@@ -9,14 +9,17 @@
 [![Spring Boot 4.x](https://img.shields.io/badge/Spring%20Boot-4.x-6DB33F?style=flat)](gradle/libs.versions.toml)
 [![Flutter stable](https://img.shields.io/badge/Flutter-stable-02569B?style=flat)](frontend/)
 
-Spec-first Monorepo als Ausgangspunkt für die eigene Software Factory (Stufe 1):
-Ein Issue wird von einem Coding-Agent (Claude Code) bearbeitet, die CI prüft das Ergebnis, ein Mensch reviewt den PR.
+Spec-first Monorepo als Testfeld für die eigene Software Factory. Stand: Stufe 2 läuft, Stufe 3 ist in Arbeit.
+Ein Label am Issue startet 💻`agent-coder` (Claude Code), die CI prüft das Ergebnis, 🔎`agent-reviewer` prüft den PR
+gegen Definition of Done und Standards, der Owner reviewt und mergt. Wer was tut: [docs/rollen.md](docs/rollen.md),
+Ablauf: [docs/process.md](docs/process.md), Stand und Plan: [docs/roadmap.md](docs/roadmap.md).
 
 ```
 openapi/    Vertrag (openapi.yaml), Quelle der Wahrheit
 service/    Spring Boot 4, Java 25, Gradle
 frontend/   Flutter (Dart), mit generiertem API-Client
-docs/       Architektur (Mermaid), Prozess, ADRs
+docs/       Architektur (Mermaid), Prozess, Rollen, ADRs, Konzepte
+config/     Definition of Done, Standards, Checkstyle (Maßstab, Schutzbereich)
 site/       Baut die API-Doku (Swagger UI) für GitHub Pages
 ```
 

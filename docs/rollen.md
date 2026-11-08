@@ -29,7 +29,7 @@ Jede Rolle beantwortet genau eine Frage.
 |---|---|---|---|---|
 | 👩🏽‍💻 Owner | Wollen wir das, und reicht es? | Ziel, Wert, Risiko | Anfang und Ende jedes Auftrags | im Betrieb |
 | 💬 Assistant | Wie muss die Factory sein, damit sie zuverlässig liefert? | Prozess, Regeln, Automatisierung | außerhalb des Ablaufs | im Betrieb |
-| 🎯 Konzept | Was genau soll die Anwendung können, für wen, und woran erkennen wir, dass sie es kann? | Idee, Nutzer, Abläufe | 1. Idee → Konzept | entschieden, Vorlage offen (P12) |
+| 🎯 Konzept | Was genau soll die Anwendung können, für wen, und woran erkennen wir, dass sie es kann? | Idee, Nutzer, Abläufe | 1. Idee → Konzept | Vorlage und Maßstab vorhanden, erste Sitzung offen (P12) |
 | 🧭`agent-planer` | Ist der Auftrag baubar, und wie bauen wir ihn? | Konzept, Issue, Codebasis | 2. Konzept → Plan | geplant ([📌 #128](https://github.com/juheba/sw-factory-tryout/issues/128)) |
 | 💻`agent-coder` | Wie setze ich den Auftrag korrekt um? | Spec, Code, Tests | 3. Umsetzung | im Betrieb |
 | 🔎`agent-reviewer` | Ist der Diff richtig gebaut und regelkonform? | Code gegen Regeln | 4. Prüfung | im Betrieb; neuer Zuschnitt (`DoD-4: Tests mit Fehlerfall`, `DoD-5: Kriterien erfüllt`) ab [📌 #125](https://github.com/juheba/sw-factory-tryout/issues/125) |
