@@ -112,6 +112,7 @@ Der Agent darf seine eigene Kontrolle nicht verändern. Geschützt sind:
 | `verify.sh`, `frontend/tool/`, `config/` | das Gate: Ein Agent darf seine Prüfung nicht abschwächen |
 | `site/` | Baut die öffentliche API-Doku (GitHub Pages): Ein Agent könnte sonst Inhalte auf der öffentlichen Seite platzieren |
 | `gradle/`, `gradlew*`, `*.gradle.kts`, `pubspec.yaml` | Lieferkette: Abhängigkeiten, Wrapper, Build-Skripte |
+| `service/src/test/java/com/example/orderservice/architecture/`, `service/src/test/resources/archunit*` | Architekturregeln als Gate (ArchUnit, [ADR 0004](0004-architekturregeln-archunit.md)): Ein Agent darf Regeln nicht löschen oder per `archunit.properties` lockern |
 
 Durchgesetzt auf zwei Ebenen:
 

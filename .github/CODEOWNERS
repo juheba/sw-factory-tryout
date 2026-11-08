@@ -22,3 +22,7 @@
 /service/build.gradle.kts   @juheba
 /frontend/build.gradle.kts  @juheba
 /frontend/pubspec.yaml      @juheba
+
+# Architekturregeln als Gate (Issue #196): Regeln und ihre Konfiguration ändert nur der Owner.
+/service/src/test/java/com/example/orderservice/architecture/ @juheba
+/service/src/test/resources/archunit*                         @juheba
