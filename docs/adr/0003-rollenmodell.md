@@ -55,3 +55,9 @@ Unverändert gilt: Issues legt nur der Owner an, und nur Issues des Owners start
 - Umsetzung über Folge-Issues: Konzept-Vorlage (P12), Standards (P13), App-Vorschau (X4), Pilot (W2), DoD-9-Status,
   Zuschnitt von QA ([📌 #125](https://github.com/juheba/sw-factory-tryout/issues/125)) und Planer
   ([📌 #128](https://github.com/juheba/sw-factory-tryout/issues/128)).
+
+## Nachtrag (08.11.2026)
+
+Die Reihenfolge aus Entscheidung 7 ist geändert ([📌 #202](https://github.com/juheba/sw-factory-tryout/issues/202)): Die Factory wird vorerst in diesem Repo weiter
+verprobt. Der Pilot wartet auf eine konkrete Idee, QA und Planer kommen davor. Die aktuelle Reihenfolge steht in der
+[Roadmap](../roadmap.md), Zeile E3. Die übrigen Entscheidungen gelten unverändert.
