@@ -12,13 +12,16 @@ frontend/                     Flutter-App (Dart), nutzt einen aus der Spec gener
 docs/                         Architektur (Mermaid), ADRs, Prozess
 config/checkstyle/            Stilregeln für den Service
 config/definition-of-done.md  Definition of Done (Maßstab für Coder, Reviewer und QA)
+config/standards/             Standards der Linsen (Architektur, Konzept), Kennungen ARCH-n, KON-n
+docs/konzept/                 Konzepte je Idee (Vorlage: _vorlage.md)
 verify.sh                     Gesamtes Gate (Service und Frontend)
 ```
 
 ## Stack
 
 - **Service:** Java 25 (Toolchain), Gradle (Kotlin DSL, Wrapper), Spring Boot 4.x (Spring Framework 7, Jackson 3),
-  OpenAPI Generator (`spring`, `interfaceOnly`). Tests: JUnit 5, MockMvc, AssertJ. Qualität: Checkstyle, JaCoCo.
+  OpenAPI Generator (`spring`, `interfaceOnly`). Tests: JUnit 6 (über die Spring-Boot-BOM), MockMvc, AssertJ,
+  ArchUnit. Qualität: Checkstyle, JaCoCo.
 - **Frontend:** Flutter (stable), Dart. Client aus der Spec mit OpenAPI Generator (`dart`), erzeugt in
   `frontend/packages/order_api` (nicht eingecheckt). Qualität: `dart format`, `flutter analyze`, `flutter test`.
 
