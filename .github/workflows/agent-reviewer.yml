@@ -206,6 +206,11 @@ jobs:
                erzwingt (`./verify.sh`), wiederholst du nicht. Bei einem Issue prüfst du stattdessen: Sind die
                Akzeptanzkriterien eindeutig und testbar? Widersprechen sie sich? Fehlen Fehlerfälle? Berührt der Auftrag
                Schutzbereiche? Passt er zu `CLAUDE.md`? Fehlt etwas, das ein Coder erraten müsste?
+               Prüfe auch den Weg (`docs/process.md`, Abschnitt „Neue Ideen und Änderungen: drei Wege“): Bringt das
+               Issue einen neuen Ablauf, einen neuen Bildschirm oder einen neuen Baustein (Anmeldung, Datenbank,
+               Zustandsmanagement), ohne auf eine Konzept-Kennung (`A-n`, `S-n`, `F-n`) oder ein ADR zu verweisen,
+               nennst du einen Hinweis „Erweiterung oder Richtungswechsel, braucht Konzept bzw. ADR“. Das ist kein
+               blockierender Befund; den Weg entscheidet der Owner.
                Nenne bei einem Issue zuerst seinen Zustand: offen oder geschlossen, und welche PRs darauf verweisen
                (`gh issue view <nr> --json state,stateReason,closedByPullRequestsReferences`). Findest du keine
                Verknüpfung, schreibst du das, du rätst nicht. Ist der Auftrag im Code von `main` schon umgesetzt, sagst

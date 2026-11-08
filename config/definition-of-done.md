@@ -35,10 +35,10 @@ die Kennungen allein nennen, damit sie kurz bleibt.
 | DoD-5 | Kriterien erfüllt | Alle Akzeptanzkriterien des Issues sind erfüllt. Jede Abweichung steht mit Begründung im PR-Text. | Urteil |
 | DoD-6 | Annahmen offengelegt | Annahmen und offene Punkte stehen im PR-Text. Es wurde nichts stillschweigend anders gebaut als beauftragt. | Urteil |
 | DoD-7 | Keine ungeplanten Abhängigkeiten | Keine neuen Abhängigkeiten oder Versionssprünge ohne Auftrag im Issue. Keine Secrets, Tokens oder `.env`-Dateien. | Sperre (Build-Dateien, `.env`), Urteil (Code, der eine Bibliothek nachbaut oder Daten ausliest) |
-| DoD-8 | Doku aktuell | Doku ist aktuell: `docs/architecture.md` bei Änderung der Architektur oder des Ablaufs, Roadmap-Status des betroffenen Punkts, ADR bei Grundsatzentscheidung. | Urteil |
+| DoD-8 | Doku aktuell | Doku ist aktuell: `docs/architecture.md` bei Änderung der Architektur oder des Ablaufs, Roadmap-Status des betroffenen Punkts, ADR bei Grundsatzentscheidung, das Konzept unter `docs/konzept/`, wenn eine Ausbaustufe umgesetzt oder ein Baustein (`A-n`, `S-n`, `F-n`) geändert wurde (`KON-8: Stand nachgeführt`). | Urteil |
 | DoD-9 | Schutzbereiche unberührt | Keine Änderung in Schutzbereichen (`.github/`, `.claude/`, `CLAUDE.md`, `config/`, `site/`, `verify.sh`, `frontend/tool/`, Build-Dateien, Architektur-Tests unter `service/src/test/java/com/example/orderservice/architecture/` und `service/src/test/resources/archunit*`). Ein Verstoß ist immer ein blockierender Befund. | Sperre (Berechtigungen, `CODEOWNERS`), Urteil (Umwege) |
 | DoD-10 | Commits und Branch sauber | Commits sind klein und im Stil Conventional Commits, der Branch heißt `agent/<issue-nr>-<slug>`, der PR enthält `Closes #<issue-nr>`. | Urteil |
-| DoD-11 | Standards eingehalten | Die Standards der betroffenen Linsen sind eingehalten (`config/standards/`, heute [Architektur](standards/architektur.md)). Befunde zitieren Kennung und Kurzname des Standards (zum Beispiel `ARCH-2: Abhängigkeiten nach innen`). | Gate (soweit ein Standard „Gate“ nennt), Urteil |
+| DoD-11 | Standards eingehalten | Die Standards der betroffenen Linsen sind eingehalten (`config/standards/`, heute [Architektur](standards/architektur.md) und [Konzept](standards/konzept.md)). Befunde zitieren Kennung und Kurzname des Standards (zum Beispiel `ARCH-2: Abhängigkeiten nach innen`). | Gate (soweit ein Standard „Gate“ nennt), Urteil |
 
 ## Je nach Änderung
 
