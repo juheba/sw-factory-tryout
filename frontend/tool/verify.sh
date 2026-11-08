@@ -4,11 +4,12 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-# ARCH-5 (config/standards/architektur.md, Issue #196): Der generierte Client steht nur in den Repositories.
+# ARCH-5: Client gekapselt (config/standards/architektur.md, Issue #196): Der generierte Client steht nur in den
+# Repositories.
 # Läuft zuerst, weil es nichts braucht außer grep.
 verstoesse=$(grep -rl --include='*.dart' "package:order_api" lib | grep -vE '^lib/[^/]+/[^/]+_repository\.dart$' || true)
 if [ -n "$verstoesse" ]; then
-  echo "ARCH-5 verletzt: package:order_api darf nur in lib/<feature>/*_repository.dart importiert werden. Betroffen:"
+  echo "ARCH-5: Client gekapselt verletzt: package:order_api darf nur in lib/<feature>/*_repository.dart stehen. Betroffen:"
   echo "$verstoesse"
   exit 1
 fi

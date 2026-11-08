@@ -122,11 +122,15 @@ Art, deshalb steht das Wort „Issue“, „PR“ oder „Environment“ nicht d
 | Planer | 🧭`agent-planer` | |
 | Owner | 👩🏽‍💻 Owner | der Mensch |
 | Assistant | 💬 Assistant | arbeitet an der Factory selbst, nicht im Ablauf |
+| Regel | `DoD-9: Schutzbereiche unberührt` | Kennung und Kurzname aus [DoD](../config/definition-of-done.md) oder [Standard](../config/standards/), nie die Kennung allein |
 
 Regeln:
 
 - **Immer Emoji, Nummer oder Name und, wo es einen gibt, den Link.** „🔀 #137“ mit Link, nie nur „#137“ oder „137“;
   „🌐`factory-read`“, nie nur „factory-read“; „🔎`agent-reviewer`“, wenn die Rolle gemeint ist.
+- **Regeln mit Kennung und Kurzname.** „`ARCH-2: Abhängigkeiten nach innen` muss angepasst werden“, nie nur „ARCH-2“.
+  Die Kennung ist die stabile Adresse, der Kurzname sagt, worum es geht ([📌 #199](https://github.com/juheba/sw-factory-tryout/issues/199)).
+  Ausnahme: eine Sammelzeile wie „Nicht betroffen: DoD-2, DoD-3“.
 - **Das Emoji ersetzt das Wort, nicht die Nummer.** Wer Emojis nicht darstellen kann, sieht im Link-Text nur die Nummer;
   deshalb steht die Art zusätzlich im Link-Ziel (`/issues/`, `/pull/`).
 - **Sparsam bei allem anderen:** Zusätzliche Emojis nur in Überschriften und Zuständigkeitstabellen, nicht an jedem Wort.
