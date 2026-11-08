@@ -1,6 +1,10 @@
 [versions]
 spring-boot = "4.1.2"
 openapi-generator = "7.27.0"
+archunit = "1.5.1"
+
+[libraries]
+archunit = { module = "com.tngtech.archunit:archunit", version.ref = "archunit" }
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
