@@ -30,6 +30,7 @@ Der Reviewer antwortet pro Urteilspunkt mit `✅`, `❌` oder `nicht beurteilbar
 | DoD-8 | Doku ist aktuell: `docs/architecture.md` bei Änderung der Architektur oder des Ablaufs, Roadmap-Status des betroffenen Punkts, ADR bei Grundsatzentscheidung. | Urteil |
 | DoD-9 | Keine Änderung in Schutzbereichen (`.github/`, `.claude/`, `CLAUDE.md`, `config/`, `site/`, `verify.sh`, `frontend/tool/`, Build-Dateien). Ein Verstoß ist immer ein blockierender Befund. | Sperre (Berechtigungen, `CODEOWNERS`), Urteil (Umwege) |
 | DoD-10 | Commits sind klein und im Stil Conventional Commits, der Branch heißt `agent/<issue-nr>-<slug>`, der PR enthält `Closes #<issue-nr>`. | Urteil |
+| DoD-11 | Die Standards der betroffenen Linsen sind eingehalten (`config/standards/`, heute [Architektur](standards/architektur.md)). Befunde zitieren die Kennung des Standards (zum Beispiel `ARCH-2`). | Gate (soweit ein Standard „Gate“ nennt), Urteil |
 
 ## Je nach Änderung
 
@@ -47,7 +48,8 @@ Der Reviewer antwortet pro Urteilspunkt mit `✅`, `❌` oder `nicht beurteilbar
 Gilt für PRs mit Autor `dependabot[bot]` und Branch `dependabot/…` (Entscheidung in [📌 #136](https://github.com/juheba/sw-factory-tryout/issues/136), 07.11.2026). Sie
 entstehen ohne Issue und ohne Coder, deshalb ersetzen die Punkte hier einen Teil der Liste „Immer“:
 
-- **Unverändert:** DoD-1 (Gate), DoD-3 und DoD-8 (falls betroffen, zum Beispiel Badges im README).
+- **Unverändert:** DoD-1 (Gate), DoD-3 und DoD-8 (falls betroffen, zum Beispiel Badges im README), DoD-11 nur als
+  Gate (das Urteil entfällt, weil kein eigener Code entsteht).
 - **`n/a`:** DoD-2, DoD-4, DoD-5 und DoD-6 (kein Auftrag, kein eigener Code), DoD-7 (der Versionssprung ist der Zweck
   des PRs; neue Abhängigkeiten prüft DoD-U2), DoD-10 (Branch, Commit und Text erzeugt Dependabot).
 - **Ersetzt:** DoD-9 durch DoD-U2. Die Änderung im Schutzbereich ist bei Update-PRs gewollt, der Owner gibt sie per

@@ -67,12 +67,12 @@ flowchart LR
 
 Fachgebiete sind Linsen, durch die eine Rolle prüft. Jede Linse braucht einen Maßstab unter `config/` (Roadmap P13).
 
-| Linse | Maßstab (geplant) | Genutzt von |
+| Linse | Maßstab | Genutzt von |
 |---|---|---|
-| Architektur | Architekturprinzipien | Planer (Entwurf), Reviewer (Prüfung) |
-| Sauberer Code | Leitlinien je Stack (Java/Spring, Dart/Flutter) | Coder (Umsetzung), Reviewer (Prüfung) |
-| Sicherheit | Sicherheits-Checkliste für den Produktcode | Coder, Reviewer; dazu Werkzeuge (CodeQL, Kandidaten in [📌 #154](https://github.com/juheba/sw-factory-tryout/issues/154) bis [📌 #157](https://github.com/juheba/sw-factory-tryout/issues/157)) |
-| UX | UX-Leitlinie (Bedienbarkeit, Zustände leer/lädt/Fehler, Barrierefreiheit) | Konzept (Entwurf), QA (Prüfung) |
+| Architektur | [Architekturprinzipien](../config/standards/architektur.md) (`ARCH-1` bis `ARCH-12`) | Planer (Entwurf), Coder (Umsetzung), Reviewer (Prüfung) |
+| Sauberer Code | Leitlinien je Stack (Java/Spring, Dart/Flutter), geplant | Coder (Umsetzung), Reviewer (Prüfung) |
+| Sicherheit | Sicherheits-Checkliste für den Produktcode, geplant | Coder, Reviewer; dazu Werkzeuge (CodeQL, Kandidaten in [📌 #154](https://github.com/juheba/sw-factory-tryout/issues/154) bis [📌 #157](https://github.com/juheba/sw-factory-tryout/issues/157)) |
+| UX | UX-Leitlinie (Bedienbarkeit, Zustände leer/lädt/Fehler, Barrierefreiheit), geplant | Konzept (Entwurf), QA (Prüfung) |
 | Kriterien und Randfälle | Akzeptanzkriterien des Issues, DoD-4 und DoD-5 | QA |
 
 ## Die Rollen im Einzelnen

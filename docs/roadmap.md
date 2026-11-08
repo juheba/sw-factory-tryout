@@ -60,7 +60,7 @@ flowchart LR
 | P10 | Review-Schleife: Befunde von Reviewer und QA abarbeiten | ⬜ offen | Issue #127, nach #124. |
 | P11 | Schreibweise: Emoji und Links für Issues, PRs, Environments und Agents | ✅ erledigt | Abschnitt „Schreibweise“ in `docs/process.md` ([📌 #139](https://github.com/juheba/sw-factory-tryout/issues/139)), Satz in `CLAUDE.md` ([📌 #141](https://github.com/juheba/sw-factory-tryout/issues/141)); der Reviewer prüft sie (Hinweis, nicht blockierend). Die Probephase seit 31.10.2026 läuft weiter, Anpassungen nach Beobachtung. |
 | P12 | Konzeptphase: Idee → Konzept (🎯 Konzept) | ⬜ offen | [📌 #187](https://github.com/juheba/sw-factory-tryout/issues/187). Entschieden: interaktiv mit fester Vorlage, kein Workflow (ADR 0003, Entscheidung 1). Offen: Vorlage `docs/konzept/_vorlage.md` und Checkliste „Konzept ist reif“. |
-| P13 | Standards als Maßstab der Linsen | ⬜ offen | [📌 #186](https://github.com/juheba/sw-factory-tryout/issues/186). Entschieden: unter `config/` (ADR 0003, Entscheidung 2). Architekturprinzipien, sauberer Code je Stack, Sicherheits-Checkliste, UX-Leitlinie; DoD und Prompts verweisen darauf. |
+| P13 | Standards als Maßstab der Linsen | ⚠️ in Arbeit | [📌 #186](https://github.com/juheba/sw-factory-tryout/issues/186). Architektur: `config/standards/architektur.md` mit ARCH-1 bis ARCH-12 und DoD-11 ([📌 #195](https://github.com/juheba/sw-factory-tryout/issues/195)), ArchUnit als Gate folgt ([📌 #196](https://github.com/juheba/sw-factory-tryout/issues/196)). Entschieden: unter `config/` (ADR 0003, Entscheidung 2). Architekturprinzipien, sauberer Code je Stack, Sicherheits-Checkliste, UX-Leitlinie; DoD und Prompts verweisen darauf. |
 
 ## Sicherheit
 
