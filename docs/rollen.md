@@ -70,7 +70,7 @@ Fachgebiete sind Linsen, durch die eine Rolle prüft. Jede Linse braucht einen M
 | Linse | Maßstab | Genutzt von |
 |---|---|---|
 | Architektur | [Architekturprinzipien](../config/standards/architektur.md) (`ARCH-1` bis `ARCH-12`) | Planer (Entwurf), Coder (Umsetzung), Reviewer (Prüfung) |
-| Sauberer Code | Leitlinien je Stack (Java/Spring, Dart/Flutter), geplant | Coder (Umsetzung), Reviewer (Prüfung) |
+| Sauberer Code | [Code-Standards](../config/standards/code.md) (`CODE-1` bis `CODE-12`), dazu [Java](../config/standards/code-java.md) (`JAVA-n`) und [Dart](../config/standards/code-dart.md) (`DART-n`) | Coder (Umsetzung), Reviewer (Prüfung) |
 | Sicherheit | Sicherheits-Checkliste für den Produktcode, geplant | Coder, Reviewer; dazu Werkzeuge (CodeQL, Kandidaten in [📌 #154](https://github.com/juheba/sw-factory-tryout/issues/154) bis [📌 #157](https://github.com/juheba/sw-factory-tryout/issues/157)) |
 | UX | UX-Leitlinie (Bedienbarkeit, Zustände leer/lädt/Fehler, Barrierefreiheit), geplant | Konzept (Entwurf), QA (Prüfung) |
 | Konzept ist reif | [Konzept-Maßstab](../config/standards/konzept.md) (`KON-1` bis `KON-8`) | Owner (Konzeptphase), Planer (vor dem Schnitt) |

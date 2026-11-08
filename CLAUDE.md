@@ -12,7 +12,8 @@ frontend/                     Flutter-App (Dart), nutzt einen aus der Spec gener
 docs/                         Architektur (Mermaid), ADRs, Prozess
 config/checkstyle/            Stilregeln für den Service
 config/definition-of-done.md  Definition of Done (Maßstab für Coder, Reviewer und QA)
-config/standards/             Standards der Linsen (Architektur, Konzept), Kennungen ARCH-n, KON-n
+config/standards/             Standards der Linsen (Architektur, Konzept, Code), Kennungen ARCH-n, KON-n, CODE-n,
+                              JAVA-n, DART-n
 docs/konzept/                 Konzepte je Idee (Vorlage: _vorlage.md)
 verify.sh                     Gesamtes Gate (Service und Frontend)
 ```
