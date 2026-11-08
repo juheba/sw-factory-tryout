@@ -4,6 +4,15 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
+# ARCH-5 (config/standards/architektur.md, Issue #196): Der generierte Client steht nur in den Repositories.
+# Läuft zuerst, weil es nichts braucht außer grep.
+verstoesse=$(grep -rl --include='*.dart' "package:order_api" lib | grep -v '_repository\.dart$' || true)
+if [ -n "$verstoesse" ]; then
+  echo "ARCH-5 verletzt: package:order_api darf nur in lib/**/*_repository.dart importiert werden. Betroffen:"
+  echo "$verstoesse"
+  exit 1
+fi
+
 (cd .. && ./gradlew :frontend:openApiGenerate)
 
 flutter pub get

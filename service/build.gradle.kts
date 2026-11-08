@@ -29,6 +29,9 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.yaml:snakeyaml")
+    // Architekturregeln als Gate (Issue #196, config/standards/architektur.md).
+    // Kern-Artefakt mit normalen @Test-Methoden, unabhängig von der JUnit-Version der BOM.
+    testImplementation(libs.archunit)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
