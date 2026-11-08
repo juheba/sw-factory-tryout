@@ -118,7 +118,7 @@ flowchart LR
 | ID | Punkt | Status | Nächster Schritt / Verweis |
 |---|---|---|---|
 | W1 | Trennung generisch und projektspezifisch | ⚠️ in Arbeit | Workflow, Einstellungen, Vorlage, Prompt, ADR 0002 sind generisch. Spec, Gate und Stack sind es nicht. Vor Stufe 5 auflisten. **Hygiene-Regel** (08.11.2026, [📌 #202](https://github.com/juheba/sw-factory-tryout/issues/202)): Neues Factory-Material trennt Allgemeines und Projektspezifisches, wie die Standards (Prinzip und „Hier“). Heute vermischt: `CLAUDE.md` (Regeln mit Pfaden), einzelne DoD-Punkte mit Paketnamen, das Schutzmuster in `agent-coder-revise.yml`, fest eingetragene Namen (`juheba`). |
-| W2 | Pilot: eine echte Idee des Owners durch die ganze Kette | ⬜ offen | [📌 #189](https://github.com/juheba/sw-factory-tryout/issues/189). Nach P12 und P13 (ADR 0003, Entscheidung 7). Konzept, Plan, Umsetzung, Prüfung, Abnahme; danach festhalten, was fehlte, und die Reihenfolge von QA und Planer daran messen. |
+| W2 | Pilot: eine echte Idee des Owners durch die ganze Kette | ⬜ offen | [📌 #189](https://github.com/juheba/sw-factory-tryout/issues/189). Wartet auf eine konkrete Idee des Owners (Entscheidung vom 08.11.2026, [📌 #202](https://github.com/juheba/sw-factory-tryout/issues/202), siehe E3 und E5). Konzept, Plan, Umsetzung, Prüfung, Abnahme; danach festhalten, was fehlte. Die Idee ist zugleich der Auslöser für die Neubewertung von E5. |
 
 ## Blinde Flecken (ehrlich: noch nicht bewertet)
 
