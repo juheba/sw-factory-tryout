@@ -28,7 +28,7 @@ Der Reviewer antwortet pro Urteilspunkt mit `✅`, `❌` oder `nicht beurteilbar
 | DoD-6 | Annahmen und offene Punkte stehen im PR-Text. Es wurde nichts stillschweigend anders gebaut als beauftragt. | Urteil |
 | DoD-7 | Keine neuen Abhängigkeiten oder Versionssprünge ohne Auftrag im Issue. Keine Secrets, Tokens oder `.env`-Dateien. | Sperre (Build-Dateien, `.env`), Urteil (Code, der eine Bibliothek nachbaut oder Daten ausliest) |
 | DoD-8 | Doku ist aktuell: `docs/architecture.md` bei Änderung der Architektur oder des Ablaufs, Roadmap-Status des betroffenen Punkts, ADR bei Grundsatzentscheidung. | Urteil |
-| DoD-9 | Keine Änderung in Schutzbereichen (`.github/`, `.claude/`, `CLAUDE.md`, `config/`, `site/`, `verify.sh`, `frontend/tool/`, Build-Dateien). Ein Verstoß ist immer ein blockierender Befund. | Sperre (Berechtigungen, `CODEOWNERS`), Urteil (Umwege) |
+| DoD-9 | Keine Änderung in Schutzbereichen (`.github/`, `.claude/`, `CLAUDE.md`, `config/`, `site/`, `verify.sh`, `frontend/tool/`, Build-Dateien, Architektur-Tests unter `service/src/test/java/com/example/orderservice/architecture/` und `service/src/test/resources/archunit*`). Ein Verstoß ist immer ein blockierender Befund. | Sperre (Berechtigungen, `CODEOWNERS`), Urteil (Umwege) |
 | DoD-10 | Commits sind klein und im Stil Conventional Commits, der Branch heißt `agent/<issue-nr>-<slug>`, der PR enthält `Closes #<issue-nr>`. | Urteil |
 | DoD-11 | Die Standards der betroffenen Linsen sind eingehalten (`config/standards/`, heute [Architektur](standards/architektur.md)). Befunde zitieren die Kennung des Standards (zum Beispiel `ARCH-2`). | Gate (soweit ein Standard „Gate“ nennt), Urteil |
 
@@ -37,7 +37,7 @@ Der Reviewer antwortet pro Urteilspunkt mit `✅`, `❌` oder `nicht beurteilbar
 | Nr. | Gilt bei | Punkt | Prüft |
 |---|---|---|---|
 | DoD-A1 | API | Fehler sind RFC-9457-Problem-Details über den `GlobalExceptionHandler`. Neue Endpunkte haben Spec-Eintrag, Service-Implementierung, Test für Erfolg und mindestens einen Fehlerfall. | Urteil |
-| DoD-A2 | API, Service | Controller implementieren die generierten `*Api`-Interfaces im Paket `com.example.orderservice.web`. | Gate (Vertragstest), Urteil |
+| DoD-A2 | API, Service | Controller implementieren die generierten `*Api`-Interfaces im Paket `com.example.orderservice.web`. | Gate (Vertragstest, `ArchitectureTest`), Urteil |
 | DoD-A3 | API, Frontend | Der generierte Client steht nur in einem Repository unter `lib/*/`. Die UI arbeitet mit eigenen Modellen. Ändert sich die Spec, wird nur das Repository angepasst. | Urteil |
 | DoD-B1 | UI | Keine Geschäftslogik in Widgets. Erfolgs- und Fehlerzustand haben je einen Widget-Test, und das Frontend zeigt Fehler verständlich an. | Urteil |
 | DoD-C1 | Service | Constructor Injection, keine Wildcard-Imports, Zeilen höchstens 120 Zeichen. | Gate (Checkstyle), Urteil (Constructor Injection) |

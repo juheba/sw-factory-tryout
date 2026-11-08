@@ -19,9 +19,10 @@ Test-Abhängigkeit und braucht diese Zusage (ARCH-10, DoD-7).
   1.4.1 unterstützt. Dependabot hält die Version aktuell (Eintrag in `gradle/libs.versions.toml`).
 - **Stufe 1 (Grundregeln):** ARCH-2 (`service` hängt nicht von `web` und Spring-HTTP ab), ARCH-4 (`ProblemDetail` nur in
   `web`), DoD-A2 (Controller in `web`, implementieren ein generiertes `*Api`-Interface), ARCH-7 (keine Feld-Injection).
-- **Stufe 2 (allgemeine Regeln):** keine Zyklen zwischen Paketen, keine Standard-Streams, keine generischen Exceptions,
-  kein `java.util.logging`. Für das Frontend gibt es ArchUnit nicht. Dort prüft `frontend/tool/verify.sh` ARCH-5 mit
-  `grep`, ohne neue Abhängigkeit (`package:order_api` nur in `*_repository.dart`).
+- **Stufe 2 (allgemeine Regeln):** keine Zyklen zwischen Paketen (ARCH-2), keine Standard-Streams und kein
+  `java.util.logging` (ARCH-9), keine generischen Exceptions (ARCH-4). Für das Frontend gibt es ArchUnit nicht. Dort
+  prüft `frontend/tool/verify.sh` ARCH-5 mit `grep`, ohne neue Abhängigkeit (`package:order_api` nur in
+  `lib/<feature>/*_repository.dart`).
 - **Ausnahme:** Generierter Code (Paket `com.example.orderservice.api`) ist von den Regeln ausgenommen, er wird nie von
   Hand geändert (ARCH-1).
 - **Meldungen:** Jede Regel nennt ihre Kennung (`because("ARCH-n …")`), damit ein roter Build direkt auf den Standard
@@ -35,7 +36,8 @@ Test-Abhängigkeit und braucht diese Zusage (ARCH-10, DoD-7).
 
 ## Konsequenzen
 
-- Verstöße gegen ARCH-2, ARCH-4, ARCH-5, ARCH-7 und DoD-A2 machen das Gate rot. Der Reviewer muss sie nicht mehr suchen.
+- Verstöße gegen ARCH-2, ARCH-4, ARCH-5, ARCH-7, ARCH-9 und DoD-A2 machen das Gate rot (jeweils der Teil, den die
+  Regel prüft; der Rest bleibt Urteil). Der Reviewer muss sie nicht mehr suchen.
 - Eine neue oder geänderte Regel ist ein Owner-PR. Wiederkehrende Review-Befunde werden so zu Regeln (Lernschleife P8).
 - **Stufe 3 später:** gefrorene Regeln (`FreezingArchRule`) für Prinzipien, die bestehender Code noch verletzt. Ihr
   Speicher läge ebenfalls im Schutzbereich.
@@ -43,3 +45,6 @@ Test-Abhängigkeit und braucht diese Zusage (ARCH-10, DoD-7).
   vorübergehenden Verstößen in `OrderService` (Spring-HTTP-Import, Feld-Injection, `System.out`) ließ genau die drei
   passenden Regeln rot werden, die Meldungen nannten ARCH-2, ARCH-7 und ARCH-11. Die Prüfung für das Frontend war auf
   dem heutigen Stand grün und mit einem eingebauten Import in `orders_page.dart` rot.
+- Korrektur nach dem Review (Issue #196, 08.11.2026): Die Regel zu `System.out` gehört zu ARCH-9, nicht zu ARCH-11; der
+  Negativtest meldet seither ARCH-9. Die Regel für Controller prüft zusätzlich die Endung `Api`. Die Frontend-Prüfung
+  erlaubt den Client nur noch in `lib/<feature>/*_repository.dart` (genau eine Ordnerebene, wie DoD-A3).

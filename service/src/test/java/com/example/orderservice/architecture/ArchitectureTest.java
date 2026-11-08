@@ -2,6 +2,7 @@ package com.example.orderservice.architecture;
 
 import static com.tngtech.archunit.base.DescribedPredicate.not;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage;
+import static com.tngtech.archunit.core.domain.JavaClass.Predicates.simpleNameEndingWith;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noFields;
@@ -56,7 +57,7 @@ class ArchitectureTest {
     void controllersLiveInWebAndImplementGeneratedApi() {
         classes().that().areAnnotatedWith(RestController.class)
             .should().resideInAPackage(WEB)
-            .andShould().implement(resideInAPackage(ROOT + ".api"))
+            .andShould().implement(resideInAPackage(ROOT + ".api").and(simpleNameEndingWith("Api")))
             .because("DoD-A2 und ARCH-1: Controller implementieren die generierten *Api-Interfaces")
             .check(CLASSES);
     }
@@ -83,7 +84,7 @@ class ArchitectureTest {
     void noStandardStreams() {
         noClasses().that(not(resideInAPackage(API)))
             .should(GeneralCodingRules.ACCESS_STANDARD_STREAMS)
-            .because("ARCH-11: Ausgaben laufen über Logging, nicht über System.out oder System.err")
+            .because("ARCH-9: Ausgaben laufen über Logging, nicht über System.out oder System.err")
             .check(CLASSES);
     }
 

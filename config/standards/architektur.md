@@ -33,7 +33,8 @@ Befunde zitieren die Kennung (`ARCH-n`), so wie `DoD-n` (DoD-11).
 - **Hier:** Im Service geht die Richtung `web` → `service` → Speicher. Klassen in `..service..` importieren nichts aus
   `..web..` und kein Spring-HTTP (`org.springframework.http..`, `org.springframework.web..`). Controller enthalten keine
   fachlichen Regeln, sie delegieren.
-- **Prüft:** Urteil. Gate ab [📌 #196](https://github.com/juheba/sw-factory-tryout/issues/196) (ArchUnit).
+- **Prüft:** Gate (ArchUnit, `ArchitectureTest`, [ADR 0004](../../docs/adr/0004-architekturregeln-archunit.md)): Abhängigkeitsrichtung und keine Zyklen zwischen Paketen.
+  Urteil: Controller ohne fachliche Regeln.
 
 ### ARCH-3 Modelle an der Grenze
 
@@ -51,8 +52,8 @@ Befunde zitieren die Kennung (`ARCH-n`), so wie `DoD-n` (DoD-11).
 - **Hier:** Eigene Exceptions im Paket `service` (zum Beispiel `OrderNotFoundException`). Abgebildet werden sie nur im
   `GlobalExceptionHandler` (Paket `web`), als RFC-9457-Problem-Details. `ProblemDetail` wird nur in `..web..` erzeugt.
   Stacktraces und Klassennamen erscheinen nicht in der Antwort.
-- **Prüft:** Urteil. Gate ab [📌 #196](https://github.com/juheba/sw-factory-tryout/issues/196) für die Regel
-  „`ProblemDetail` nur in `web`“.
+- **Prüft:** Gate (ArchUnit, [ADR 0004](../../docs/adr/0004-architekturregeln-archunit.md)): „`ProblemDetail` nur in `web`“ und keine generischen Exceptions. Urteil: sprechende
+  Typen, keine internen Details in der Antwort.
 
 ### ARCH-5 Frontend nach Features, Client gekapselt
 
@@ -62,7 +63,8 @@ Befunde zitieren die Kennung (`ARCH-n`), so wie `DoD-n` (DoD-11).
   steht nur in `*_repository.dart`. Ein Repository ist eine abstrakte Klasse mit einer Implementierung gegen die API
   (zum Beispiel `OrdersRepository` und `ApiOrdersRepository`). Die UI nutzt eigene Modelle wie `OrderSummary` oder
   `Product`.
-- **Prüft:** Urteil. Gate ab [📌 #196](https://github.com/juheba/sw-factory-tryout/issues/196) für die Import-Regel.
+- **Prüft:** Gate (`frontend/tool/verify.sh`, [ADR 0004](../../docs/adr/0004-architekturregeln-archunit.md)): `package:order_api` nur in `lib/<feature>/*_repository.dart`.
+  Urteil: Gliederung nach Features, eigene Modelle in der UI.
 
 ### ARCH-6 Logik nicht im Widget
 
@@ -79,7 +81,7 @@ Befunde zitieren die Kennung (`ARCH-n`), so wie `DoD-n` (DoD-11).
   keine globalen Instanzen.
 - **Hier:** Im Service gilt Constructor Injection, keine Feld-Injection (`@Autowired` an Feldern). Im Frontend werden
   Repositories über Konstruktoren übergeben und in `main.dart` verdrahtet. Tests übergeben Fakes auf demselben Weg.
-- **Prüft:** Urteil. Gate ab [📌 #196](https://github.com/juheba/sw-factory-tryout/issues/196) für den Service.
+- **Prüft:** Gate (ArchUnit, [ADR 0004](../../docs/adr/0004-architekturregeln-archunit.md)): keine Feld-Injection im Service. Urteil: Frontend.
 
 ### ARCH-8 Speicher gekapselt
 
@@ -91,11 +93,13 @@ Befunde zitieren die Kennung (`ARCH-n`), so wie `DoD-n` (DoD-11).
 
 ### ARCH-9 Querschnittsthemen in eigene Konfiguration
 
-- **Prinzip:** Querschnittsthemen wie Sicherheitseinstellungen, Serialisierung oder Cross-Origin-Regeln stehen an einer
-  eigenen, benannten Stelle, nicht verstreut im Fachcode. Werte kommen aus der Konfiguration, Secrets nie aus dem Code.
+- **Prinzip:** Querschnittsthemen wie Logging, Sicherheitseinstellungen, Serialisierung oder Cross-Origin-Regeln
+  stehen an einer eigenen, benannten Stelle, nicht verstreut im Fachcode. Werte kommen aus der Konfiguration, Secrets
+  nie aus dem Code.
 - **Hier:** Eigene Konfigurationsklassen im Paket `web` (zum Beispiel `CorsConfig`). Werte kommen aus der
-  Anwendungskonfiguration (zum Beispiel `app.cors.allowed-origin-patterns`). Keine Secrets im Repository (DoD-7).
-- **Prüft:** Urteil.
+  Anwendungskonfiguration (zum Beispiel `app.cors.allowed-origin-patterns`). Ausgaben laufen über das Logging von
+  Spring Boot, nicht über `System.out` oder `java.util.logging`. Keine Secrets im Repository (DoD-7).
+- **Prüft:** Gate (ArchUnit, [ADR 0004](../../docs/adr/0004-architekturregeln-archunit.md)): keine Standard-Streams, kein `java.util.logging`. Urteil: der Rest.
 
 ### ARCH-10 Neue Bausteine nur per ADR
 
