@@ -151,7 +151,7 @@ jobs:
           token: ${{ secrets.AGENT_GITHUB_TOKEN }}
 
       # Werkzeuge für das Gate (./verify.sh), wie in agent-coder-issue.yml.
-      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6
+      - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
         with:
           distribution: temurin
           java-version: "25"
