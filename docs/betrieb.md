@@ -129,7 +129,7 @@ der Versionen mitpflegen:
 | OpenAPI (3.0.3) | `openapi/openapi.yaml` (Zeile `openapi:`) |
 | Java (25) | `service/build.gradle.kts` (Toolchain) |
 | Spring Boot (4.x) | `gradle/libs.versions.toml` (`spring-boot`) |
-| Flutter (stable) | `frontend/` (Kanal stable) |
+| Flutter (3.50) | `.github/workflows/ci.yml` (`flutter-version`, auch in `agent-coder-issue.yml` und `agent-coder-revise.yml`) |
 
 CI, API-Doku und CodeQL sind Live-Badges (Workflows `ci.yml`, `pages.yml` und das CodeQL-Default-Setup von GitHub) und
 brauchen keine Pflege. Das CodeQL-Badge zeigt den letzten Lauf auf `main` und verlinkt auf die Code-Scanning-Ergebnisse.

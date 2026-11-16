@@ -23,8 +23,9 @@ verify.sh                     Gesamtes Gate (Service und Frontend)
 - **Service:** Java 25 (Toolchain), Gradle (Kotlin DSL, Wrapper), Spring Boot 4.x (Spring Framework 7, Jackson 3),
   OpenAPI Generator (`spring`, `interfaceOnly`). Tests: JUnit 6 (über die Spring-Boot-BOM), MockMvc, AssertJ,
   ArchUnit. Qualität: Checkstyle, JaCoCo.
-- **Frontend:** Flutter (stable), Dart. Client aus der Spec mit OpenAPI Generator (`dart`), erzeugt in
-  `frontend/packages/order_api` (nicht eingecheckt). Qualität: `dart format`, `flutter analyze`, `flutter test`.
+- **Frontend:** Flutter 3.50.0 (stable, in den Workflows gepinnt), Dart, Material-Widgets aus `material_ui`. Client
+  aus der Spec mit OpenAPI Generator (`dart`), erzeugt in `frontend/packages/order_api` (nicht eingecheckt).
+  Qualität: `dart format`, `flutter analyze`, `flutter test`.
 
 ## Befehle
 

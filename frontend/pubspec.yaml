@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Material-Widgets, seit Flutter 3.50 ein eigenes Paket statt package:flutter/material.dart (Issue #211).
+  material_ui: ^1.11.0
   # Wird mit `./gradlew :frontend:openApiGenerate` aus openapi/openapi.yaml erzeugt (nicht eingecheckt).
   order_api:
     path: packages/order_api

@@ -7,7 +7,7 @@
 [![OpenAPI 3.0.3](https://img.shields.io/badge/OpenAPI-3.0.3-6BA539?style=flat)](openapi/openapi.yaml)
 [![Java 25](https://img.shields.io/badge/Java-25-007396?style=flat)](service/build.gradle.kts)
 [![Spring Boot 4.x](https://img.shields.io/badge/Spring%20Boot-4.x-6DB33F?style=flat)](gradle/libs.versions.toml)
-[![Flutter stable](https://img.shields.io/badge/Flutter-stable-02569B?style=flat)](frontend/)
+[![Flutter 3.50](https://img.shields.io/badge/Flutter-3.50-02569B?style=flat)](frontend/)
 
 Spec-first Monorepo als Testfeld für die eigene Software Factory. Stand: Stufe 2 läuft, Stufe 3 ist in Arbeit.
 Ein Label am Issue startet 💻`agent-coder` (Claude Code), die CI prüft das Ergebnis, 🔎`agent-reviewer` prüft den PR
@@ -32,7 +32,7 @@ Webserver ausliefern (zum Beispiel `python3 -m http.server -d site/dist`).
 ## Voraussetzungen
 
 - Git, ein JDK ist nicht zwingend nötig (Gradle lädt JDK 25 per Toolchain nach), empfohlen ist aber ein lokales JDK 25
-- [Flutter SDK](https://docs.flutter.dev/install) (stable)
+- [Flutter SDK](https://docs.flutter.dev/install) 3.50.0 (stable), wie in der CI
 
 ## Erste Einrichtung (einmalig)
 
