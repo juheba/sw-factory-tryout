@@ -38,7 +38,7 @@ die Kennungen allein nennen, damit sie kurz bleibt.
 | DoD-8 | Doku aktuell | Doku ist aktuell: `docs/architecture.md` bei Änderung der Architektur oder des Ablaufs, Roadmap-Status des betroffenen Punkts, ADR bei Grundsatzentscheidung, das Konzept unter `docs/konzept/`, wenn eine Ausbaustufe umgesetzt oder ein Baustein (`A-n`, `S-n`, `F-n`) geändert wurde (`KON-8: Stand nachgeführt`). | Urteil |
 | DoD-9 | Schutzbereiche unberührt | Keine Änderung in Schutzbereichen (`.github/`, `.claude/`, `CLAUDE.md`, `config/`, `site/`, `verify.sh`, `frontend/tool/`, Build-Dateien, Architektur-Tests unter `service/src/test/java/com/example/orderservice/architecture/` und `service/src/test/resources/archunit*`). Ein Verstoß ist immer ein blockierender Befund. | Sperre (Berechtigungen, `CODEOWNERS`), Urteil (Umwege) |
 | DoD-10 | Commits und Branch sauber | Commits sind klein und im Stil Conventional Commits, der Branch heißt `agent/<issue-nr>-<slug>`, der PR enthält `Closes #<issue-nr>`. | Urteil |
-| DoD-11 | Standards eingehalten | Die Standards der betroffenen Linsen sind eingehalten (`config/standards/`, heute [Architektur](standards/architektur.md) und [Konzept](standards/konzept.md)). Befunde zitieren Kennung und Kurzname des Standards (zum Beispiel `ARCH-2: Abhängigkeiten nach innen`). | Gate (soweit ein Standard „Gate“ nennt), Urteil |
+| DoD-11 | Standards eingehalten | Die Standards der betroffenen Linsen sind eingehalten (`config/standards/`, heute [Architektur](standards/architektur.md), [Konzept](standards/konzept.md) und [sauberer Code](standards/code.md) mit [Java](standards/code-java.md) und [Dart](standards/code-dart.md)). Befunde zitieren Kennung und Kurzname des Standards (zum Beispiel `ARCH-2: Abhängigkeiten nach innen`). | Gate (soweit ein Standard „Gate“ nennt), Urteil |
 
 ## Je nach Änderung
 
@@ -48,7 +48,7 @@ die Kennungen allein nennen, damit sie kurz bleibt.
 | DoD-A2 | Controller implementieren Api | API, Service | Controller implementieren die generierten `*Api`-Interfaces im Paket `com.example.orderservice.web`. | Gate (Vertragstest, `ArchitectureTest`), Urteil |
 | DoD-A3 | Client im Repository | API, Frontend | Der generierte Client steht nur in einem Repository unter `lib/*/`. Die UI arbeitet mit eigenen Modellen. Ändert sich die Spec, wird nur das Repository angepasst. | Urteil |
 | DoD-B1 | Keine Logik im Widget | UI | Keine Geschäftslogik in Widgets. Erfolgs- und Fehlerzustand haben je einen Widget-Test, und das Frontend zeigt Fehler verständlich an. | Urteil |
-| DoD-C1 | Service-Konventionen | Service | Constructor Injection, keine Wildcard-Imports, Zeilen höchstens 120 Zeichen. | Gate (Checkstyle), Urteil (Constructor Injection) |
+| DoD-C1 | Service-Konventionen | Service | Constructor Injection, keine Wildcard-Imports, Zeilen höchstens 120 Zeichen. Die übrigen Regeln für Java stehen in den [Code-Standards](standards/code.md) und [`code-java.md`](standards/code-java.md) (`DoD-11: Standards eingehalten`). | Gate (Checkstyle, ArchUnit), Urteil (Constructor Injection) |
 | DoD-D1 | Ablauf begründet | Workflow, Betrieb | Änderungen an Automatisierung, Sicherheit oder Ablauf sind im ADR oder in `docs/betrieb.md` begründet. Nur der Owner ändert Schutzbereiche. | Urteil |
 
 ## Update-PRs (Dependabot)

@@ -4,3 +4,17 @@ analyzer:
   exclude:
     - packages/**
     - build/**
+
+# Code-Standards (config/standards/code.md und code-dart.md, Issue #207). Regeln, die flutter_lints schon enthält,
+# stehen hier trotzdem, damit das Gate nicht von der Version des Pakets abhängt.
+linter:
+  rules:
+    - unawaited_futures # DART-1: Futures beachtet
+    - use_build_context_synchronously # DART-2: Kontext nach await geprüft
+    - cancel_subscriptions # DART-3: Ressourcen freigegeben
+    - close_sinks # DART-3: Ressourcen freigegeben
+    - prefer_final_locals # DART-4: const und final bevorzugt, CODE-6: Unveränderlich bevorzugt
+    - prefer_final_fields # DART-4, CODE-6
+    - prefer_const_constructors_in_immutables # DART-4
+    - empty_catches # CODE-4: Fehler sichtbar
+    - avoid_print # CODE-10: Nichts Totes

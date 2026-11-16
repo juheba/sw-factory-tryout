@@ -30,5 +30,18 @@
     <module name="ModifierOrder"/>
     <module name="OneTopLevelClass"/>
     <module name="UpperEll"/>
+
+    <!-- Code-Standards (config/standards/code.md, Issue #207) -->
+    <!-- CODE-2: Einheiten klein. Leerzeilen und Kommentare zählen nicht mit. -->
+    <module name="MethodLength">
+      <property name="max" value="40"/>
+      <property name="countEmpty" value="false"/>
+    </module>
+    <!-- CODE-4: Fehler sichtbar. Ein leerer catch ist nur mit Kommentar erlaubt, der das Warum erklärt (CODE-8). -->
+    <module name="EmptyCatchBlock"/>
+    <!-- CODE-8: Kommentar erklärt Warum. Ein TODO oder FIXME nennt sein Issue (#<nr>). -->
+    <module name="TodoComment">
+      <property name="format" value="\b(TODO|FIXME)\b(?!.*#[0-9]+)"/>
+    </module>
   </module>
 </module>
