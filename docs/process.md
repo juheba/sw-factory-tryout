@@ -18,6 +18,9 @@ flowchart LR
 Der **Loop** ist der Kern: Der Agent ändert Code, führt `./verify.sh` aus, liest die Fehler und korrigiert,
 bis das Gate grün ist. Ohne dieses Feedback gibt es kein belastbares „geprüft“.
 
+Neues Verhalten wird durch Tests abgesichert: Sie decken den Erfolgsfall und mindestens einen Fehlerfall ab
+(`DoD-4: Tests mit Fehlerfall`).
+
 ## Ablauf (Stufe 2: Label startet den Lauf)
 
 ```mermaid
