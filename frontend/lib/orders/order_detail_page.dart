@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../products/product_detail_page.dart';
 import '../products/products_repository.dart';
