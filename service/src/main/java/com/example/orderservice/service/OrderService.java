@@ -87,10 +87,14 @@ public class OrderService {
         return Optional.ofNullable(orders.get(id));
     }
 
-    /** Zählt die Bestellungen, bei gesetztem {@code status} nur die mit diesem Status. */
-    public long count(OrderStatus status) {
+    /**
+     * Zählt die Bestellungen, bei gesetztem {@code status} nur die mit diesem Status,
+     * bei gesetztem {@code customerId} nur die dieser Kundin oder dieses Kunden.
+     */
+    public long count(OrderStatus status, String customerId) {
         return orders.values().stream()
             .filter(order -> status == null || order.getStatus() == status)
+            .filter(order -> customerId == null || customerId.equals(order.getCustomerId()))
             .count();
     }
 

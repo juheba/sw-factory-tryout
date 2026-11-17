@@ -183,6 +183,33 @@ class OrdersApiTest {
     }
 
     @Test
+    void countsOnlyOrdersOfGivenCustomer() throws Exception {
+        long before = readCount(null, "count-cust-a");
+        long totalBefore = readCount(null);
+        createOrderForCustomer("count-cust-a");
+        createOrderForCustomer("count-cust-a");
+        createOrderForCustomer("count-cust-b");
+
+        assertThat(readCount(null, "count-cust-a")).isEqualTo(before + 2);
+        assertThat(readCount(null, "count-cust-unknown")).isZero();
+        assertThat(readCount(null)).isEqualTo(totalBefore + 3);
+    }
+
+    @Test
+    void countsOrdersOfGivenCustomerCombinedWithStatus() throws Exception {
+        long createdBefore = readCount("CREATED", "count-cust-c");
+        long cancelledBefore = readCount("CANCELLED", "count-cust-c");
+        String cancelledId = createOrderForCustomer("count-cust-c");
+        createOrderForCustomer("count-cust-c");
+        String otherCancelledId = createOrderForCustomer("count-cust-d");
+        mvc.perform(post("/orders/{id}/cancel", cancelledId)).andExpect(status().isOk());
+        mvc.perform(post("/orders/{id}/cancel", otherCancelledId)).andExpect(status().isOk());
+
+        assertThat(readCount("CREATED", "count-cust-c")).isEqualTo(createdBefore + 1);
+        assertThat(readCount("CANCELLED", "count-cust-c")).isEqualTo(cancelledBefore + 1);
+    }
+
+    @Test
     void countReturnsProblemDetailsForInvalidStatus() throws Exception {
         mvc.perform(get("/orders/count").param("status", "BOGUS"))
             .andExpect(status().isBadRequest())
@@ -335,13 +362,29 @@ class OrdersApiTest {
     }
 
     private long readCount(String statusParam) throws Exception {
+        return readCount(statusParam, null);
+    }
+
+    private long readCount(String statusParam, String customerIdParam) throws Exception {
         MockHttpServletRequestBuilder request = get("/orders/count");
         if (statusParam != null) {
             request = request.param("status", statusParam);
         }
+        if (customerIdParam != null) {
+            request = request.param("customerId", customerIdParam);
+        }
         String body = mvc.perform(request).andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
         return ((Number) JsonPath.read(body, "$.count")).longValue();
+    }
+
+    private String createOrderForCustomer(String customerId) throws Exception {
+        String order = "{\"customerId\": \"" + customerId
+            + "\", \"items\": [{\"sku\": \"BOOK-001\", \"quantity\": 1}]}";
+        String body = mvc.perform(post("/orders").contentType(MediaType.APPLICATION_JSON).content(order))
+            .andExpect(status().isCreated())
+            .andReturn().getResponse().getContentAsString();
+        return JsonPath.read(body, "$.id");
     }
 
     private String createOrderAndReturnId() throws Exception {

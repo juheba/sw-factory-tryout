@@ -31,8 +31,8 @@ public class OrdersController implements OrdersApi {
     }
 
     @Override
-    public ResponseEntity<OrderCount> countOrders(OrderStatus status) {
-        return ResponseEntity.ok(new OrderCount(orderService.count(status)));
+    public ResponseEntity<OrderCount> countOrders(OrderStatus status, String customerId) {
+        return ResponseEntity.ok(new OrderCount(orderService.count(status, customerId)));
     }
 
     @Override

@@ -80,7 +80,7 @@ paths:
     get:
       tags: [orders]
       operationId: countOrders
-      summary: Anzahl der Bestellungen, optional nach Status gefiltert
+      summary: Anzahl der Bestellungen, optional nach Status und Kunde gefiltert
       parameters:
         - name: status
           in: query
@@ -88,6 +88,14 @@ paths:
           description: Nur Bestellungen mit diesem Status zählen
           schema:
             $ref: "#/components/schemas/OrderStatus"
+        - name: customerId
+          in: query
+          required: false
+          description: Nur Bestellungen dieser Kundin oder dieses Kunden zählen, kombinierbar mit status
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 64
       responses:
         "200":
           description: Anzahl der Bestellungen
