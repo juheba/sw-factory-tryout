@@ -161,6 +161,43 @@ class OrdersApiTest {
     }
 
     @Test
+    void countsAllOrdersWithoutStatus() throws Exception {
+        long before = readCount(null);
+        String cancelledId = createOrderAndReturnId();
+        createOrderAndReturnId();
+        mvc.perform(post("/orders/{id}/cancel", cancelledId)).andExpect(status().isOk());
+
+        assertThat(readCount(null)).isEqualTo(before + 2);
+    }
+
+    @Test
+    void countsOnlyOrdersWithGivenStatus() throws Exception {
+        long createdBefore = readCount("CREATED");
+        long cancelledBefore = readCount("CANCELLED");
+        String cancelledId = createOrderAndReturnId();
+        createOrderAndReturnId();
+        mvc.perform(post("/orders/{id}/cancel", cancelledId)).andExpect(status().isOk());
+
+        assertThat(readCount("CREATED")).isEqualTo(createdBefore + 1);
+        assertThat(readCount("CANCELLED")).isEqualTo(cancelledBefore + 1);
+    }
+
+    @Test
+    void countReturnsProblemDetailsForInvalidStatus() throws Exception {
+        mvc.perform(get("/orders/count").param("status", "BOGUS"))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+            .andExpect(jsonPath("$.status").value(400));
+    }
+
+    @Test
+    void countPathIsNotTreatedAsOrderId() throws Exception {
+        mvc.perform(get("/orders/count"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.count").isNumber());
+    }
+
+    @Test
     void rejectsOrderWithoutItems()throws Exception {
         mvc.perform(post("/orders").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"customerId\": \"c-1\", \"items\": []}"))
@@ -295,6 +332,16 @@ class OrdersApiTest {
             .andReturn().getResponse().getContentAsString();
         List<String> all = JsonPath.read(body, "$[*].id");
         return all.stream().filter(knownIds::contains).toList();
+    }
+
+    private long readCount(String statusParam) throws Exception {
+        MockHttpServletRequestBuilder request = get("/orders/count");
+        if (statusParam != null) {
+            request = request.param("status", statusParam);
+        }
+        String body = mvc.perform(request).andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
+        return ((Number) JsonPath.read(body, "$.count")).longValue();
     }
 
     private String createOrderAndReturnId() throws Exception {

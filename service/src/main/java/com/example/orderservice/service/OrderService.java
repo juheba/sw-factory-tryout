@@ -87,6 +87,13 @@ public class OrderService {
         return Optional.ofNullable(orders.get(id));
     }
 
+    /** Zählt die Bestellungen, bei gesetztem {@code status} nur die mit diesem Status. */
+    public long count(OrderStatus status) {
+        return orders.values().stream()
+            .filter(order -> status == null || order.getStatus() == status)
+            .count();
+    }
+
     /**
      * Liefert alle Bestellungen, bei gesetztem {@code status} nur die mit diesem Status.
      * Ohne {@code sort} (oder mit {@code createdAt_asc}) aufsteigend nach Anlegedatum.

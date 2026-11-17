@@ -76,6 +76,32 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
+  /orders/count:
+    get:
+      tags: [orders]
+      operationId: countOrders
+      summary: Anzahl der Bestellungen, optional nach Status gefiltert
+      parameters:
+        - name: status
+          in: query
+          required: false
+          description: Nur Bestellungen mit diesem Status zählen
+          schema:
+            $ref: "#/components/schemas/OrderStatus"
+      responses:
+        "200":
+          description: Anzahl der Bestellungen
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderCount"
+        "400":
+          description: Ungültiger Wert für status
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
   /orders/{id}:
     get:
       tags: [orders]
@@ -243,6 +269,15 @@ components:
         createdAt:
           type: string
           format: date-time
+
+    OrderCount:
+      type: object
+      required: [count]
+      properties:
+        count:
+          type: integer
+          format: int64
+          minimum: 0
 
     Problem:
       type: object
