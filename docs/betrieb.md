@@ -61,7 +61,7 @@ Danach: Ursache klären (Annotationen und Ergebnis-JSON des Laufs, siehe unten),
 | Kommentar „⏳ Agent-Lauf wartet auf deine Freigabe“ am Issue oder PR | Pro Lauf legt ein Job einen Kommentar mit Link an und aktualisiert ihn bis zum Ende (▶️ läuft, ✅ abgeschlossen, ❌ ohne Erfolg, ⛔ abgebrochen). | Dem Link folgen, **Review deployments**, freigeben oder ablehnen. Bleibt der Kommentar auf ⏳ oder ▶️ stehen, obwohl der Lauf beendet ist, ist die Aktualisierung gescheitert (Warnung „Lauf-Kommentar“ im Lauf). |
 | Lauf startet nicht nach Label | Absender oder Issue-Autor ist nicht der Owner, oder das falsche Label. | Bedingung in `.github/workflows/agent-coder-issue.yml` prüfen. Label entfernen und neu setzen. |
 | Lauf wurde abgebrochen, obwohl ein neuer folgte | Pro Issue gilt ein Lauf zugleich, GitHub hält nur einen wartenden Lauf pro Gruppe. | Label auf demselben Issue erneut setzen, wenn der laufende Lauf fertig ist. |
-| „Action is not allowed“ | Die Allowlist (Settings → Actions → General) kennt die Version nicht. Beim `setup-bun` in der Claude-Action ist der genaue SHA nötig. | Fehlenden Eintrag ergänzen, nach jedem Action-Update neu prüfen. |
+| „Action is not allowed“ | Die Allowlist (Settings → Actions → General) deckt die Action oder Version nicht ab, zum Beispiel eine neue Unter-Action der Claude-Action (`setup-bun`). | Prüfen, ob die Allowlist die Version abdeckt; nur wenn nicht, Eintrag ergänzen. |
 | API-Doku ist veraltet oder fehlt | Der Workflow „API-Doku“ ist nicht gelaufen oder fehlgeschlagen (nur Änderungen an `openapi/**`, `site/**` und `pages.yml` lösen ihn aus). | Actions → **API-Doku** ansehen, bei Fehler die Meldung von `site/build.sh` lesen (ungültige Spec, Swagger-UI-Commit stimmt nicht). Neu starten: **Run workflow**. |
 | Deploy der API-Doku scheitert an „Branch not allowed“ | Das Environment `github-pages` erlaubt nur bestimmte Branches. | Settings → Environments → `github-pages` → Deployment branches: `main` erlauben (nur `main`). |
 | Authentifizierungsfehler im Lauf | Ein Zugang ist abgelaufen oder widerrufen. | `.github/ablaufdaten.json` und das Secret im Environment prüfen, Zugang erneuern. |
@@ -142,15 +142,17 @@ Beim Erneuern das Datum in `.github/ablaufdaten.json` anpassen und das Housekeep
   schreibend, **ohne** Workflows-Recht, Laufzeit 90 Tage. Das Secret im Environment `factory-write` ersetzen.
 - **OAuth-Token `CLAUDE_CODE_OAUTH_TOKEN`:** lokal `claude setup-token` ausführen, das Token nicht speichern und nirgends
   einfügen (nicht in Chats, Issues oder PR-Texte), nur als Secret im Environment `factory-write` ablegen.
-- **Nach Action-Updates:** Allowlist prüfen (siehe Störungen), bei Bedarf neuen SHA eintragen.
+- **Nach Action-Updates:** Prüfen, ob die Allowlist die neue Version abdeckt (siehe Störungen); nur wenn nicht, Eintrag
+  ergänzen.
 - **Allowlist für die API-Doku (einmalig):** Settings → Actions → General → „Allow select actions“: `actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9`, `actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346` und die von `upload-pages-artifact` genutzte `actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f` ergänzen.
 
 ## Updates der Action und von Claude Code
 
-Roadmap B1. Die Action `anthropics/claude-code-action` ist in `agent-coder-issue.yml` und `agent-coder-revise.yml` per Commit-SHA
-gepinnt (Kommentar mit Tag, zuletzt v1.0.261). Claude Code selbst installiert die Action zur Laufzeit (zuletzt
-2.1.310), dort steht also nichts Gepinntes im Repo. Beides kann das Verhalten der Factory ändern, ohne dass im Repo
-eine Zeile auffällt. Deshalb gilt: nie unbeobachtet springen, erst prüfen, dann pinnen.
+Roadmap B1. Die Action `anthropics/claude-code-action` ist in `agent-coder-issue.yml`, `agent-coder-revise.yml` und
+`agent-reviewer.yml` per Commit-SHA gepinnt (Kommentar mit Tag, zuletzt v1.0.271). Claude Code selbst installiert die
+Action zur Laufzeit (zuletzt 2.1.322), dort steht also nichts Gepinntes im Repo. Beides kann das Verhalten der
+Factory ändern, ohne dass im Repo eine Zeile auffällt. Deshalb gilt: nie unbeobachtet springen, erst prüfen, dann
+pinnen.
 
 **Wann:** Dependabot meldet eine neue Action-Version, oder der Owner will bewusst aktualisieren. Kleine Patch-Sprünge
 dürfen warten, bis ohnehin ein Lauf ansteht. Bei Sicherheitshinweisen sofort.
@@ -160,22 +162,27 @@ dürfen warten, bis ohnehin ein Lauf ansteht. Bei Sicherheitshinweisen sofort.
 1. **Neues Tag lesen.** Release-Notes der Action und die Änderungen an Claude Code zwischen alter und neuer Version
    ansehen. Auf geänderte Eingaben, Berechtigungen, Standardwerte und Verhalten der Settings (`.claude/agent-settings.json`,
    Deny-Regeln) achten. Den SHA des Tags notieren (`gh api repos/anthropics/claude-code-action/git/ref/tags/<tag>`).
-2. **Allowlist anpassen.** Settings → Actions → General: neuen SHA und, falls die Action ihre eigenen Unter-Actions
-   ändert (zum Beispiel `setup-bun`), deren genauen SHA eintragen (siehe Störungen, „Action is not allowed“).
-3. **In einem Branch ausprobieren.** Nur den SHA (und den Tag-Kommentar) in beiden Workflows ändern, als eigener PR.
-   Der PR enthält nichts anderes.
+2. **Allowlist prüfen.** Settings → Actions → General: Deckt die Allowlist die neue Version und, falls die Action ihre
+   Unter-Actions ändert (zum Beispiel `setup-bun`), auch diese ab? Nur wenn nicht, Eintrag ergänzen (siehe Störungen,
+   „Action is not allowed“).
+3. **Als eigenen PR vorbereiten.** Nur den SHA (und den Tag-Kommentar) in den drei Workflows ändern, meist der PR von
+   Dependabot. Der PR enthält nichts anderes. **Grenze:** Coder und Reviewer starten über `issues`, `issue_comment` und
+   `pull_request_target` und laufen daher immer mit der Workflow-Datei aus `main`. Ein Branch mit dem neuen SHA wird
+   von keinem Agent-Lauf benutzt, die Referenzaufgaben laufen erst nach dem Merge (Schritt 4); abgesichert über das
+   Zurückrollen unten (Issue #214).
 4. **Referenzaufgaben laufen lassen.** Ein kleiner Satz bekannter Test-Issues (Roadmap M2, bis dahin zum Beispiel ein
-   Fehlerfall, eine Spec-Änderung und ein Schutzbereich-Auftrag aus den Issues #18 bis #35) wird mit der neuen
-   Version bearbeitet, auf einem Testbranch oder in einer Kopie des Issues. Vergleichen mit der alten Version:
+   Fehlerfall, eine Spec-Änderung und ein Schutzbereich-Auftrag aus den Issues #18 bis #35) wird direkt nach dem Merge
+   mit der neuen Version bearbeitet, als Kopie des Issues; die PRs der Prüflinge werden geschlossen, nicht gemergt.
+   Beispiel mit vier Aufgaben (R1 bis R4): Issue #214. Vergleichen mit der alten Version:
    Gate grün, Exit-Code im PR-Text, `num_turns` und `total_cost_usd` im Log, keine neuen Einträge unter
    „Agent-Ablehnungen“, Schutzbereiche unangetastet, Überarbeitung per Kommentar (`/code`) funktioniert.
-5. **Entscheiden und pinnen.** Passt alles, wird der PR gemerged, der SHA bleibt damit gepinnt. Passt etwas nicht,
-   bleibt es bei der alten Version, und die Abweichung kommt als Issue oder in die Roadmap.
+5. **Entscheiden.** Passt alles, bleibt der SHA gepinnt. Passt etwas nicht, Revert-PR auf den alten SHA (siehe
+   Zurückrollen), und die Abweichung kommt als Issue oder in die Roadmap.
 6. **Festhalten.** Die neue Version (Action-Tag und die im Log sichtbare Claude-Code-Version) in `docs/roadmap.md`
    unter B1 nachtragen.
 
-**Zurückrollen:** Revert-PR auf den alten SHA, kein Force-Push. Die Allowlist-Einträge der alten Version bleiben
-dafür vorerst bestehen.
+**Zurückrollen:** Revert-PR auf den alten SHA, kein Force-Push. Vorher prüfen, ob die Allowlist die alte Version
+noch abdeckt.
 
 **Offen:** Ob die Action eine feste Claude-Code-Version erlaubt (Eingabe oder `claude_args`), ist hier nicht geprüft.
 Der Owner sollte das in der `action.yml` des gewählten Tags nachlesen. Wenn ja, den Wert zusätzlich pinnen; ohne

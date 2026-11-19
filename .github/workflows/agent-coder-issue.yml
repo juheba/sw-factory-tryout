@@ -112,7 +112,7 @@ jobs:
           flutter-version: 3.50.0 # gepinnt, Issue #211; Dependabot pflegt das nicht
           cache: true
 
-      # Letzter Schritt: der Agent. Festgelegt auf einen Commit (v1.0.261), nicht auf ein bewegliches Tag.
+      # Letzter Schritt: der Agent. Festgelegt auf einen Commit (v1.0.271), nicht auf ein bewegliches Tag.
       - uses: anthropics/claude-code-action@4fa93a88de49bbef68b10eb15aabedf28ca0e1ed # v1.0.271
         env:
           GH_TOKEN: ${{ secrets.AGENT_GITHUB_TOKEN }}
