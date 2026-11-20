@@ -4,7 +4,10 @@ import com.example.orderservice.service.OrderAlreadyCancelledException;
 import com.example.orderservice.service.OrderNotFoundException;
 import com.example.orderservice.service.ProductNotFoundException;
 import com.example.orderservice.service.UnknownProductException;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Path;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,6 +40,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ProblemDetail handleConstraintViolation(ConstraintViolationException ex) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        String detail = ex.getConstraintViolations().stream()
+                .map(violation -> lastNodeName(violation) + ": " + violation.getMessage())
+                .sorted()
+                .collect(Collectors.joining("; "));
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
+    }
+
+    /** Letztes Glied des Property-Pfads (Parametername), ohne Methoden- oder Klassennamen. */
+    private static String lastNodeName(ConstraintViolation<?> violation) {
+        String name = "";
+        for (Path.Node node : violation.getPropertyPath()) {
+            name = node.getName();
+        }
+        return name;
     }
 }
