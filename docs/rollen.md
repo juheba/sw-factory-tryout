@@ -33,7 +33,7 @@ Jede Rolle beantwortet genau eine Frage.
 | 🧭`agent-planer` | Ist der Auftrag baubar, und wie bauen wir ihn? | Konzept, Issue, Codebasis | 2. Konzept → Plan | geplant ([📌 #128](https://github.com/juheba/sw-factory-tryout/issues/128)) |
 | 💻`agent-coder` | Wie setze ich den Auftrag korrekt um? | Spec, Code, Tests | 3. Umsetzung | im Betrieb |
 | 🔎`agent-reviewer` | Ist der Diff richtig gebaut und regelkonform? | Code gegen Regeln | 4. Prüfung | im Betrieb; neuer Zuschnitt (`DoD-4: Tests mit Fehlerfall`, `DoD-5: Kriterien erfüllt`) ab [📌 #125](https://github.com/juheba/sw-factory-tryout/issues/125) |
-| 🔬`agent-qa` | Tut es nachweislich, was das Issue verlangt? | Verhalten gegen Kriterien | 4. Prüfung | geplant ([📌 #125](https://github.com/juheba/sw-factory-tryout/issues/125)) |
+| 🔬`agent-qa` | Tut es nachweislich, was das Issue verlangt? | Verhalten gegen Kriterien | 4. Prüfung | Stufe 1 per `/qa` ([📌 #125](https://github.com/juheba/sw-factory-tryout/issues/125)) |
 
 **Wichtigste Abgrenzung:** Der Reviewer prüft, **wie** etwas gebaut ist (Code gegen `CLAUDE.md` und DoD). QA prüft,
 **was** es tut (Verhalten gegen die Akzeptanzkriterien).

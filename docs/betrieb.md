@@ -14,6 +14,7 @@ Die Namen nach der Umstellung ([📌 #138](https://github.com/juheba/sw-factory-
 |---|---|---|---|---|
 | `agent-coder` | `agent-coder-issue.yml` | „💻 agent-coder: Issue“ | Label `agent-coder` auf einem Issue (nur wenn Label-Setzer und Issue-Autor `juheba` sind) | `factory-write` (mit Freigabe) |
 | `agent-coder` | `agent-coder-revise.yml` | „💻 agent-coder: /code Revise“ | Kommentar `/code <Wunsch>` auf einem `agent/*`-PR (der frühere Befehl `/agent` entfiel mit [📌 #164](https://github.com/juheba/sw-factory-tryout/issues/164)) | `factory-write` (mit Freigabe) |
+| `agent-qa` | `agent-qa.yml` | „🔬 agent-qa“ | Kommentar `/qa [Hinweis]` auf einem PR (wird nur von `juheba` angenommen) | `factory-read` (ohne Freigabe) |
 | `agent-reviewer` | `agent-reviewer.yml` | „🔎 agent-reviewer“ | Neuer oder aktualisierter `agent/*`-PR (automatisch, prüft nur Nicht-Draft-PRs von `juheba`); Kommentar `/review [Hinweis]` auf einem Issue oder PR (wird nur von `juheba` angenommen) | `factory-read` (ohne Freigabe) |
 | `agent/` (Branch-Präfix, kein Agent) | – | – | Bezeichnet von der Factory erzeugte Branches | – |
 
@@ -285,6 +286,22 @@ Begründung: [ADR 0002](adr/0002-agent-sicherheit.md), Abschnitt „Reviewer ohn
 
 **Notausschalter:** Environment `factory-read` löschen oder das Secret entfernen, dann scheitert der Job `review`
 (der Kommentar meldet den Fehler). Härter: Workflow in der Actions-Oberfläche deaktivieren.
+
+## QA bedienen
+
+QA (Workflow `agent-qa.yml`, Roadmap E3, [📌 #125](https://github.com/juheba/sw-factory-tryout/issues/125)) prüft, ob
+die Akzeptanzkriterien des verknüpften Issues (`Closes #nr`) durch Tests belegt sind, und nennt höchstens fünf fehlende
+Randfälle. Sie ist schreibgeschützt, läuft ohne Freigabe in `factory-read` und nutzt dieselben Rechte wie der
+Reviewer (`.claude/reviewer-settings.json`). Einrichtung: nichts zusätzlich, Environment und Variable
+`REVIEWER_MODEL` gelten auch hier.
+
+- **Auf Zuruf:** Kommentar `/qa` von dir auf einem PR, optional mit Hinweis (`/qa achte auf den Fehlerfall leer`).
+  Ein automatischer Start folgt erst nach zwei brauchbaren Läufen.
+- **Ergebnis:** Kommentar „🔬 QA“ mit Urteil (`Kriterien belegt`, `Lücken`, `nicht beurteilbar`), Tabelle Kriterium zu
+  Test und Vorschlägen, die du als `/code …` weitergeben kannst. Tests schreibt QA nicht.
+- **Unterschied zum Reviewer:** Der Reviewer prüft Regeln und Standards, QA das Verhalten gegen das Issue
+  (`DoD-4: Tests mit Fehlerfall`, `DoD-5: Kriterien erfüllt`, Aufteilung siehe Definition of Done).
+- **Wirkt erst nach dem Merge**, wie beim Reviewer. **Notausschalter:** Workflow in der Actions-Oberfläche deaktivieren.
 
 ## Zuständigkeit
 

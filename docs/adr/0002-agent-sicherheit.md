@@ -385,6 +385,10 @@ von `agent/*` bleiben gesperrt.
 
 ## Reviewer ohne Freigabe (Roadmap P4, Issue #124)
 
+**Nachtrag (Issue #125):** QA (`agent-qa.yml`) läuft nach demselben Muster und mit denselben Maßnahmen: drei Jobs mit
+getrennten Rechten, `factory-read`, `.claude/reviewer-settings.json`, Workflow aus `main`, PR-Code nur gelesen. Auslöser
+ist nur `/qa` von `juheba` auf einem PR. Claude schreibt nur `.agent-tmp/qa.md`.
+
 Entscheidung des Owners (28.10.2026): Der Reviewer läuft ohne Freigabe im Environment, sonst wird der Owner zum
 Engpass. Das ist nur vertretbar, weil der Lauf nichts schreiben und nichts ausführen kann.
 

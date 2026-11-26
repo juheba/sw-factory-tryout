@@ -181,7 +181,7 @@ jobs:
           github_token: ${{ github.token }}
           settings: .claude/reviewer-settings.json
           # Das Modell steht in der Repository-Variable REVIEWER_MODEL (Settings > Variables). Ohne Variable: sonnet.
-          claude_args: --max-turns 15 --model ${{ vars.REVIEWER_MODEL || 'sonnet' }}
+          claude_args: --max-turns 20 --model ${{ vars.REVIEWER_MODEL || 'sonnet' }}
           prompt: |
             Du bist der Reviewer in einer Software-Factory. Du prüfst, du baust nichts. Du schreibst genau eine Datei:
             `.agent-tmp/review.md` (mit dem Edit- oder Write-Werkzeug). Sie wird von einem anderen Job als Kommentar
@@ -226,6 +226,10 @@ jobs:
                Standardwert, neue Mindestversion) mit `Grep` gegen den Code in `pr/` ab und nenne Treffer mit Datei und
                Zeile. Sind die Release Notes im PR-Text gekürzt oder fehlen sie, schreibst du für DoD-U1
                `nicht beurteilbar` und nennst den Grund.
+               **Arbeitsteilung mit QA:** Ob jedes Akzeptanzkriterium durch einen Test belegt ist, prüft 🔬`agent-qa`
+               (`/qa`). Du bewertest `DoD-4: Tests mit Fehlerfall` nur danach, ob Tests für neues Verhalten vorhanden und
+               nicht trivial sind, und `DoD-5: Kriterien erfüllt` nur danach, ob jedes Kriterium im PR angesprochen und
+               jede Abweichung begründet ist. Eine Zuordnung Kriterium zu Test schreibst du nicht.
             5. Melde nur, was ein Mensch im Review ansprechen würde: Fehler, Sicherheit, fehlende oder wirkungslose
                Tests, Verstöße gegen `CLAUDE.md` oder die Definition of Done. Nichts zu Geschmack oder Formatierung.
             6. Belegpflicht: Jeder Befund nennt Datei und Zeile, ein kurzes Zitat aus dem Code und den Punkt mit Kennung

@@ -31,6 +31,8 @@ flowchart LR
     L -->|grün| PR[Pull Request mit Closes nr]
     PR --> CI[CI: Jobs service und frontend]
     PR --> RV[agent-reviewer: Review gegen DoD und Standards]
+    PR -.->|/qa| QA[agent-qa: Kriterien gegen Tests]
+    QA --> R
     CI --> R[Review durch Mensch]
     RV --> R
     R -->|Änderungswunsch: Kommentar /code ...| RK[Überarbeitung auf dem PR-Branch]
