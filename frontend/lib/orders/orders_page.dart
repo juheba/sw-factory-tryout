@@ -68,6 +68,30 @@ class _OrdersPageState extends State<OrdersPage> {
     if (mounted) _reload();
   }
 
+  Future<void> _confirmCancel(OrderSummary order) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Bestellung stornieren?'),
+        content: Text(
+          'Die Bestellung von ${order.customerId} wird storniert. '
+          'Das lässt sich nicht rückgängig machen.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Abbrechen'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Stornieren'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) await _cancel(order);
+  }
+
   Future<void> _cancel(OrderSummary order) async {
     try {
       await widget.repository.cancel(order.id);
@@ -141,7 +165,23 @@ class _OrdersPageState extends State<OrdersPage> {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasError) {
-                  return Center(child: Text('Fehler: ${snapshot.error}'));
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Die Bestellungen konnten nicht geladen werden. '
+                          'Bitte versuche es erneut.',
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8),
+                        FilledButton(
+                          onPressed: _reload,
+                          child: const Text('Erneut laden'),
+                        ),
+                      ],
+                    ),
+                  );
                 }
                 final orders = snapshot.data ?? const <OrderSummary>[];
                 if (orders.isEmpty) {
@@ -178,7 +218,7 @@ class _OrdersPageState extends State<OrdersPage> {
                           : IconButton(
                               icon: const Icon(Icons.cancel_outlined),
                               tooltip: 'Bestellung stornieren',
-                              onPressed: () => _cancel(order),
+                              onPressed: () => _confirmCancel(order),
                             ),
                     );
                   },

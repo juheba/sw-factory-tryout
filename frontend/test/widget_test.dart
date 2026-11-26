@@ -9,8 +9,10 @@ class FakeOrdersRepository implements OrdersRepository {
     this.failCancel = false,
     this.failCreate = false,
     this.createError,
+    this.failList = false,
   });
 
+  final bool failList;
   final bool failCancel;
   final bool failCreate;
   final Exception? createError;
@@ -21,6 +23,11 @@ class FakeOrdersRepository implements OrdersRepository {
     OrderStatus? status,
     OrderSort? sort,
   }) async {
+    if (failList) {
+      // Wie bei echtem I/O: Der Fehler kommt erst nach dem Aufbau des Frames.
+      await Future<void>.delayed(const Duration(milliseconds: 1));
+      throw StateError('interner Fehlerdetail-Text');
+    }
     final filtered = orders
         .where((order) => status == null || order.status == status)
         .toList();
@@ -100,6 +107,16 @@ class FakeProductsRepository extends ProductsRepository {
   }
 }
 
+Future<void> confirmCancelDialog(WidgetTester tester) async {
+  await tester.tap(
+    find.descendant(
+      of: find.byType(AlertDialog),
+      matching: find.text('Stornieren'),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
 void main() {
   testWidgets('zeigt Hinweis bei leerer Liste', (tester) async {
     await tester.pumpWidget(OrderApp(repository: FakeOrdersRepository()));
@@ -127,9 +144,93 @@ void main() {
 
     await tester.tap(find.byTooltip('Bestellung stornieren'));
     await tester.pumpAndSettle();
+    await confirmCancelDialog(tester);
 
+    expect(find.byType(AlertDialog), findsNothing);
     expect(find.byType(Chip), findsOneWidget);
     expect(find.byTooltip('Bestellung stornieren'), findsNothing);
+  });
+
+  testWidgets('Abbrechen im Dialog lässt die Bestellung aktiv', (tester) async {
+    await tester.pumpWidget(OrderApp(repository: FakeOrdersRepository()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Demo-Bestellung anlegen'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Bestellung stornieren'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Bestellung stornieren?'), findsOneWidget);
+
+    await tester.tap(find.text('Abbrechen'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.byType(Chip), findsNothing);
+    expect(find.byTooltip('Bestellung stornieren'), findsOneWidget);
+  });
+
+  group('Barrierefreiheit der Bestellliste', () {
+    Future<void> pumpWithOrder(WidgetTester tester) async {
+      await tester.pumpWidget(OrderApp(repository: FakeOrdersRepository()));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Demo-Bestellung anlegen'));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('Tap-Ziele haben Beschriftung', (tester) async {
+      final handle = tester.ensureSemantics();
+      await pumpWithOrder(tester);
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testWidgets('Tap-Ziele sind auf Android groß genug', (tester) async {
+      final handle = tester.ensureSemantics();
+      await pumpWithOrder(tester);
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testWidgets('Tap-Ziele sind auf iOS groß genug', (tester) async {
+      final handle = tester.ensureSemantics();
+      await pumpWithOrder(tester);
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testWidgets('Text hat genug Kontrast', (tester) async {
+      final handle = tester.ensureSemantics();
+      await pumpWithOrder(tester);
+      await expectLater(tester, meetsGuideline(textContrastGuideline));
+      handle.dispose();
+    });
+  });
+
+  testWidgets('zeigt verständlichen Text und lädt erneut, wenn die Liste '
+      'nicht ladbar ist', (tester) async {
+    await tester.pumpWidget(
+      OrderApp(repository: FakeOrdersRepository(failList: true)),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        'Die Bestellungen konnten nicht geladen werden. '
+        'Bitte versuche es erneut.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.textContaining('interner Fehlerdetail-Text'), findsNothing);
+    expect(find.textContaining('StateError'), findsNothing);
+    expect(find.text('Erneut laden'), findsOneWidget);
+
+    await tester.tap(find.text('Erneut laden'));
+    // Erst den Frame bauen (der FutureBuilder hängt sich an), dann warten.
+    await tester.pump();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Erneut laden'), findsOneWidget);
   });
 
   testWidgets('zeigt Fehlermeldung, wenn Stornieren fehlschlägt', (
@@ -143,6 +244,7 @@ void main() {
 
     await tester.tap(find.byTooltip('Bestellung stornieren'));
     await tester.pumpAndSettle();
+    await confirmCancelDialog(tester);
 
     expect(find.textContaining('Stornieren fehlgeschlagen'), findsOneWidget);
     expect(find.byType(Chip), findsNothing);
@@ -363,6 +465,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byTooltip('Bestellung stornieren').first);
       await tester.pumpAndSettle();
+      await confirmCancelDialog(tester);
     }
 
     Future<void> selectFilter(WidgetTester tester, String label) async {
@@ -426,6 +529,7 @@ void main() {
 
       await tester.tap(find.byTooltip('Bestellung stornieren').first);
       await tester.pumpAndSettle();
+      await confirmCancelDialog(tester);
       expect(find.text('3 Bestellungen'), findsOneWidget);
 
       await tester.tap(
@@ -488,6 +592,7 @@ void main() {
       await pumpWithThreeOrders(tester);
       await tester.tap(find.byTooltip('Bestellung stornieren').at(1));
       await tester.pumpAndSettle();
+      await confirmCancelDialog(tester);
       await tapLabel(tester, 'Neueste zuerst');
 
       await tapLabel(tester, 'Aktiv');
