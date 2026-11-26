@@ -181,7 +181,7 @@ jobs:
           github_token: ${{ github.token }}
           settings: .claude/reviewer-settings.json
           # Das Modell steht in der Repository-Variable REVIEWER_MODEL (Settings > Variables). Ohne Variable: sonnet.
-          claude_args: --max-turns 15 --model ${{ vars.REVIEWER_MODEL || 'sonnet' }}
+          claude_args: --max-turns 20 --model ${{ vars.REVIEWER_MODEL || 'sonnet' }}
           prompt: |
             Du bist der Reviewer in einer Software-Factory. Du prüfst, du baust nichts. Du schreibst genau eine Datei:
             `.agent-tmp/review.md` (mit dem Edit- oder Write-Werkzeug). Sie wird von einem anderen Job als Kommentar
