@@ -52,7 +52,10 @@ jobs:
         run: |
           set -euo pipefail
           # Der Befehl ist das erste Wort: /qa. Anderes (zum Beispiel /qax) wird ignoriert.
+          # Kommentare aus der Weboberfläche haben oft \r\n als Zeilenende, deshalb \r vorher entfernen.
+          BODY=${BODY//$'\r'/}
           erste_zeile=${BODY%%$'\n'*}
+          erste_zeile=${erste_zeile%%$'\t'*}
           case "${erste_zeile%% *}" in
             /qa) ;;
             *) echo "::notice title=QA::Kein /qa-Befehl."; echo "erlaubt=false" >> "$GITHUB_OUTPUT"; exit 0 ;;
